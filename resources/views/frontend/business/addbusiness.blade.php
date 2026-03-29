@@ -65,6 +65,13 @@
         .browse_img.busdes {
             cursor: pointer;
         }
+        #section-error-message {
+            color: #ff0000;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
     
 <div class="modal fade bd-example-modal-lg imagecrop" id="model" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -116,6 +123,7 @@
 <div class="profile_heading">
   <h2>Add your Business
   <span>Share your Business or the Services you Offer</span></h2>
+  <div id="section-error-message">Please finish the incomplete sections in red</div>
  </div>
 <div class="full_midpan">
 <div class="row">
@@ -486,6 +494,7 @@ $(document).ready(function() {
         var $backendError = $(".invalid-feedback, .is-invalid").first();
         if ($backendError.length) {
             expandSectionWithError($backendError);
+            $('#section-error-message').show();
         }
     }, 100);
 
@@ -494,6 +503,7 @@ $(document).ready(function() {
         invalidHandler: function(event, validator) {
             // Expand the first section that has a validation error
             if (validator.errorList.length > 0) {
+                $('#section-error-message').show();
                 // Delay slightly to ensure jQuery Validate has finished its work
                 setTimeout(function() {
                     expandSectionWithError(validator.errorList[0].element);
@@ -564,6 +574,11 @@ $(document).ready(function() {
             if ($(element).next().hasClass('selectize-control')) {
                 $(element).next().find('.selectize-input').removeClass('error');
             }
+            
+            // Hide header error if no errors left
+            if ($('#businessForm').validate().numberOfInvalids() === 0) {
+                $('#section-error-message').hide();
+            }
         },
         submitHandler: function(form) {
             // Final sync just in case
@@ -574,6 +589,8 @@ $(document).ready(function() {
             
             if ($('#businessForm').valid()) {
                 form.submit();
+            } else {
+                $('#section-error-message').show();
             }
         }
     });
@@ -605,6 +622,12 @@ $(document).ready(function() {
                     }, 300);
                 }
             }, 350);
+        } else {
+            $('#section-error-message').show();
+            // Scroll to the top to see the error message
+            $('html, body').animate({
+                scrollTop: $(".profile_heading").offset().top - 50
+            }, 500);
         }
     });
 });
