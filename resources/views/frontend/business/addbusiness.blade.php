@@ -482,9 +482,9 @@ $(document).ready(function() {
             var index = $("#accordion .acc_content").index($section);
             $("#accordion").accordion("option", "active", index);
             
-            // Also scroll to the error
+            // Also scroll to the title/top area instead of just the element
             $('html, body').animate({
-                scrollTop: $(element).offset().top - 100
+                scrollTop: $(".profile_heading").offset().top - 20
             }, 500);
         }
     }
@@ -613,14 +613,11 @@ $(document).ready(function() {
             var currentIndex = $("#accordion .acc_content").index($section);
             $("#accordion").accordion("option", "active", currentIndex + 1);
             
-            // Wait for accordion animation to finish before scrolling
+            // Scroll to the top of the content area instead of just the header
             setTimeout(function() {
-                var $nextHeader = $("#accordion h3").eq(currentIndex + 1);
-                if ($nextHeader.length) {
-                    $('html, body').animate({
-                        scrollTop: $nextHeader.offset().top - 10
-                    }, 300);
-                }
+                $('html, body').animate({
+                    scrollTop: $(".profile_heading").offset().top - 20
+                }, 300);
             }, 350);
         } else {
             $('#section-error-message').show();
