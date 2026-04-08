@@ -1075,6 +1075,7 @@ textarea {
   padding-left: 20px;
   margin-bottom: 10px;
   margin-left: 198px;
+  margin-top: -18px;
 }
 
 .notification_homebased::before {
@@ -1084,7 +1085,7 @@ textarea {
   width: 18px;
   height: 8px;
   top: -8px;
-  left: 18px;
+  left: 48px;
 }
 
 .left_profileform .frm_dv {
@@ -1633,7 +1634,7 @@ textarea {
 }
 
 .left_searchresults h3 span {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 300;
 }
 
@@ -3394,6 +3395,11 @@ ul.pagination li:last-child a:hover {
 .latest_business h2 img,
 .top_ratedbusiness h2 img {
   border: 0;
+}
+
+.top_ratedbusiness h2 span {
+  font-size: 22px;
+  font-weight: 300;
 }
 
 .search_lftthum {

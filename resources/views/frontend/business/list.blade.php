@@ -128,7 +128,7 @@
                   <div class="top_ratedbusiness">
                      <h2>
                         @if(!empty($searchQuery))
-                            Search Results For "{{ $searchQuery }}" ({{ $topratedBusiness->count() }} hits)
+                            Search Results For <span>"{{ $searchQuery }}" ({{ $topratedBusiness->count() }} hits)</span>
                         @else
                             <img src="{{ asset('assets/images/top_ratedicon.png') }}" alt=""> Top Rated Business
                         @endif

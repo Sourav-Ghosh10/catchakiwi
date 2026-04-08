@@ -897,7 +897,21 @@ class BusinessController extends Controller
 
     }
 
+    public function changeStatus(Request $request)
+    {
+        $business = Business::where('id', $request->id)->where('user_id', Auth::user()->id)->first();
+        
+        if ($business) {
+            $business->status = $request->status;
+            $business->save();
+            return response()->json(['success' => true]);
+        }
+        
+        return response()->json(['success' => false], 404);
+    }
+
     public function businessDelete($id)
+
     {
         $business = Business::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
         $business->delete();

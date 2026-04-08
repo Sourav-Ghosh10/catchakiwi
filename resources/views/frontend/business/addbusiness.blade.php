@@ -761,9 +761,21 @@ $(document).on('change', '.homebased_business', function(){
         $(".bestsuitsyou").show();
     }
 }); 
+
+// Hide bubble when focusing on other fields
+$(document).on('focus', 'input:not(.homebased_business), select, textarea, .ql-editor', function() {
+    $('.notification_homebased').fadeOut();
+});
+
+// Selectize focus needs special handling
+$(document).on('mousedown', '.selectize-input', function() {
+    $('.notification_homebased').fadeOut();
+});
+
 // Trigger radio check on load
-$('.homebased_business:checked').trigger('change');
+//$('.homebased_business:checked').trigger('change');
 </script>
+
 <script>
 $(document).ready(function () {
         $('#country_select').change(function () {

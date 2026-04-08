@@ -146,6 +146,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/business/edit/{id}', [BusinessController::class, 'businessEdit'])->name('business.list.edit');
     Route::put('/business/update/{id}', [BusinessController::class, 'businessUpdate'])->name('business.list.update');
     Route::delete('/business/delete/{id}', [BusinessController::class, 'businessDelete'])->name('business.list.delete');
+    Route::post('/business/update-status', [BusinessController::class, 'changeStatus'])->name('business.update-status');
+
     
     Route::get('/notice-post', [UserController::class, 'Notice'])->name('notice-post');
     Route::post('/notice-submit', [UserController::class, 'NoticePost'])->name('notice-submit');

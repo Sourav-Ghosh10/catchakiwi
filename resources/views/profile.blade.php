@@ -256,10 +256,10 @@
                                                       }}</a></td>
                                                 <td align="center" valign="top"
                                                    class="stuaactive">
-                                                   <select>
-                                                      <option>Active</option>
-                                                      <option>Inactive</option>
-                                                   </select>
+                                                    <select class="change-business-status" data-id="{{ $business->id }}">
+                                                       <option value="1" {{ $business->status == '1' ? 'selected' : '' }}>Active</option>
+                                                       <option value="0" {{ $business->status == '0' ? 'selected' : '' }}>Inactive</option>
+                                                    </select>
                                                    <!-- <img src="{{ asset('assets/images/thikmark_icon.png') }}" alt=""> -->
                                                 </td>
                                                 <td align="left"
@@ -1941,6 +1941,49 @@ function clearSearch() {
         });
     @endif
 </script>
+<script>
+    $(document).on('change', '.change-business-status', function() {
+        const id = $(this).data('id');
+        const status = $(this).val();
+        const $select = $(this);
+
+        $.ajax({
+            url: '{{ route("business.update-status") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                id: id,
+                status: status
+            },
+            success: function(response) {
+                if(response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: 'Business status updated successfully!',
+                        confirmButtonColor: '#729b0f'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to update status.'
+                    });
+                    location.reload();
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.'
+                });
+                location.reload();
+            }
+        });
+    });
+</script>
    <!-- body start end-->
+
    @include('includes/footer-js')
    @include('includes/footer')
