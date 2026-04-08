@@ -19,15 +19,18 @@ class ArticleController extends Controller
         // Handle sorting
         if ($sortBy == 'writer') {
             $query->join('users', 'articles.user_id', '=', 'users.id')
-                  ->select('articles.*')
-                  ->orderBy('users.name', $sortOrder);
-        } elseif ($sortBy == 'category') {
+                ->select('articles.*')
+                ->orderBy('users.name', $sortOrder);
+        }
+        elseif ($sortBy == 'category') {
             $query->join('article_categories', 'articles.category_id', '=', 'article_categories.id')
-                  ->select('articles.*')
-                  ->orderBy('article_categories.title', $sortOrder);
-        } elseif (in_array($sortBy, ['title', 'status', 'views', 'published_at', 'created_at'])) {
+                ->select('articles.*')
+                ->orderBy('article_categories.title', $sortOrder);
+        }
+        elseif (in_array($sortBy, ['title', 'status', 'views', 'published_at', 'created_at'])) {
             $query->orderBy($sortBy, $sortOrder);
-        } else {
+        }
+        else {
             $query->latest();
         }
 
