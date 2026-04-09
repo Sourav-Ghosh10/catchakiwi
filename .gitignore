@@ -23,3 +23,4 @@ app1/
 oldfiles/
 error_log
 ~assets/
+public/assets/profile/*

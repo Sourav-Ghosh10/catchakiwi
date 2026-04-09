@@ -47,7 +47,7 @@
         });
         $modal.on('shown.bs.modal', function() {
             let uploadtype = $("#uploadtype").val();
-            if(uploadtype == "imageUpload"){
+            if(uploadtype == "imageUpload" || uploadtype == "imageUpload2"){
                 cropper = new Cropper(image, {
                     aspectRatio: 1,
                     viewMode: 1,
@@ -77,7 +77,7 @@
             try {
                 let uploadtype = $("#uploadtype").val();
                 let canvas;
-                if(uploadtype=="imageUpload"){
+                if(uploadtype=="imageUpload" || uploadtype=="imageUpload2"){
                     canvas = cropper.getCroppedCanvas({ width: 200, height: 200 });
                 }else if(uploadtype=="coverupload"){
                     canvas = cropper.getCroppedCanvas({ width: 1074, height: 400 });
@@ -88,12 +88,17 @@
                 }
                 if(canvas){
                     var base64data = canvas.toDataURL('image/jpeg', 0.8);
-                    if(uploadtype=="imageUpload"){
+                    if(uploadtype=="imageUpload" || uploadtype=="imageUpload2"){
                         $('#base64image').val(base64data);
-                        document.getElementById('imagePreview').style.backgroundImage = "url("+base64data+")";
+                        var preview = document.getElementById('imagePreview');
+                        if (preview) {
+                            preview.style.backgroundImage = "url("+base64data+")";
+                        }
+                        // alert('Submitting profile photo...');
                         $('#profile_photo').submit();
                     }else if(uploadtype=="coverupload"){
                         $('#base64coverimage').val(base64data);
+                        // alert('Submitting cover banner...');
                         $('#profilecoverbanner').submit();
                     }else if(uploadtype=="noticeimg"){
                         $('#noticeimgbase64').val(base64data);

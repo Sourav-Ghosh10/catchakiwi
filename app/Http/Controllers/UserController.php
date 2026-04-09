@@ -323,34 +323,43 @@ class UserController extends Controller
 
 	public function StoreProfileBanner(Request $request) {
 		$id = Auth::user()->id;
-		//dd($id);
-
 		$profile_banner = $request->file('profile_banner');
 		$base64coverimage = $request->input('base64coverimage');
-		//exit;
-		if($profile_banner) {
+		$last_img = null;
+
+		if($base64coverimage) {
             $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $base64coverimage);
             $binaryImageData = base64_decode($base64_data);
-            //exit;
+            
             // Ensure directory exists
-            $dirPath = 'public/assets/profile/banners';
-            if (!file_exists(base_path($dirPath))) {
-                mkdir(base_path($dirPath), 0777, true);
+            $dirPath = 'assets/profile/banners';
+            $fullDirPath = 'public/' . $dirPath;
+            if (!file_exists(base_path($fullDirPath))) {
+                mkdir(base_path($fullDirPath), 0777, true);
             }
             
-            $img_ext = strtolower($profile_banner->getClientOriginalExtension());
+            $img_ext = 'jpg';
+            if ($profile_banner) {
+                $img_ext = strtolower($profile_banner->getClientOriginalExtension());
+            }
+            
             $fileName = uniqid() . rand(1111, 1111111111) . '.' . $img_ext;
-            $filePath = $dirPath . '/' . $fileName;
-            file_put_contents(base_path($filePath), $binaryImageData, LOCK_EX | FILE_BINARY);
-            $last_img = $filePath;
+            $dbPath = $dirPath . '/' . $fileName;
+            $diskPath = 'public/' . $dbPath;
+            
+            file_put_contents(base_path($diskPath), $binaryImageData, LOCK_EX | FILE_BINARY);
+            $last_img = $dbPath;
 		}
 
-		User::find($id)->update([
-			'profile_banner'	=> $last_img,
-			'updated_at'		=> Carbon::now()
-		]);
+        if ($last_img) {
+            User::find($id)->update([
+                'profile_banner'	=> $last_img,
+                'updated_at'		=> Carbon::now()
+            ]);
+            return redirect()->back()->with('success', 'Profile banner updated successfully');
+        }
 
-		return Redirect()->back();
+		return redirect()->back()->with('error', 'No image data received');
 	}
 	
 	//public function StoreProfilePic(Request $request) {
@@ -386,7 +395,6 @@ class UserController extends Controller
 
         if($base64_image) {
             // Extract the image data and format from base64 string
-            // Expected format: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...
             if (preg_match('/^data:image\/(\w+);base64,/', $base64_image, $type)) {
                 // Remove the data URL part
                 $base64_image = substr($base64_image, strpos($base64_image, ',') + 1);
@@ -408,19 +416,21 @@ class UserController extends Controller
                 $name_gen = hexdec(uniqid());
                 $img_ext = ($type === 'jpg') ? 'jpeg' : $type;
                 $img_name = $name_gen . '.' . $img_ext;
-                $up_location = 'public/assets/profile/pict';
-                $last_img = $up_location . '/' . $img_name;
+                
+                $dirPath = 'assets/profile/pict';
+                $dbPath = $dirPath . '/' . $img_name;
+                $diskPath = 'public/' . $dbPath;
 
                 // Create directory if it doesn't exist
-                if (!file_exists(base_path($up_location))) {
-                    mkdir(base_path($up_location), 0777, true);
+                if (!file_exists(base_path('public/' . $dirPath))) {
+                    mkdir(base_path('public/' . $dirPath), 0777, true);
                 }
 
                 // Save the image file
-                if (file_put_contents(base_path($last_img), $image_data)) {
+                if (file_put_contents(base_path($diskPath), $image_data)) {
                     // Update user record
                     User::find($id)->update([
-                        'image' => $last_img,
+                        'image' => $dbPath,
                         'updated_at' => Carbon::now()
                     ]);
 

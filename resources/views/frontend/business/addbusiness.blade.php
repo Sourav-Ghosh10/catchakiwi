@@ -96,21 +96,7 @@
                 </div>
               </div>
             </div>
-<div class="top_search nomob_search">
-<div class="container">
-    <!--<div class="logo"><h1><a href="/"><img src="{{ asset('assets/images/logo-inner.png') }}" alt="" /></a></h1></div>-->
-    </div>
-<div class="container">
-<div class="home_midbody">
-<div class="home_searchsec">
-<form action="" method="post">
-<input name="" type="text" placeholder="Services I’m looking for" />
-<input name="" type="text" placeholder="Enter your location" class="location" />
-<input name="" type="submit" value="Search" />
-</form>
-</div>
-</div>
-</div></div>
+
 <!-- Header start end-->
 
 <!-- body start-->

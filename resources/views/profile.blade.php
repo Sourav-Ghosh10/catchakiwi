@@ -51,6 +51,16 @@
    <!-- body start-->
    <div class="mid_body">
       <div class="container">
+         @if(session('success'))
+            <div class="alert alert-success mt-3">
+                {{ session('success') }}
+            </div>
+         @endif
+         @if(session('error'))
+            <div class="alert alert-danger mt-3">
+                {{ session('error') }}
+            </div>
+         @endif
          <div class="profile_banner"> 
            @if(!empty($profile->profile_banner))
                 <img src="{{ asset($profile->profile_banner) }}" alt="">
@@ -63,12 +73,12 @@
                   enctype="multipart/form-data"
                   action="{{route('store.profilepic')}}" method="POST"
                   class="avatar-upload">
+                  @csrf
+                  <input type="hidden" name="base64image" id="base64image" value="">
                   <div class="avatar-edit">
                      <input type='file' id="imageUpload"
                         accept=".png, .jpg, .jpeg" name="imageUpload"
                         class=" imageUpload" />
-                     <input type="hidden" name="base64image" name="base64image"
-                        id="base64image">
                      <label for="imageUpload"></label>
                   </div>
                   <div class="avatar-preview container2">
@@ -80,13 +90,8 @@
                      }
                      $url = url($image);
                      $imgs = "background-image:url($url)";
-
                      @endphp
                      <div id="imagePreview" style="{{ $imgs }}">
-                        <input type="hidden" name="_token"
-                           value="{{csrf_token()}}">
-                        <input style="margin-top: 60px; visibility: hidden;"
-                           type="submit" class="btn btn-warning" value="Save">
                      </div>
                   </div>
                </form>
@@ -651,37 +656,35 @@
                                        id="profilecoverbanner" method="POST"
                                        enctype="multipart/form-data">
                                        @csrf
+                                       <input type="hidden" name="base64coverimage" id="base64coverimage" value="">
                                        <div class="form-group">
-                                         <div class="browsepic bdrbox"><img src="{{ asset($profile->profile_banner) }}" alt></div>
+                                         <div class="browsepic bdrbox">
+                                            @if(!empty($profile->profile_banner))
+                                                <img src="{{ asset($profile->profile_banner) }}" alt="Cover Banner">
+                                            @else
+                                                <img src="{{ asset('assets/images/default-cover.png') }}" alt="Default Cover">
+                                            @endif
+                                         </div>
                                          <div class="newupload">
-                                           <label>Update Your Cover Photo</label>
-                                           <div class=customupbtn>
-                                          <input type="file" name="profile_banner" id="coverupload" class="form-control imageUpload">
-                                          <input type="hidden" name="base64coverimage"  id="base64coverimage" value>
+                                           <label for="coverupload">Update Your Cover Photo</label>
+                                           <div class="customupbtn">
+                                          <input type="file" name="profile_banner" id="coverupload" class="form-control imageUpload" accept=".png, .jpg, .jpeg">
                                          </div>
                                          </div>
-                                          
-                                          
-                                          <!--  <input type="submit" name="submit" value="submit"> -->
                                        </div>
                                     </form>
                                  </div>
                                  <h3>Change Profile Photo</h3>
                                  <div class="probrowse_content">
                                     <div class="form-group">
-                                      <div class="browsepic bdrbox"><img  src="{{ $url }}" alt></div>
+                                      <div class="browsepic bdrbox"><img src="{{ $url }}" alt="Profile Photo"></div>
                                       <div class="newupload">
-                                      <label>Update Your Profile Photo</label>
-                                      <div class=customupbtn>
-                                       <input type="file" id="imageUpload" accept=".png, .jpg, .jpeg" name="imageUpload" class=" imageUpload">
-                                       <input type="hidden"  name="base64coverimage" id="base64coverimage" value>
+                                      <label for="imageUpload2">Update Your Profile Photo</label>
+                                      <div class="customupbtn">
+                                       <input type="file" id="imageUpload2" accept=".png, .jpg, .jpeg" name="imageUpload" class="imageUpload">
                                       </div>
                                       </div>
-                                      
-                                       
-                                       <!--<input type="submit" name="submit" value="submit"> -->
                                     </div>
-                                    <!-- <img src="{{ asset('assets/images/browse_img.png') }}" alt=""> -->
                                  </div>
                               </div>
                            </div>

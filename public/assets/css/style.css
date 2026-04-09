@@ -673,9 +673,10 @@ textarea {
 
 .profile_banner img {
   width: 100%;
-  max-height: 300px;
-  /* object-fit: cover;*/
-  object-position: top;
+  max-height: 450px;
+  object-fit: contain;
+  background-color: #f8f9fa;
+  object-position: center;
 }
 
 .home_bg {
@@ -973,6 +974,12 @@ textarea {
   bottom: -70px;
   overflow: hidden;
   left: 46px;
+}
+
+.profile_banner .profile_pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .profile_heading {
@@ -4767,7 +4774,17 @@ button.remove-bus-image:hover {
   background: #0F5FA8;
 }
 
-.customupbtn input {
-  opacity: 0;
-  width: auto;
+.customupbtn input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 0;
+  padding: 0 !important;
+  border: none !important;
+  display: block !important;
 }
