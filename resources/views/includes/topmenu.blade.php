@@ -1,7 +1,7 @@
 <nav>
                      <ul class="deskmenu">
                         <li><a href="{{ URL::to(strtolower(session('CountryCode')).'/business') }}">Business</a></li>
-                        <li><a href="{{ route('notices') }}">Notice</a></li>
+                        <li><a href="{{ route('notices') }}">Notice Board</a></li>
                         <li><a href="{{ route('article.list') }}">Articles</a></li>
                         <li><a href="#">Forum</a></li>
                         <!-- <li class="login_button"></li> -->
