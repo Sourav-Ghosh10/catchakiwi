@@ -131,6 +131,7 @@ FRONTEND CONTROLLER BEGIN
 Route::post('/login', [CustomAuthenticatedSessionController::class, 'store']);
 
 Route::get('/notice-board', [NoticeController::class, 'noticeBoard'])->name('notice-board');
+Route::get('/notices', [NoticeController::class, 'noticeBoardV2'])->name('notices');
 
 Route::get('/get-a-quote', [BusinessController::class, 'getaQuote'])->name('get-a-quote');
 Route::get('/{country}/business', [BusinessController::class, 'list']);
