@@ -1,7 +1,7 @@
 @include('includes/admin-header')
 @include('includes/admin-sidebar')
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
@@ -11,6 +11,7 @@
         --glass-border: rgba(255, 255, 255, 0.1);
         --accent-color: #00d2ff;
     }
+
 
     .content-wrapper {
         background: #0f111a;
@@ -138,7 +139,7 @@
     .preview-img {
         max-width: 100%;
         border-radius: 10px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease;
     }
 
@@ -234,15 +235,17 @@
                         </h4>
 
                         @if(session('success'))
-                            <div class="alert alert-success border-0 rounded-4 mb-4" style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
+                            <div class="alert alert-success border-0 rounded-4 mb-4"
+                                style="background: rgba(40, 167, 69, 0.1); color: #28a745;">
                                 <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
                             </div>
                         @endif
 
-                        <form action="{{ route('admin.ads.update', $ads->id) }}" method="POST" class="forms-sample" enctype="multipart/form-data">
+                        <form action="{{ route('admin.ads.update', $ads->id) }}" method="POST" class="forms-sample"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
-                            
+
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-4">
                                     <div class="form-group">
@@ -256,7 +259,9 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="form-group">
                                         <label>Ad Destination Link</label>
-                                        <input type="url" name="link" class="form-control" value="{{ $ads->link }}" placeholder="https://example.com" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); color: #fff; padding: 0.8rem 1.2rem; border-radius: 12px;">
+                                        <input type="url" name="link" class="form-control" value="{{ $ads->link }}"
+                                            placeholder="https://example.com"
+                                            style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); color: #fff; padding: 0.8rem 1.2rem; border-radius: 12px;">
                                     </div>
                                 </div>
                             </div>
@@ -274,16 +279,20 @@
                                 </div>
 
                                 @error('msg')
-                                    <div class="mt-3 text-danger small"><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $message }}</div>
+                                    <div class="mt-3 text-danger small"><i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                        {{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="row">
                                 <div class="col-md-7">
-                                    @if($ads->ads_image !="")
+                                    @if($ads->ads_image != "")
                                         <div class="current-image-wrapper">
-                                            <label class="d-block mb-3" style="color: #888; letter-spacing: 1px; font-size: 0.8rem; font-weight: 600;">ACTIVE CREATIVE</label>
-                                            <img src="{{ asset(str_replace('public/', '', $ads->ads_image)) }}" class="preview-img" alt="Current Ad">
+                                            <label class="d-block mb-3"
+                                                style="color: #888; letter-spacing: 1px; font-size: 0.8rem; font-weight: 600;">ACTIVE
+                                                CREATIVE</label>
+                                            <img src="{{ asset(str_replace('public/', '', $ads->ads_image)) }}"
+                                                class="preview-img" alt="Current Ad">
                                             <div class="mt-3 text-muted small">
                                                 <i class="bi bi-info-circle me-1"></i> Original path: {{ $ads->ads_image }}
                                             </div>
@@ -328,8 +337,10 @@
                     </span>
                 </div>
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-dark rounded-pill px-4" data-bs-dismiss="modal">Discard</button>
-                    <button type="button" class="btn btn-primary rounded-pill px-5 crop" id="crop">Apply Selection</button>
+                    <button type="button" class="btn btn-dark rounded-pill px-4"
+                        data-bs-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-5 crop" id="crop">Apply
+                        Selection</button>
                 </div>
             </div>
         </div>
@@ -340,7 +351,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var image = document.getElementById('image');
         var cropper;
         var $modalElement = document.getElementById('model');
@@ -348,12 +359,12 @@
         var input = document.getElementById('imageInput');
 
         // Handle File Selection
-        input.addEventListener("change", function(e) {
+        input.addEventListener("change", function (e) {
             var files = e.target.files;
             if (files && files.length > 0) {
                 var file = files[0];
                 var reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     image.src = e.target.result;
                     bsModal.show();
                 };
@@ -362,10 +373,10 @@
         });
 
         // Initialize Cropper when modal opens
-        $modalElement.addEventListener('shown.bs.modal', function() {
+        $modalElement.addEventListener('shown.bs.modal', function () {
             var uploadtype = document.getElementById("uploadtype").value;
-            var aspect_ratio = 1/1;
-            
+            var aspect_ratio = 1 / 1;
+
             if (uploadtype && uploadtype.toLowerCase() == "mid") {
                 aspect_ratio = 1074 / 400;
             } else if (uploadtype && uploadtype.toLowerCase() == "side") {
@@ -389,7 +400,7 @@
         });
 
         // Clean up Cropper when modal closes
-        $modalElement.addEventListener('hidden.bs.modal', function() {
+        $modalElement.addEventListener('hidden.bs.modal', function () {
             if (cropper) {
                 cropper.destroy();
                 cropper = null;
@@ -397,7 +408,7 @@
         });
 
         // Handle Cropping
-        document.getElementById("crop").addEventListener("click", function() {
+        document.getElementById("crop").addEventListener("click", function () {
             var uploadtype = document.getElementById("uploadtype").value;
             var canvas;
             var options = {
@@ -414,14 +425,14 @@
             }
 
             if (canvas) {
-                canvas.toBlob(function(blob) {
+                canvas.toBlob(function (blob) {
                     var reader = new FileReader();
                     reader.readAsDataURL(blob);
-                    reader.onloadend = function() {
+                    reader.onloadend = function () {
                         var base64data = reader.result;
                         document.getElementById('base64image').value = base64data;
                         bsModal.hide();
-                        
+
                         // Optional: Show a small "Cropped Successfully" indicator
                         Swal.fire({
                             icon: 'success',
