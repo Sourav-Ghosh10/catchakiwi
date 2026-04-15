@@ -11,7 +11,7 @@
 .profile_heading h2 span{font-size: 13px;}
 .profile_banner .profile_pic{width: 100px; height: 100px; bottom: -50px; left: 15px;}
 .left_profileform .frm_dv.m_phone input[type="text"], .left_profileform .frm_dv select {width: 100%;}
-.selectsize{margin-left:0; width: 100%;}
+.selectsize{margin-left:0; width: 100% !important;}
 .catfield{display:block;}
 .left_profileform .frm_dv input[type="text"]{width:100%; display:block;}
 .left_profileform .frm_dv label {width: auto; display: block;}
@@ -113,6 +113,8 @@
 }
 	
 @media only screen and (max-width: 900px) {
+  .notification_homebased::before{left: auto; right: 72px;}
+.selectize-control.selectsize{width: 100% !important;}
   .closemsg {
   right: 0;
   top: -8px;
