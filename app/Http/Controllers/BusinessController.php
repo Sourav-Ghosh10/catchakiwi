@@ -731,15 +731,16 @@ class BusinessController extends Controller
             }
             
             // Ensure directory exists
-            $dirPath = 'public/assets/business';
-            if (!file_exists(base_path($dirPath))) {
-                mkdir(base_path($dirPath), 0777, true);
+            $dirPath = 'assets/business';
+            $physicalDir = public_path($dirPath);
+            if (!file_exists($physicalDir)) {
+                mkdir($physicalDir, 0777, true);
             }
             
             $fileName = uniqid() . rand(1111, 1111111111) . '.' . $img_ext;
-            $filePath = $dirPath . '/' . $fileName;
-            file_put_contents(base_path($filePath), $binaryImageData, LOCK_EX | FILE_BINARY);
-            $last_img = $filePath;
+            $physicalPath = $physicalDir . '/' . $fileName;
+            file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
+            $last_img = $dirPath . '/' . $fileName;
         }
         $slug = Str::slug($validatedData['display_name']);
         $business = Business::create([

@@ -625,15 +625,21 @@ class UserController extends Controller
             $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $noticeimgbase64);
             $binaryImageData = base64_decode($base64_data);
             //exit;
+            $dirPath = 'assets/notice';
+            $physicalDir = public_path($dirPath);
+            if (!file_exists($physicalDir)) {
+                mkdir($physicalDir, 0777, true);
+            }
+            
             $img_ext = strtolower($noticeimg->getClientOriginalExtension());
-            $fileName = uniqid() .rand(1111,1111111111). '.'.$img_ext;
-            $filePath = 'public/assets/notice/' . $fileName;
-            file_put_contents($filePath, $binaryImageData, LOCK_EX | FILE_BINARY);
+            $fileName = uniqid() . rand(1111, 1111111111) . '.' . $img_ext;
+            $physicalPath = $physicalDir . '/' . $fileName;
+            file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
             
             $noticeimg = new NoticeImg();
             $insertedId = $notice->id; 
             $noticeimg->notice_id = $insertedId;
-            $noticeimg->img_path = $filePath;
+            $noticeimg->img_path = $dirPath . '/' . $fileName;
             $noticeimg->created_at = Carbon::now();
             //dd($noticeimg);
             $noticeimg->save();

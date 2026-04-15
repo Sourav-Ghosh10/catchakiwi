@@ -12,7 +12,6 @@
         --accent-color: #00d2ff;
     }
 
-
     .content-wrapper {
         background: #0f111a;
         min-height: 100vh;
