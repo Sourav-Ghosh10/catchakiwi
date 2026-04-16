@@ -392,7 +392,7 @@ color: #fff;}
   .ui-accordion .ui-accordion-content {padding: 10px;}
 }
 @media only screen and (max-width: 480px) {
-  .help_icontxt{top:-128px; right: 0;}
+  .help_icontxt{top:-108px; right: 0;}
 .top_menu nav{padding-top:0;}
 	
 	}
