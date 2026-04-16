@@ -388,7 +388,7 @@ color: #fff;}
     top: -70px;
     padding: 5px;
     right: -32px;}
-  .help_icon{top: 30px; right: -30px;}
+  .help_icon{top: 30px; right: 0px;}
 }
 @media only screen and (max-width: 480px) {
   .help_icontxt{top:-108px;}

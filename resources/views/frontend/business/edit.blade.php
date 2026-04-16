@@ -167,7 +167,7 @@
         <img class="cropimg bdrbox" src="{{ old('base64image') ? old('base64image') : asset($business->select_image) }}" alt="">
       </div>
       <div class="newupload">
-       <label>Select your business Logo Or Image </label>
+       <label>Select your business Logo or Image </label>
         <div class=customupbtn>
           <input name="imageUpload" type="file" id="businessimage" class="imageUpload">
           <input type="hidden" name="base64image" id="base64image" value="{{ old('base64image') }}">
