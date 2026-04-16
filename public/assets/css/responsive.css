@@ -115,10 +115,8 @@
 @media only screen and (max-width: 900px) {
   .notification_homebased::before{left: auto; right: 72px;}
 .selectize-control.selectsize{width: 100% !important;}
-  .closemsg {
-  right: 0;
-  top: -8px;
-}
+  .closemsg {right: 0; top: -8px;}
+  .notification_homebased{line-height: 20px;}
   .rating-section{display: block !important;}
   .busin_profdtlsrgt a.addriview, .busin_profdtlsrgt a{margin-right:0; margin-bottom:5px;}
   .setting_usermsg .frm_div label {width: auto; display: block;}
