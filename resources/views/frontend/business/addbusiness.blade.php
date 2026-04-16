@@ -150,8 +150,8 @@
     <div class="homebased_option">
       <div class="disflex">
      <p>Homebased Startup Business? *</p>
-    <label><input name="homebased_business"  id="1" class="homebased_business" type="radio" value="Yes" required {{ old('homebased_business')=='Yes' ? 'checked' : '' }}>Yes</label>
-    <label><input name="homebased_business" id="2" class="homebased_business" type="radio" value="No" {{ old('homebased_business')=='No' ? 'checked' : '' }}> No</label></div>
+    <label><input name="homebased_business"  id="1" class="homebased_business" type="radio" value="Yes" required {{ old('homebased_business') == 'Yes' ? 'checked' : '' }}>Yes</label>
+    <label><input name="homebased_business" id="2" class="homebased_business" type="radio" value="No" {{ old('homebased_business') == 'No' ? 'checked' : '' }}> No</label></div>
    
     <div class="notification_homebased" style="display:none;">Welcome! Homebased startups get a free membership to most of our services</div> 
     </div>
@@ -159,9 +159,9 @@
     <label>Please choose the option which best suits you</label>
         <select name="bestsuitsyou">
             <!-- <option value="Startup homebased first year">Startup homebased first year</option> -->
-            <option value="Homebased, older than one year" {{ old('bestsuitsyou')=='Homebased, older than one year'?'selected':'' }}>Homebased, older than one year</option>
-            <option value="Company business Less than 5 employees" {{ old('bestsuitsyou')=='Company business Less than 5 employees'?'selected':'' }}>Company business Less than 5 employees</option>
-            <option value="Company Business with 5 or more employees" {{ old('bestsuitsyou')=='Company Business with 5 or more employees'?'selected':'' }}>Company Business with 5 or more employees</option>
+            <option value="Homebased, older than one year" {{ old('bestsuitsyou') == 'Homebased, older than one year' ? 'selected' : '' }}>Homebased, older than one year</option>
+            <option value="Company business Less than 5 employees" {{ old('bestsuitsyou') == 'Company business Less than 5 employees' ? 'selected' : '' }}>Company business Less than 5 employees</option>
+            <option value="Company Business with 5 or more employees" {{ old('bestsuitsyou') == 'Company Business with 5 or more employees' ? 'selected' : '' }}>Company Business with 5 or more employees</option>
         </select>
     
     </div>
@@ -187,7 +187,7 @@
         <option value="">Select Category</option>
         @if(!empty($category))
             @foreach($category as $cat)
-                <option value="{{ $cat['id'] }}" {{ old('category')==$cat['id'] ? 'selected' : '' }}>{{ $cat['title'] }}</option>
+                <option value="{{ $cat['id'] }}" {{ old('category') == $cat['id'] ? 'selected' : '' }}>{{ $cat['title'] }}</option>
             @endforeach
         @endif
     </select>
@@ -238,14 +238,14 @@
   <div class="acc_content">
     <div class="frm_dv">
     <label>Contact Person *</label>
-    <input name="contact_person" type="text" value="{{ old('contact_person',$profile->name) }}" placeholder="" class="thikmark @error('contact_person') is-invalid @enderror" required> 
+    <input name="contact_person" type="text" value="{{ old('contact_person', $profile->name) }}" placeholder="" class="thikmark @error('contact_person') is-invalid @enderror" required> 
     @error('contact_person')
         <span class="invalid-feedback">{{ $message }}</span>
     @enderror
     </div>
     <div class="frm_dv">
     <label>Email Address  *</label>
-    <input name="email" type="text" value="{{ old('email',$profile->email) }}" placeholder="" class="thikmark @error('email') is-invalid @enderror" required>
+    <input name="email" type="text" value="{{ old('email', $profile->email) }}" placeholder="" class="thikmark @error('email') is-invalid @enderror" required>
     @error('email')
         <span class="invalid-feedback">{{ $message }}</span>
     @enderror
@@ -332,8 +332,8 @@
     <div class="frm_dv display_addrs">
         <label>Display Address? *</label>
         <div class="disflex">
-            <label><input name="display_addrs" type="radio" value="yes" {{ old('display_addrs')=='yes'?'checked':'' }}> Yes</label>
-            <label><input name="display_addrs" type="radio" value="no" {{ old('display_addrs')=='no'?'checked':'' }}> No</label>
+            <label><input name="display_addrs" type="radio" value="yes" {{ old('display_addrs') == 'yes' ? 'checked' : '' }}> Yes</label>
+            <label><input name="display_addrs" type="radio" value="no" {{ old('display_addrs') == 'no' ? 'checked' : '' }}> No</label>
         </div>
         @error('display_addrs')
             <span class="invalid-feedback">{{ $message }}</span>
@@ -368,18 +368,18 @@
 <div class="col-lg-4 col-md-4 col-sm-12">
 <div class="right_advertisesec">
   @if(!empty($sideData))
-        @foreach ($sideData as $ad) 
-            @if($ad->ads_image!="")
-                @if($ad->link)
-                    <a href="{{ $ad->link }}" target="_blank">
-                        <img src="{{ asset($ad->ads_image) }}" alt="">
-                    </a>
-                @else
+    @foreach ($sideData as $ad) 
+        @if($ad->ads_image != "")
+            @if($ad->link)
+                <a href="{{ $ad->link }}" target="_blank">
                     <img src="{{ asset($ad->ads_image) }}" alt="">
-                @endif
-            @endif 
-        @endforeach
-      @endif
+                </a>
+            @else
+                <img src="{{ asset($ad->ads_image) }}" alt="">
+            @endif
+        @endif 
+    @endforeach
+  @endif
 </div>
 </div>
 </div>

@@ -167,7 +167,7 @@
         <img class="cropimg bdrbox" src="{{ old('base64image') ? old('base64image') : asset($business->select_image) }}" alt="">
       </div>
       <div class="newupload">
-       <label>Update Your Logo Or Image </label>
+       <label>Select your business Logo Or Image </label>
         <div class=customupbtn>
           <input name="imageUpload" type="file" id="businessimage" class="imageUpload">
           <input type="hidden" name="base64image" id="base64image" value="{{ old('base64image') }}">
@@ -263,18 +263,18 @@
 <div class="col-lg-4 col-md-4 col-sm-12">
 <div class="right_advertisesec">
   @if(!empty($sideData))
-        @foreach ($sideData as $ad) 
-            @if($ad->ads_image!="")
-                @if($ad->link)
-                    <a href="{{ $ad->link }}" target="_blank">
-                        <img src="{{ asset($ad->ads_image) }}" alt="">
-                    </a>
-                @else
+    @foreach ($sideData as $ad) 
+        @if($ad->ads_image != "")
+            @if($ad->link)
+                <a href="{{ $ad->link }}" target="_blank">
                     <img src="{{ asset($ad->ads_image) }}" alt="">
-                @endif
-            @endif 
-        @endforeach
-      @endif
+                </a>
+            @else
+                <img src="{{ asset($ad->ads_image) }}" alt="">
+            @endif
+        @endif 
+    @endforeach
+  @endif
 </div>
 </div>
 </div>
