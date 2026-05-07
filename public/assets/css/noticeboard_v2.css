@@ -166,22 +166,38 @@
     border-radius: 12px;
     text-align: center;
     text-decoration: none !important;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease;
     height: 100%;
     position: relative;
     border: 1px solid #e0e0e0;
     overflow: hidden;
     background: #fff;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    filter: grayscale(1);
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none;
 }
 
-.nb-v2-card:hover {
+.nb-v2-card.active:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(163, 217, 0, 0.2);
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+.nb-v2-card.active {
+    filter: grayscale(0);
+    opacity: 1;
+    border: 2px solid #a3d900;
+    box-shadow: 0 10px 25px rgba(163, 217, 0, 0.15);
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    cursor: pointer !important;
+    pointer-events: auto;
 }
 
 .nb-v2-card-icon-wrap {
-    height: 180px;
+    /* height: 180px; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -193,21 +209,14 @@
 .nb-v2-card-img-icon {
     width: 100%;
     height: 100%;
-    background-image: url('../images/noticeboard_icons.png');
-    background-size: 300% 300%;
-    background-repeat: no-repeat;
-    transform: scale(1.05); /* Slight zoom to hide borders if any */
+    object-fit: contain;
+    padding: 10px;
+    transition: transform 0.3s;
 }
 
-.nb-icon-1 { background-position: 0% 0%; }
-.nb-icon-2 { background-position: 50% 0%; }
-.nb-icon-3 { background-position: 100% 0%; }
-.nb-icon-4 { background-position: 0% 50%; }
-.nb-icon-5 { background-position: 50% 50%; }
-.nb-icon-6 { background-position: 100% 50%; }
-.nb-icon-7 { background-position: 0% 100%; }
-.nb-icon-8 { background-position: 50% 100%; }
-.nb-icon-9 { background-position: 100% 100%; }
+.nb-v2-card.active:hover .nb-v2-card-img-icon {
+    transform: scale(1.15);
+}
 
 .nb-v2-card-body {
     padding: 15px 10px;
@@ -217,20 +226,37 @@
 
 .nb-v2-card-title {
     font-size: 17px;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 5px;
 }
 
 /* Match colors from image */
 .nb-v2-card[data-type="deals"] .nb-v2-card-title { color: #5d8c1c; }
+.nb-v2-card[data-type="deals"] .nb-v2-card-icon-wrap { background-color: #f0f9eb; }
+
 .nb-v2-card[data-type="rides"] .nb-v2-card-title { color: #2b6cb0; }
+.nb-v2-card[data-type="rides"] .nb-v2-card-icon-wrap { background-color: #ebf5ff; }
+
 .nb-v2-card[data-type="sales"] .nb-v2-card-title { color: #9c6b30; }
+.nb-v2-card[data-type="sales"] .nb-v2-card-icon-wrap { background-color: #fff9eb; }
+
 .nb-v2-card[data-type="vehicles"] .nb-v2-card-title { color: #4a5568; }
+.nb-v2-card[data-type="vehicles"] .nb-v2-card-icon-wrap { background-color: #f5f7fa; }
+
 .nb-v2-card[data-type="property"] .nb-v2-card-title { color: #744210; }
+.nb-v2-card[data-type="property"] .nb-v2-card-icon-wrap { background-color: #fff5f5; }
+
 .nb-v2-card[data-type="jobs"] .nb-v2-card-title { color: #2d3748; }
+.nb-v2-card[data-type="jobs"] .nb-v2-card-icon-wrap { background-color: #f5f5ff; }
+
 .nb-v2-card[data-type="services"] .nb-v2-card-title { color: #276749; }
+.nb-v2-card[data-type="services"] .nb-v2-card-icon-wrap { background-color: #f0fff4; }
+
 .nb-v2-card[data-type="items"] .nb-v2-card-title { color: #744210; }
+.nb-v2-card[data-type="items"] .nb-v2-card-icon-wrap { background-color: #fffaf0; }
+
 .nb-v2-card[data-type="events"] .nb-v2-card-title { color: #9b2c2c; }
+.nb-v2-card[data-type="events"] .nb-v2-card-icon-wrap { background-color: #fff5f7; }
 
 .nb-v2-card-subtitle {
     font-size: 13px;
