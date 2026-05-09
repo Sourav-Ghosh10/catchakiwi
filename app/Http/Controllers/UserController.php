@@ -577,12 +577,21 @@ class UserController extends Controller
 		return Redirect()->back();
 	} 
 	public function Notice(){
-	    $category = NoticeCategory::all();
-	    $ads = Ads::where('country', session('CountryCode'))->get();
+	    $category = NoticeCategory::where('status', '1')->get();
+	    $countryCode = session('CountryCode');
+	    
+	    $ads = Ads::where('country', $countryCode)->get();
+	    if($ads->isEmpty()){
+	        $ads = Ads::whereNotNull('ads_image')->where('ads_image', '!=', '')->take(5)->get();
+	    }
+	    
         $grouped = collect($ads)->groupBy('type');
         $sideData=[];
         if ($grouped->has('side')) {
             $sideData = $grouped->get('side');
+        } else {
+            // If no 'side' type, just use the first few ads as sideData for this view
+            $sideData = $ads->take(3);
         }
         
 	    return view('auth.notice-form', compact('category','grouped','sideData'));
@@ -593,15 +602,14 @@ class UserController extends Controller
             'noticetype' => 'required',
             'notice_title' => 'required|string|max:35',
             'notice_body' => 'required|string|max:155',
-        ], [
-            'category_id.required' => 'The category id is required.',
-            'noticetype.required' => 'The notice type is required.',
-            'notice_title.required' => 'The notice title is required.',
-            'notice_title.max' => 'The notice title must not exceed 35 characters.',
-            'notice_body.required' => 'The notice body is required.',
-            'notice_body.max' => 'The notice body must not exceed 155 characters.',
+            'town_suburb' => 'nullable|string',
+            'looking_for' => 'nullable|string',
+            'job_location' => 'nullable|string',
+            'start_date' => 'nullable|string',
+            'budget' => 'nullable|string',
+            'message_text' => 'nullable|string',
         ]);
-        //dd($request);
+        
 	    $category_id = $request->input('category_id');
 	    $noticetype = $request->input('noticetype');
 	    $notice_title = $request->input('notice_title');
@@ -617,32 +625,40 @@ class UserController extends Controller
         $notice->noticetype = $noticetype;
         $notice->heading = $notice_title;
         $notice->content = $notice_body;
+        $notice->town_suburb = $request->input('town_suburb');
+        $notice->looking_for = $request->input('looking_for');
+        $notice->job_location = $request->input('job_location');
+        $notice->start_date = $request->input('start_date');
+        $notice->budget = $request->input('budget');
+        $notice->message_text = $request->input('message_text');
         $notice->created_at = Carbon::now();
         $notice->expire_at = Carbon::now();
         //dd($notice);
         $notice->save();
-        if($noticeimg){
-            $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $noticeimgbase64);
-            $binaryImageData = base64_decode($base64_data);
-            //exit;
-            $dirPath = 'assets/notice';
-            $physicalDir = public_path($dirPath);
-            if (!file_exists($physicalDir)) {
-                mkdir($physicalDir, 0777, true);
+        $noticeimgbase64 = $request->input('noticeimgbase64');
+        if($noticeimgbase64 && is_array($noticeimgbase64)){
+            foreach($noticeimgbase64 as $imgBase64){
+                if($imgBase64){
+                    $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $imgBase64);
+                    $binaryImageData = base64_decode($base64_data);
+                    
+                    $dirPath = 'assets/notice';
+                    $physicalDir = public_path($dirPath);
+                    if (!file_exists($physicalDir)) {
+                        mkdir($physicalDir, 0777, true);
+                    }
+                    
+                    $fileName = uniqid() . rand(1111, 1111111111) . '.jpg';
+                    $physicalPath = $physicalDir . '/' . $fileName;
+                    file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
+                    
+                    $noticeImgObj = new NoticeImg();
+                    $noticeImgObj->notice_id = $notice->id;
+                    $noticeImgObj->img_path = $dirPath . '/' . $fileName;
+                    $noticeImgObj->created_at = Carbon::now();
+                    $noticeImgObj->save();
+                }
             }
-            
-            $img_ext = strtolower($noticeimg->getClientOriginalExtension());
-            $fileName = uniqid() . rand(1111, 1111111111) . '.' . $img_ext;
-            $physicalPath = $physicalDir . '/' . $fileName;
-            file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
-            
-            $noticeimg = new NoticeImg();
-            $insertedId = $notice->id; 
-            $noticeimg->notice_id = $insertedId;
-            $noticeimg->img_path = $dirPath . '/' . $fileName;
-            $noticeimg->created_at = Carbon::now();
-            //dd($noticeimg);
-            $noticeimg->save();
         }
         return redirect()->route('notice-post')->with('success', 'Notice created successfully!');
 

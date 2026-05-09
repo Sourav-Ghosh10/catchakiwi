@@ -67,8 +67,8 @@
 <div class="left_profileform notice_posefrm">
 <div class="frm_dv">
     <label>Category:</label>
-    <select name="category_id">
-        <option>Choose your Category</option>
+    <select name="category_id" id="category_id">
+        <option value="">Choose your Category</option>
         @if(!empty($category))
             @foreach($category as $cat)
             <option value="{{ $cat->id }}">{{ $cat->category }}</option>
@@ -76,83 +76,239 @@
         @endif
     </select>
     </div>
+
+ <div id="rest_of_fields" style="display:none;">
  <div class="frm_dv">
  <label>Notice Options:</label><div class="radiogbutt"><input name="noticetype" type="radio" value="standard"> Standard 7 day Notice (Free) $0.00</div>
  <div class="radiogbutt"><input name="noticetype" type="radio" value="feature"> Feature Notice(Lasts 28 days)$3.00
 <img src="images/help_icon.png" alt="" class="help_icon"></div>
  </div>
- <!--<div class="frm_dv">
- <label></label><div class="radiogbutt"><input name="" type="radio" value=""> Feature Notice(Lasts 28 days)$3.00
-<img src="images/help_icon.png" alt="" class="help_icon"></div>
- </div>-->
+ 
  <div class="frm_dv">
  <label>Notice Title:</label><input name="notice_title" type="text" placeholder="Enter Notice Title (35 char max)">
+ </div>
 
+ <!-- Get a Quote Fields -->
+ <div id="get_a_quote_fields" style="display:none;">
+     <div class="frm_dv">
+        <label>I'm Looking for:</label>
+        <input name="looking_for" type="text" placeholder="I'm Looking for">
+     </div>
+     <div class="frm_dv">
+        <label>Where do you need the job done?:</label>
+        <input name="job_location" type="text" placeholder="Where do you need the job done?">
+     </div>
+     <div class="frm_dv">
+        <label>When do you need the work to start?:</label>
+        <input name="start_date" type="text" placeholder="When do you need the work to start?">
+     </div>
+     <div class="frm_dv">
+        <label>Budget:</label>
+        <input name="budget" type="text" placeholder="Budget">
+     </div>
  </div>
+
+ <!-- $5 Service Deal Fields -->
+ <div id="service_deal_fields" style="display:none;">
+     <div class="frm_dv">
+        <label>Town/Suburb:</label>
+        <input name="town_suburb" type="text" placeholder="Town/Suburb">
+     </div>
+     <div class="frm_dv">
+        <label>User name:</label>
+        <input type="text" value="{{ Auth::user()->name }}" disabled>
+     </div>
+     <div class="frm_dv">
+        <label>Date listed:</label>
+        <input type="text" value="{{ date('d/m/Y') }}" disabled>
+     </div>
+     <div class="frm_dv">
+        <label>Message:</label>
+        <textarea name="message_text" placeholder="Message"></textarea>
+     </div>
+ </div>
+
  <div class="frm_dv textareadv">
- <label>Add your content: </label><textarea name="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)."></textarea>
+ <label id="body_label">Add your content: </label><textarea name="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)."></textarea>
 </div>
+ <style>
+    .image-upload-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 150px);
+        gap: 20px;
+        margin-top: 5px;
+    }
+    .image-upload-box {
+        width: 150px;
+        height: 150px;
+        aspect-ratio: 1/1;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        background-color: #fcfcfc;
+        transition: all 0.3s ease;
+    }
+    .image-upload-box:hover {
+        border-color: #ff9900;
+        background-color: #fff9f0;
+    }
+    .image-upload-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .image-upload-box .placeholder-icon {
+        font-size: 24px;
+        color: #aaa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .image-upload-box .placeholder-icon span {
+        font-size: 12px;
+        margin-top: 5px;
+        color: #999;
+    }
+    .remove-img {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(255, 0, 0, 0.7);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+        z-index: 10;
+    }
+    .left_profileform .frm_dv {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+    .left_profileform .frm_dv label {
+        width: 180px;
+        min-width: 180px;
+        margin-bottom: 0;
+        padding-top: 10px;
+        font-weight: 600;
+        color: #333;
+    }
+    .left_profileform .frm_dv input[type="text"],
+    .left_profileform .frm_dv select,
+    .left_profileform .frm_dv textarea,
+    .left_profileform .frm_dv .image-upload-grid,
+    .left_profileform .frm_dv .radiogbutt,
+    .left_profileform .frm_dv .chk_addtnlbox {
+        flex: 1;
+    }
+    .left_profileform .frm_dv textarea {
+        min-height: 120px;
+    }
+</style>
+
  <div class="frm_dv">
- <label>Image preview</label>
- <div class="imageprvsec">
-<ul>
- <li class="noticeimgshow"></li>
- <li></li>
- <li></li>
- <li></li>
-</ul>
+    <label>Images (3 places):</label>
+    <div style="flex: 1;">
+        <div class="image-upload-grid">
+            <!-- Box 1 -->
+            <div class="image-upload-box" onclick="document.getElementById('noticeimg1').click();">
+                <div id="noticeimgshow1" class="noticeimgshow placeholder-icon">
+                    <i class="fa fa-camera"></i>
+                    <span>Image 1</span>
+                </div>
+                <input type="file" name="noticeimg[]" class="imageUpload" id="noticeimg1" style="display:none;">
+                <input type="hidden" name="noticeimgbase64[]" class="noticeimgbase64" id="noticeimgbase641">
+            </div>
+
+            <!-- Box 2 -->
+            <div class="image-upload-box" onclick="document.getElementById('noticeimg2').click();">
+                <div id="noticeimgshow2" class="noticeimgshow2 placeholder-icon">
+                    <i class="fa fa-camera"></i>
+                    <span>Image 2</span>
+                </div>
+                <input type="file" name="noticeimg[]" class="imageUpload" id="noticeimg2" style="display:none;">
+                <input type="hidden" name="noticeimgbase64[]" class="noticeimgbase64" id="noticeimgbase642">
+            </div>
+
+            <!-- Box 3 -->
+            <div class="image-upload-box" onclick="document.getElementById('noticeimg3').click();">
+                <div id="noticeimgshow3" class="noticeimgshow3 placeholder-icon">
+                    <i class="fa fa-camera"></i>
+                    <span>Image 3</span>
+                </div>
+                <input type="file" name="noticeimg[]" class="imageUpload" id="noticeimg3" style="display:none;">
+                <input type="hidden" name="noticeimgbase64[]" class="noticeimgbase64" id="noticeimgbase643">
+            </div>
+        </div>
+        <span style="font-size: 11px; color: #999; display: block; margin-top: 10px;">Recommended size: Square (e.g. 600x600px) | JPG, GIF, PNG</span>
+    </div>
  </div>
- </div>
- <div class="frm_dv browse_img">
- <label>Images:</label>
-<div class="custom_browse"> <input id="uploadFile" placeholder="Choose your free image" disabled="disabled" />
-<label  class="custom-file-input" >
-<input type="file" name="noticeimg" class="imageUpload" id="noticeimg">
-<input type="hidden" name="noticeimgbase64" class="noticeimgbase64" id="noticeimgbase64">
-</label>
-<span>Recommended size 640w/480px ( JPG,GIF,PNG )	</span>
-</div>
- </div>
- <div class="frm_dv">
+ 
+ <div class="frm_dv" id="additional_images_section">
  <label><!--Notice Options:--></label>
 <div class="chk_addtnlbox"><input name="" type="checkbox" value="" checked>Add 3 more images (free renewal) $2.00
  <img src="images/help_icon.png" alt="" class="help_icon">
- <!--<div class="help_icontxt">Text Goes Here.</div>--></div>
- 
  </div>
- <div class="frm_dv browse_img">
- <label><!--Additional image 4:--></label>
-<div class="custom_browse"> <input id="uploadFile" placeholder="Choose Image" disabled="disabled" />
-<label  class="custom-file-input" >
-<input type="file" id="uploadBtn">
-</label></div>
  </div>
- <div class="frm_dv browse_img">
- <label><!--Additional image 4:--></label>
-<div class="custom_browse"> <input id="uploadFile" placeholder="Choose Image" disabled="disabled" />
-<label  class="custom-file-input" >
-<input type="file" id="uploadBtn">
-</label></div>
- </div>
- <div class="frm_dv browse_img">
- <label><!--Additional image 4:--></label>
-<div class="custom_browse"> <input id="uploadFile" placeholder="Choose Image" disabled="disabled" />
-<label  class="custom-file-input" >
-<input type="file" id="uploadBtn">
-</label></div>
- </div>
-  <div class="frm_dv"><!--<label></label>
-  <img src="images/loader.gif" alt="" class="loader">-->
-  <!--<div class="profile_img">
-  <img src="images/profile_pic.png" alt="" class="pro">
-  <p>T1577932667100 
-  <span>01/03/2020</span></p>
-  <img src="images/notice_chaticon.png" alt="" class="helpic"> </div>-->
+
+  <div class="frm_dv">
   </div>
  <div class="frm_dv"><label></label>
  <input name="submit" type="submit" value="Create Notice"></div>
+ </div>
 </div>
 </form>
+
+<script>
+document.getElementById('category_id').addEventListener('change', function() {
+    var categoryId = this.value;
+    var restOfFields = document.getElementById('rest_of_fields');
+    var getAQuoteFields = document.getElementById('get_a_quote_fields');
+    var serviceDealFields = document.getElementById('service_deal_fields');
+    var additionalImagesSection = document.getElementById('additional_images_section');
+    var bodyLabel = document.getElementById('body_label');
+    var bodyTextarea = document.getElementsByName('notice_body')[0];
+
+    if (categoryId) {
+        restOfFields.style.display = 'block';
+        
+        // ID 1 is $5 Service Deal
+        // ID 2 is Get a Quote
+        if (categoryId == '1') {
+            serviceDealFields.style.display = 'block';
+            getAQuoteFields.style.display = 'none';
+            additionalImagesSection.style.display = 'none';
+            bodyLabel.innerText = 'Description:';
+            bodyTextarea.placeholder = 'Description';
+        } else if (categoryId == '2') {
+            serviceDealFields.style.display = 'none';
+            getAQuoteFields.style.display = 'block';
+            additionalImagesSection.style.display = 'none';
+            bodyLabel.innerText = 'Provide a description of your job:';
+            bodyTextarea.placeholder = 'Provide a description of your job';
+        } else {
+            serviceDealFields.style.display = 'none';
+            getAQuoteFields.style.display = 'none';
+            additionalImagesSection.style.display = 'block';
+            bodyLabel.innerText = 'Add your content:';
+            bodyTextarea.placeholder = 'Add notice body text (155 char max).';
+        }
+    } else {
+        restOfFields.style.display = 'none';
+    }
+});
+
+</script>
 </div>
 </div>
 <div class="modal fade bd-example-modal-lg imagecrop" id="model" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">

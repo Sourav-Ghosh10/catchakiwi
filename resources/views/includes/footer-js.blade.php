@@ -57,9 +57,9 @@
                     aspectRatio: 3,
                     viewMode: 1,
                 });
-            }else if(uploadtype == "noticeimg"){
+            }else if(uploadtype.startsWith("noticeimg")){
                 cropper = new Cropper(image, {
-                    aspectRatio: 6/4,
+                    aspectRatio: 1/1,
                     viewMode: 1,
                 });
             }else if(uploadtype == "businessimage" || uploadtype == "articleimage"){
@@ -81,8 +81,8 @@
                     canvas = cropper.getCroppedCanvas({ width: 200, height: 200 });
                 }else if(uploadtype=="coverupload"){
                     canvas = cropper.getCroppedCanvas({ width: 1074, height: 400 });
-                }else if(uploadtype=="noticeimg"){
-                    canvas = cropper.getCroppedCanvas({ width: 310, height: 206 });
+                }else if(uploadtype.startsWith("noticeimg")){
+                    canvas = cropper.getCroppedCanvas({ width: 640, height: 480 });
                 }else if(uploadtype == "businessimage" || uploadtype == "articleimage"){
                     canvas = cropper.getCroppedCanvas({ width: 800, height: 600 });
                 }
@@ -100,9 +100,15 @@
                         $('#base64coverimage').val(base64data);
                         // alert('Submitting cover banner...');
                         $('#profilecoverbanner').submit();
-                    }else if(uploadtype=="noticeimg"){
-                        $('#noticeimgbase64').val(base64data);
-                        $(".noticeimgshow").html('<img src="'+base64data+'" alt=""><span>X</span>');
+                    }else if(uploadtype.startsWith("noticeimg")){
+                        let index = uploadtype.replace('noticeimg', '');
+                        if (index === "") index = "1";
+                        
+                        let base64Input = $('#noticeimgbase64' + index);
+                        let previewDiv = $('.noticeimgshow' + (index === "1" ? "" : index));
+                        
+                        base64Input.val(base64data);
+                        previewDiv.removeClass('placeholder-icon').html('<img src="'+base64data+'" alt=""><div class="remove-img" data-index="'+index+'">X</div>');
                     }else if(uploadtype == "businessimage" || uploadtype == "articleimage"){ 
                         $('#base64image').val(base64data);
                         $(".cropimg").attr('src', base64data);
@@ -141,6 +147,19 @@
             $container.find('#base64image').val('');
             $container.find('input[type="file"]').val('');
             $(this).hide();
+        });
+        // Handle notice image removal
+        $(document).on("click", ".remove-img", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            let index = $(this).data('index');
+            let base64Input = $('#noticeimgbase64' + index);
+            let previewDiv = $('.noticeimgshow' + (index === "1" ? "" : index));
+            let fileInput = $('#noticeimg' + index);
+            
+            base64Input.val('');
+            fileInput.val('');
+            previewDiv.addClass('placeholder-icon').html('<i class="fa fa-camera"></i><span>Image '+index+'</span>');
         });
     </script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
