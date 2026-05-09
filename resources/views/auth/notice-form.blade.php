@@ -67,11 +67,11 @@
 <div class="left_profileform notice_posefrm">
 <div class="frm_dv">
     <label>Category:</label>
-    <select name="category_id" id="category_id">
+    <select name="category_id" id="category_id" required>
         <option value="">Choose your Category</option>
         @if(!empty($category))
             @foreach($category as $cat)
-            <option value="{{ $cat->id }}">{{ $cat->category }}</option>
+            <option value="{{ $cat->id }}" {{ $loop->first ? 'selected' : '' }}>{{ $cat->category }}</option>
             @endforeach
         @endif
     </select>
@@ -308,6 +308,12 @@ document.getElementById('category_id').addEventListener('change', function() {
     }
 });
 
+window.addEventListener('load', function() {
+    var categorySelect = document.getElementById('category_id');
+    if (categorySelect.value !== "") {
+        categorySelect.dispatchEvent(new Event('change'));
+    }
+});
 </script>
 </div>
 </div>
