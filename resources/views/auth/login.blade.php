@@ -1,47 +1,5 @@
-@include('includes/header')
+@include('includes/inner-header')
 
-<?php
-
-$ipData = session('ipData');
-?>
-    <!-- Header start-->
-    <div class="top_bar inner">
-    <div class="container">
-    <div class="row">
-    <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-    <p class="nz_region">
-        <select class="countryChange">
-            <option value="IN" {{ (session('CountryCode')=="IN")?"selected":"" }}>IN-India</option>
-            <option value="NZ" {{ (session('CountryCode')=="NZ")?"selected":"" }}>NZ-New Zealand</option>
-            <option value="AU" {{ (session('CountryCode')=="AU")?"selected":"" }}>AU-Australia</option>
-            <option value="CN" {{ (session('CountryCode')=="CN")?"selected":"" }}>CN-China</option>
-            <option value="ENG" {{ (session('CountryCode')=="ENG")?"selected":"" }}>UK-United Kingdom</option>
-            <option value="US" {{ (session('CountryCode')=="US")?"selected":"" }}>US-United States</option>
-        </select>
-    </p>
-    </div>
- <div class="col-lg-9 col-md-9 col-sm-9 col-9 top_menu">
-            @include('includes/topmenu')
-            @include('includes/sidemenu')
-         </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    <div class="top_search nomob_search">
-    <div class="container"><div class="logo"><h1><a href="https://catchakiwi.com/"><img src="{{ asset('assets/images/logo-inner.png') }}" alt="" /></a></h1></div></div>
-    <div class="container" style="display:none;">
-    <div class="home_midbody">
-    <div class="home_searchsec">
-    <form action="" method="post">
-    <input name="" type="text" placeholder="Services I’m looking for" />
-    <input name="" type="text" placeholder="Enter your location" class="location" />
-    <input name="" type="submit" value="Search" />
-    </form>
-    </div>
-    </div>
-    </div></div>
-    <!-- Header start end-->
     
     <!-- body start-->
     <div class="mid_body">
