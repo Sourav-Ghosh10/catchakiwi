@@ -719,8 +719,8 @@
                      <span>Support our advertisers, catchakiwi exists because of them</span>
                   </div>
                   <div class="right_advertisesec">
-                     @if(!empty($midData))
-                    @foreach ($midData as $ad) 
+                     @if(!empty($sideData))
+                    @foreach ($sideData as $ad) 
                     @if($ad->ads_image!="")
                     @if($ad->link)
                     <a href="{{ $ad->link }}" target="_blank">
