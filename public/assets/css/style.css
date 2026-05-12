@@ -934,6 +934,9 @@ textarea {
   padding-top: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #cce690;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
 }
 
 .top_bar.inner .nz_region {
@@ -1635,8 +1638,8 @@ textarea {
   font-size: 23px;
   font-weight: 500;
   color: #404041;
-  border-bottom: 1px solid #d7d7d7;
-  padding-bottom: 10px;
+  /* border-bottom: 1px solid #d7d7d7;
+  padding-bottom: 10px; */
   margin-bottom: 15px;
 }
 
@@ -1779,11 +1782,12 @@ ul.pagination li:last-child a:hover {
 }
 
 .brad_cam {
-  background: #f3f3f3;
+  /* background: #f3f3f3;
   border: 1px solid #ebebeb;
   padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 16px;
+  border-radius: 5px;*/
+  border-bottom: 1px solid #ebebeb;
+  margin-bottom: 16px; 
 }
 
 .brad_cam ul {
@@ -1795,16 +1799,20 @@ ul.pagination li:last-child a:hover {
 .brad_cam ul li {
   display: inline-block;
   background: url(../images/brad_camarrow.png) 0 center no-repeat;
-  font-size: 13px;
+  font-size: 14px;
   color: #404041;
-  padding-left: 20px;
-  margin-right: 10px;
+  padding-left: 15px;
+  margin-right: 0;
   line-height: 36px;
+  margin-left: 5px;
+  font-weight: 300;
+  font-family: 'Poppins', sans-serif;
 }
 
 .brad_cam ul li:first-child {
   background-image: none;
   padding-left: 0;
+  margin-left: 0;
 }
 
 .brad_cam ul li a {
@@ -1812,7 +1820,7 @@ ul.pagination li:last-child a:hover {
 }
 
 .brad_cam ul li a:hover,
-.brad_cam ul li.active a {
+.brad_cam ul li.active a, .brad_cam ul li.active {
   color: #f8981d;
 }
 
