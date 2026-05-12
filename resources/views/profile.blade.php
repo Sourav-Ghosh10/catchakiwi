@@ -718,21 +718,21 @@
                      <i class="fa fa-heart"></i>
                      <span>Support our advertisers, catchakiwi exists because of them</span>
                   </div>
-                  <div class="right_advertisesec">
-                     @if(!empty($midData))
-                    @foreach ($midData as $ad) 
-                    @if($ad->ads_image!="")
-                    @if($ad->link)
-                    <a href="{{ $ad->link }}" target="_blank">
-                      <img src="{{ asset($ad->ads_image) }}" alt="">
-                    </a>
-                    @else
-                    <img src="{{ asset($ad->ads_image) }}" alt="">
-                    @endif
-                    @endif
-                    @endforeach
-                    @endif
-                  </div>
+                   @if(!empty($midData))
+                      @foreach ($midData as $ad) 
+                         @if($ad->ads_image!="")
+                            <div class="mb-4 mt-3">
+                               @if($ad->link)
+                                  <a href="{{ $ad->link }}" target="_blank">
+                                     <img src="{{ asset($ad->ads_image) }}" class="img-fluid rounded shadow-sm w-100" alt="Ad">
+                                  </a>
+                               @else
+                                  <img src="{{ asset($ad->ads_image) }}" class="img-fluid rounded shadow-sm w-100" alt="Ad">
+                               @endif
+                            </div>
+                         @endif
+                      @endforeach
+                   @endif
 
                   <!-- Modal -->
                   <div id="imageModal" class="modal">
