@@ -145,6 +145,10 @@
                     </ul> -->
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="support_advertiser">
+                        <i class="fa fa-heart"></i>
+                        <span>Support our advertisers, catchakiwi exists because of them</span>
+                    </div>
                     <div class="right_advertisesec">
                         @if(!empty($sideData))
                             @foreach ($sideData as $ad)

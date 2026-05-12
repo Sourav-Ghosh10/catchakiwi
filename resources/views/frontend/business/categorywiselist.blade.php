@@ -148,6 +148,10 @@
                </div>
             </div>
          </div>
+         <div class="support_advertiser">
+            <i class="fa fa-heart"></i>
+            <span>Support our advertisers, catchakiwi exists because of them</span>
+         </div>
          <div class="bottom_advsec">
           @if(!empty($sideData))
             @foreach ($sideData as $ad) 

@@ -93,51 +93,6 @@
                                                     placeholder="Add notice body text (155 char max)."></textarea>
                                             </div>
                                             <style>
-                                                .support_advertiser {
-                                                    background: linear-gradient(135deg, #fffafa 0%, #fff0f0 100%);
-                                                    border: 1px solid #ffcccc;
-                                                    padding: 15px;
-                                                    margin-bottom: 20px;
-                                                    color: #c9302c;
-                                                    font-size: 14px;
-                                                    text-align: center;
-                                                    border-radius: 12px;
-                                                    font-weight: 600;
-                                                    box-shadow: 0 4px 15px rgba(217, 83, 79, 0.05);
-                                                    transition: all 0.3s ease;
-                                                    display: flex;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                    gap: 10px;
-                                                    line-height: 1.4;
-                                                }
-
-                                                .support_advertiser:hover {
-                                                    transform: translateY(-2px);
-                                                    box-shadow: 0 6px 20px rgba(217, 83, 79, 0.1);
-                                                    border-color: #ff9999;
-                                                }
-
-                                                .support_advertiser i {
-                                                    font-size: 18px;
-                                                    color: #d9534f;
-                                                    animation: pulse 2s infinite;
-                                                }
-
-                                                @keyframes pulse {
-                                                    0% {
-                                                        transform: scale(1);
-                                                    }
-
-                                                    50% {
-                                                        transform: scale(1.1);
-                                                    }
-
-                                                    100% {
-                                                        transform: scale(1);
-                                                    }
-                                                }
-
                                                 .image-upload-grid {
                                                     display: grid;
                                                     grid-template-columns: repeat(3, 150px);

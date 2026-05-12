@@ -93,6 +93,10 @@
                         </ul>
                     </div>
 
+                    <div class="support_advertiser">
+                        <i class="fa fa-heart"></i>
+                        <span>Support our advertisers, catchakiwi exists because of them</span>
+                    </div>
                     @foreach($sideData as $ad)
                         <div class="mb-4 mt-3">
                             @if($ad->link)
