@@ -51,17 +51,6 @@
    <!-- body start-->
    <div class="mid_body">
       <div class="container">
-         <div class="row">
-            <div class="col-lg-12">
-               <div class="brad_cam">
-                  <ul>
-                     <li><a href="{{ URL::to(strtolower(session('CountryCode') ?? 'nz') . '/business') }}">Top Business</a></li>
-                     <li class="active"><a>Dashboard</a></li>
-                  </ul>
-                  <br class="clr" />
-               </div>
-            </div>
-         </div>
          @if(session('success'))
             <div class="alert alert-success mt-3">
                 {{ session('success') }}
@@ -74,8 +63,8 @@
          @endif
          <div class="profile_banner"> 
            @if(!empty($profile->profile_banner))
-                <img src="{{ asset($profile->profile_banner) }}" alt="">
-            @else
+            <img src="{{ asset($profile->profile_banner) }}" alt="">
+        @else
                 <img src="{{ asset('assets/images/default-cover.png') }}" alt="">
             @endif
             <div class="profile_pic-dis">
@@ -94,13 +83,13 @@
                   </div>
                   <div class="avatar-preview container2">
                      @php
-                     if(!empty($profile->image) && $profile->image!=''){
-                     $image =$profile->image;
-                     }else{
-                     $image = Auth::user()->profile_photo_url;
-                     }
-                     $url = url($image);
-                     $imgs = "background-image:url($url)";
+                        if (!empty($profile->image) && $profile->image != '') {
+                            $image = $profile->image;
+                        } else {
+                            $image = Auth::user()->profile_photo_url;
+                        }
+                        $url = url($image);
+                        $imgs = "background-image:url($url)";
                      @endphp
                      <div id="imagePreview" style="{{ $imgs }}">
                      </div>
@@ -154,7 +143,7 @@
                         <ul class="resp-tabs-list hor_1">
                            <li class="profile">Public Profile</li>
                            <li class="message">Listings <span>({{
-                                 count($businessList) + count($articles) + count($notice)}})</span></li>
+    count($businessList) + count($articles) + count($notice)}})</span></li>
                            <li class="imagesss">Messages</li>
                            <li class="setting">Settings</li>
                         </ul>
@@ -163,10 +152,10 @@
                               <div class="profiletab_namdetls">
                                  @if($profile->name)
                                       @php
-                                          $nameArray = explode(" ", trim($profile->name));
+                                        $nameArray = explode(" ", trim($profile->name));
 
-                                          $firstname = array_shift($nameArray);       // First word
-                                          $lastname  = implode(" ", $nameArray);      // Remaining words
+                                        $firstname = array_shift($nameArray);       // First word
+                                        $lastname = implode(" ", $nameArray);      // Remaining words
                                       @endphp
                                   @endif
                                  <form action method="post">
@@ -175,22 +164,22 @@
                                        <input name="name" type="text"
                                           value="{{ $profile->name }}">
                                     </p>
-                                    @if($profile->fname_visibility==1)
-                                    <p>
-                                       <label>First Name</label>
-                                       <input name="firstname" type="text" value="{{ $firstname }}">
-                                    </p>
-                                   @endif
-                                   @if($profile->lname_visibility==1)
+                                    @if($profile->fname_visibility == 1)
+                                        <p>
+                                           <label>First Name</label>
+                                           <input name="firstname" type="text" value="{{ $firstname }}">
+                                        </p>
+                                       @endif
+                                   @if($profile->lname_visibility == 1)
                                     <p>
                                        <label>Last Name</label>
                                        <input name="lastname" type="text" value="{{ $lastname }}">
                                     </p>
                                    @endif
-                                   @if($profile->dob_visibility==1)
+                                   @if($profile->dob_visibility == 1)
                                     <p>
-                                    	<label>Date of Birth</label>
-                                       	<input name="dateofbirth" type="text" value="{{ \Carbon\Carbon::parse($profile->dob)->format('j M Y') }}">
+                                        <label>Date of Birth</label>
+                                           <input name="dateofbirth" type="text" value="{{ \Carbon\Carbon::parse($profile->dob)->format('j M Y') }}">
                                     </p>
                                    @endif
                                     <p>
@@ -198,22 +187,22 @@
                                        <input name="region" type="text"
                                           value="{{ $suburb->state_name ?? '' }}">
                                     </p>
-                                    @if($profile->city_visibility==1)
-                                    <p>
-                                       <label>District/City</label>
-                                       <input name="district" type="text" value="{{ $suburb->city_name??'' }}">
-                                    </p>
-                                   @endif
-                                   @if($profile->suburb_visibility==1)
+                                    @if($profile->city_visibility == 1)
+                                        <p>
+                                           <label>District/City</label>
+                                           <input name="district" type="text" value="{{ $suburb->city_name ?? '' }}">
+                                        </p>
+                                       @endif
+                                   @if($profile->suburb_visibility == 1)
                                     <p>
                                        <label>Suburb/Town</label>
-                                       <input name="suburb" type="text" value="{{ $suburb->suburb_name?? ($suburb->city_name??"") }}">
+                                       <input name="suburb" type="text" value="{{ $suburb->suburb_name ?? ($suburb->city_name ?? "") }}">
                                     </p>
                                    @endif
                                     <p>
                                        <label>Country</label>
                                        <input name type="text"
-                                          value="{{ $suburb->country_name??'' }}">
+                                          value="{{ $suburb->country_name ?? '' }}">
                                     </p>
                                  </form>
                               </div>
@@ -249,55 +238,55 @@
                                                    valign="top">&nbsp;</th>
                                              </tr>
                                              @if(!empty($businessList))
-                                             @foreach($businessList as
-                                             $business)
-                                             <tr>
-                                                <td align="center" valign="top"
-                                                   class="dash_pic">
-                                                   @if($business->select_image)
-                                                   <img
-                                                      src="<?= asset($business->select_image) ?>"
-                                                      alt style="width:35%">
-                                                   @else
-                                                   <img
-                                                      src="{{ asset('assets/images/cam_img.png') }}"
-                                                      alt>
-                                                   @endif
-                                                </td>
-                                                <td align="left" valign="top"
-                                                   class="left"><a
-                                                      href="<?= url("/".strtolower($business->shortname)."/business/{$business->slug}/{$business->slug}/{$business->slug}")
-                                                      ?>">{{
-                                                      $business->display_name
-                                                      }}</a></td>
-                                                <td align="center" valign="top"
-                                                   class="stuaactive">
-                                                    <select class="change-business-status" data-id="{{ $business->id }}">
-                                                       <option value="1" {{ $business->status == '1' ? 'selected' : '' }}>Active</option>
-                                                       <option value="0" {{ $business->status == '0' ? 'selected' : '' }}>Inactive</option>
-                                                    </select>
-                                                   <!-- <img src="{{ asset('assets/images/thikmark_icon.png') }}" alt=""> -->
-                                                </td>
-                                                <td align="left"
-                                                   valign="top"><img
-                                                      src="{{ asset('assets/images/view_icon.png') }}"
-                                                      alt> {{$business->view_count}}</td>
-                                                <td align="left" valign="top"><a
-                                                      href="{{ route('business.list.edit', $business->id) }}"
-                                                      class="edit">Edit <img
-                                                         src="{{ asset('assets/images/edit_icon.png') }}"
-                                                         alt></a></td>
-                                                <td align="left" valign="top">
-                                                    <form action="{{ route('business.list.delete', $business->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this business? This action cannot be undone.');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="delete" style="background:none; border:none; padding:0; cursor:pointer;">
-                                                            <img src="{{ asset('assets/images/delete_icon.png') }}" alt>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                             </tr>
-                                             @endforeach
+                                                 @foreach($businessList as
+                                                                                    $business)
+                                                                                     <tr>
+                                                                                        <td align="center" valign="top"
+                                                                                           class="dash_pic">
+                                                                                           @if($business->select_image)
+                                                                                               <img
+                                                                                                  src="<?= asset($business->select_image) ?>"
+                                                                                                  alt style="width:35%">
+                                                                                           @else
+                                                                                               <img
+                                                                                                  src="{{ asset('assets/images/cam_img.png') }}"
+                                                                                                  alt>
+                                                                                           @endif
+                                                                                        </td>
+                                                                                        <td align="left" valign="top"
+                                                                                           class="left"><a
+                                                                                              href="<?= url("/" . strtolower($business->shortname) . "/business/{$business->slug}/{$business->slug}/{$business->slug}")
+                                                                                              ?>">{{
+                                                    $business->display_name
+                                                                                              }}</a></td>
+                                                                                        <td align="center" valign="top"
+                                                                                           class="stuaactive">
+                                                                                            <select class="change-business-status" data-id="{{ $business->id }}">
+                                                                                               <option value="1" {{ $business->status == '1' ? 'selected' : '' }}>Active</option>
+                                                                                               <option value="0" {{ $business->status == '0' ? 'selected' : '' }}>Inactive</option>
+                                                                                            </select>
+                                                                                           <!-- <img src="{{ asset('assets/images/thikmark_icon.png') }}" alt=""> -->
+                                                                                        </td>
+                                                                                        <td align="left"
+                                                                                           valign="top"><img
+                                                                                              src="{{ asset('assets/images/view_icon.png') }}"
+                                                                                              alt> {{$business->view_count}}</td>
+                                                                                        <td align="left" valign="top"><a
+                                                                                              href="{{ route('business.list.edit', $business->id) }}"
+                                                                                              class="edit">Edit <img
+                                                                                                 src="{{ asset('assets/images/edit_icon.png') }}"
+                                                                                                 alt></a></td>
+                                                                                        <td align="left" valign="top">
+                                                                                            <form action="{{ route('business.list.delete', $business->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this business? This action cannot be undone.');">
+                                                                                                @csrf
+                                                                                                @method('DELETE')
+                                                                                                <button type="submit" class="delete" style="background:none; border:none; padding:0; cursor:pointer;">
+                                                                                                    <img src="{{ asset('assets/images/delete_icon.png') }}" alt>
+                                                                                                </button>
+                                                                                            </form>
+                                                                                        </td>
+                                                                                     </tr>
+                                                 @endforeach
                                              @endif
                                           </table>
                                        </div>
@@ -356,36 +345,36 @@
                                                    valign="top">&nbsp;</th>
                                              </tr>
                                              @if(!empty($articles))
-                                             @foreach($articles as $article)
-                                             <tr>
-                                                <td align="left" valign="top" class="left">
-                                                   <a href="{{ route('article.details', $article->slug) }}">{{ $article->title }}</a>
-                                                </td>
-                                                <td align="left" valign="top">
-                                                   {{ $article->category->title ?? 'N/A' }}
-                                                </td>
-                                                <td align="center" valign="top">
-                                                   <span class="badge badge-{{ $article->status == 'published' ? 'success' : 'warning' }}">
-                                                      {{ ucfirst($article->status) }}
-                                                   </span>
-                                                </td>
-                                                <td align="left" valign="top">
-                                                   <img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $article->views }}
-                                                </td>
-                                                <td align="left" valign="top">
-                                                   <a href="{{ route('article.user-edit', $article->id) }}" class="edit">
-                                                      Edit <img src="{{ asset('assets/images/edit_icon.png') }}" alt="">
-                                                   </a>
-                                                </td>
-                                                <td align="left" valign="top">
-                                                    <form action="{{ route('article.user-delete', $article->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this article? This action cannot be undone.');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                                    </form>
-                                                </td>
-                                             </tr>
-                                             @endforeach
+                                                 @foreach($articles as $article)
+                                                     <tr>
+                                                        <td align="left" valign="top" class="left">
+                                                           <a href="{{ route('article.details', $article->slug) }}">{{ $article->title }}</a>
+                                                        </td>
+                                                        <td align="left" valign="top">
+                                                           {{ $article->category->title ?? 'N/A' }}
+                                                        </td>
+                                                        <td align="center" valign="top">
+                                                           <span class="badge badge-{{ $article->status == 'published' ? 'success' : 'warning' }}">
+                                                              {{ ucfirst($article->status) }}
+                                                           </span>
+                                                        </td>
+                                                        <td align="left" valign="top">
+                                                           <img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $article->views }}
+                                                        </td>
+                                                        <td align="left" valign="top">
+                                                           <a href="{{ route('article.user-edit', $article->id) }}" class="edit">
+                                                              Edit <img src="{{ asset('assets/images/edit_icon.png') }}" alt="">
+                                                           </a>
+                                                        </td>
+                                                        <td align="left" valign="top">
+                                                            <form action="{{ route('article.user-delete', $article->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this article? This action cannot be undone.');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                                            </form>
+                                                        </td>
+                                                     </tr>
+                                                 @endforeach
                                              @endif
                                           </table>
                                        </div>
@@ -399,11 +388,11 @@
                               </div>
 
                               @if(!empty($midData))
-                              @foreach ($midData as $ad)
-                              @if($ad->ads_image!="")
-                              <img src="{{ asset($ad->ads_image) }}" alt>
-                              @endif
-                              @endforeach
+                                  @foreach ($midData as $ad)
+                                      @if($ad->ads_image != "")
+                                          <img src="{{ asset($ad->ads_image) }}" alt>
+                                      @endif
+                                  @endforeach
                               @endif
                            </div>
                            <div class="setting_tabbasic">
@@ -529,8 +518,8 @@
                                  <label>Country *</label>
                                  <select  class="selectdrop" id="country" disabled>
                                     @foreach($country as $cnty):
-                                      <option value="{{ $cnty['id'] }}" {{ isset($suburb->country_name) && $cnty['name'] == $suburb->country_name?"selected":"" }}>{{ $cnty['name'] ?? ''
-                                         }}</option>
+                                          <option value="{{ $cnty['id'] }}" {{ isset($suburb->country_name) && $cnty['name'] == $suburb->country_name ? "selected" : "" }}>{{ $cnty['name'] ?? ''
+                                             }}</option>
                                     @endforeach
                                    </select>
                                  <select id="countryVisibility" disabled style="display:none">
@@ -564,7 +553,7 @@
                               <div class="frm_dv showaddress">
                                  <label>City or District *</label>
                                  <select class="selectdrop">
-                                    <option>{{ $suburb->city_name??''
+                                    <option>{{ $suburb->city_name ?? ''
                                        }}</option>
                                  </select>
                                  <select class="update-address-visibility" id="city_visibility">
@@ -576,7 +565,7 @@
                              <div class="frm_dv showaddress">
                                  <label>Suburb/Town *</label>
                                  <select class="selectdrop">
-                                    <option>{{ $suburb->suburb_name??($suburb->city_name??"") }}</option>
+                                    <option>{{ $suburb->suburb_name ?? ($suburb->city_name ?? "") }}</option>
                                  </select>
                                  <select class="update-address-visibility" id="suburb_visibility">
                                       <option value="0" {{ ($profile->suburb_visibility ?? 1) == 0 ? 'selected' : '' }}>Hidden</option>
@@ -731,17 +720,17 @@
                   </div>
                   <div class="right_advertisesec">
                      @if(!empty($sideData))
-                    @foreach ($sideData as $ad) 
-                    @if($ad->ads_image!="")
-                    @if($ad->link)
-                    <a href="{{ $ad->link }}" target="_blank">
-                      <img src="{{ asset($ad->ads_image) }}" alt="">
-                    </a>
-                    @else
-                    <img src="{{ asset($ad->ads_image) }}" alt="">
-                    @endif
-                    @endif
-                    @endforeach
+                        @foreach ($sideData as $ad) 
+                            @if($ad->ads_image != "")
+                                @if($ad->link)
+                                    <a href="{{ $ad->link }}" target="_blank">
+                                      <img src="{{ asset($ad->ads_image) }}" alt="">
+                                    </a>
+                                @else
+                                    <img src="{{ asset($ad->ads_image) }}" alt="">
+                                @endif
+                            @endif
+                        @endforeach
                     @endif
                   </div>
 
@@ -1946,7 +1935,7 @@ function clearSearch() {
                 const listingsTab = document.querySelector('.resp-tabs-list.hor_1 li:nth-child(2)');
                 if (listingsTab) {
                     listingsTab.click();
-                    
+
                     // After a short delay, open the Articles accordion
                     setTimeout(() => {
                         const articleTab = document.querySelector('.article_tab');

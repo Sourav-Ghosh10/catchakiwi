@@ -3,7 +3,7 @@
 <div class="top_search nomob_search">
     <div class="container">
         <div class="home_midbody">
-            <div class="home_searchsec">
+            <!-- <div class="home_searchsec">
                 <form action="{{ route('search', ['country' => $country_name]) }}" method="get">
                     <div class="searchpan">
                         <div class="serchservice">
@@ -48,7 +48,7 @@
                         <input name="" type="submit" value="Search" />
                     </div>
                 </form>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -100,7 +100,8 @@
                                             href="{{ URL::to($country_name . '/business/' . $primary . "/" . $secondary) }}">{{ $secondary_cat->title ?? ucwords(str_replace('-', ' ', $secondary)) }}</a>
                                     </li>
                                 @else
-                                    <li class="active"><a>{{ $primary_cat->title ?? ucwords(str_replace('-', ' ', $primary)) }}</a></li>
+                                    <li class="active">
+                                        <a>{{ $primary_cat->title ?? ucwords(str_replace('-', ' ', $primary)) }}</a></li>
                                 @endif
                             </ul>
                             <br class="clr" />
@@ -140,10 +141,10 @@
                                                         <li><img src="{{ asset('assets/images/phone_icon.png') }}" alt="">
                                                             <span class="spntoggle" data-toggle="popover" data-html="true"
                                                                 data-placement="bottom" data-content="
-                                                            1. <a href='tel:{{ $topBusiness->main_phone }}'>{{ $topBusiness->main_phone }}</a>
-                                                            @if($topBusiness->secondary_phone)
-                                                                <br>2. <a style='font-size: 14px !important; font-weight: bold !important; color: #007bff !important;' href='tel:{{ $topBusiness->secondary_phone }}'>{{ $topBusiness->secondary_phone }}</a>
-                                                            @endif">
+                                                                    1. <a href='tel:{{ $topBusiness->main_phone }}'>{{ $topBusiness->main_phone }}</a>
+                                                                    @if($topBusiness->secondary_phone)
+                                                                        <br>2. <a style='font-size: 14px !important; font-weight: bold !important; color: #007bff !important;' href='tel:{{ $topBusiness->secondary_phone }}'>{{ $topBusiness->secondary_phone }}</a>
+                                                                    @endif">
                                                                 Telephone
                                                             </span>
                                                         </li>

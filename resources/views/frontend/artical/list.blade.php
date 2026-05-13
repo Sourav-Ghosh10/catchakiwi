@@ -2,27 +2,21 @@
 
 <div class="mid_body">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="brad_cam">
-                    <ul>
-                        <li><a href="{{ URL::to(strtolower(session('CountryCode') ?? 'nz') . '/business') }}">Top Business</a></li>
-                        @if(isset($category))
-                            <li><a href="{{ route('article.list') }}">Articles</a></li>
-                            <li class="active"><a>{{ $category->title }}</a></li>
-                        @else
-                            <li class="active"><a>Articles</a></li>
-                        @endif
-                    </ul>
-                    <br class="clr" />
-                </div>
-            </div>
-        </div>
         <div class="full_midpan">
             <div class="row artilist">
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_searchresults">
-                        <h3><img src="{{ asset('assets/images/article_icon2.png') }}" alt=""> Articles
+                        <h3><img src="{{ asset('assets/images/article_icon2.png') }}" alt=""> Articles <br>
+                            <div class="brad_cam">
+                                <ul>
+                                    <li><a href="{{ url('/') }}">Home</a></li>
+                                    <li class="active"><a href="{{ route('article.list') }}">Articles</a></li>
+                                    @if(isset($category))
+                                        <li>{{ $category->title }}
+                                        </li>
+                                    @endif
+                                </ul>
+                            </div>
                             <a href="{{ route('article.add') }}" class="submit_ariclebut">Submit Article</a>
                         </h3>
                         <h4>
