@@ -2,6 +2,17 @@
 
 <div class="mid_body">
   <div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+          <div class="brad_cam">
+            <ul>
+              <li><a href="{{ URL::to(strtolower(session('CountryCode') ?? 'nz') . '/business') }}">Top Business</a></li>
+              <li class="active"><a>Search Results</a></li>
+            </ul>
+            <br class="clr" />
+          </div>
+        </div>
+      </div>
     <div class="full_midpan">
       <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12">

@@ -334,7 +334,7 @@ class BusinessController extends Controller
              $country_name = strtolower(session('CountryCode'));
          }    
 		
-		$categories = Category::withCount([
+        $categories = Category::withCount([
             'parent_businesses' => function ($q) use ($country_id) {
                 $q->where('country', $country_id)->where('status', '1');
             }
@@ -351,10 +351,11 @@ class BusinessController extends Controller
         ->where('parent_id', 0)
         ->orderBy('title', 'ASC')
         ->get();
+
         $query = Business::select(
             'business.id',
             'business.company_name',
-            'business.display_name', 
+            'business.display_name',
             'business.business_description',
             'business.select_image',
             'business.contact_person',
@@ -362,16 +363,16 @@ class BusinessController extends Controller
             'business.main_phone',
             'business.website_url',
             'business.address',
-          	'business.slug',
+            'business.slug',
             'business.created_at',
-          	'business.homebased_business',
-            'cat1.title', 
-            'cat1.title_url', 
-            'cat2.title as sec_title', 
-            'cat2.title_url as sec_title_url', 
-            DB::raw('COALESCE(MAX(business_review.rating), 0) as highest_rating'), 
+            'business.homebased_business',
+            'cat1.title',
+            'cat1.title_url',
+            'cat2.title as sec_title',
+            'cat2.title_url as sec_title_url',
+            DB::raw('COALESCE(MAX(business_review.rating), 0) as highest_rating'),
             DB::raw('COALESCE(AVG(business_review.rating), 0) as average_rating'),
-            DB::raw('COUNT(business_review.rating) as rating_count')  
+            DB::raw('COUNT(business_review.rating) as rating_count')
         )
         ->join('categories as cat1', 'cat1.id', '=', 'business.primary_category')
         ->join('categories as cat2', 'cat2.id', '=', 'business.secondary_category')
@@ -379,17 +380,17 @@ class BusinessController extends Controller
         ->where('business.country', $country_id)
         ->where('business.status', "1");
 
-        if($primary!=""){
+        if ($primary != "") {
             $query->where('cat1.title_url', $primary);
         }
-        if($secondary!=""){
+        if ($secondary != "") {
             $query->where('cat2.title_url', $secondary);
-        }        
+        }
 
         $topratedBusiness = $query->groupBy(
             'business.id',
             'business.company_name',
-            'business.display_name', 
+            'business.display_name',
             'business.business_description',
             'business.select_image',
             'business.contact_person',
@@ -400,15 +401,38 @@ class BusinessController extends Controller
             'business.created_at',
             'business.slug',
             'business.homebased_business',
-            'cat1.title', 
-            'cat1.title_url', 
-            'cat2.title', 
+            'cat1.title',
+            'cat1.title_url',
+            'cat2.title',
             'cat2.title_url'
         )
         ->orderBy('average_rating', 'desc')
         ->get();
 
-        return view('frontend/business/categorywiselist',compact('categories','sideData','topratedBusiness','country_name','primary','secondary'));        
+        $category = Category::where('parent_id', 0)->orderBy('title', 'asc')->get();
+        if (!empty($category)) {
+            foreach ($category as $key => $cate) {
+                $subcategory = Category::where('parent_id', $cate->id)->get();
+                $category[$key]->subcat = $subcategory;
+            }
+        }
+
+        if (session('CountryCode') == "NZ") {
+            $states = State::with(['cities' => function ($query) {
+                $query->orderBy('name', 'asc')->with(['towns' => function ($query) {
+                    $query->orderBy('suburb_name', 'asc');
+                }]);
+            }])->where('country_id', $country_id)->orderBy('name', 'asc')->get()->toArray();
+        } else {
+            $states = State::with(['cities' => function ($query) {
+                $query->orderBy('name', 'asc');
+            }])->where('country_id', $country_id)->orderBy('name', 'asc')->get()->toArray();
+        }
+
+        $primary_cat = Category::where('title_url', $primary)->first();
+        $secondary_cat = $secondary ? Category::where('title_url', $secondary)->first() : null;
+
+        return view('frontend/business/categorywiselist', compact('categories', 'sideData', 'topratedBusiness', 'country_name', 'primary', 'secondary', 'category', 'states', 'primary_cat', 'secondary_cat'));
     }
     public function BusinessSearch(Request $request, $country)
     {
@@ -529,24 +553,50 @@ class BusinessController extends Controller
 
         return view('frontend.business.search_results', compact('businesses', 'country', 'searchQuery', 'sideData','category','states'));
     }
-    public function details($country,$primary,$secxondary,$slug) {
-      	$this->updateCategoryViews($primary, $secxondary);
-      	$business_view_count = Business::where('slug', $slug)->firstOrFail();
+    public function details($country, $primary, $secxondary, $slug)
+    {
+        $this->updateCategoryViews($primary, $secxondary);
+        $business_view_count = Business::where('slug', $slug)->firstOrFail();
         // increment view count
         $business_view_count->increment('view_count');
-        $business = Business::select('business.*', 'cat1.title', 'cat1.title_url', 'cat2.title as sec_title', 'cat2.title_url as sec_title_url','users.name')
+        $business = Business::select('business.*', 'cat1.title', 'cat1.title_url', 'cat2.title as sec_title', 'cat2.title_url as sec_title_url', 'users.name')
             ->join('categories as cat1', 'cat1.id', '=', 'business.primary_category')
             ->join('categories as cat2', 'cat2.id', '=', 'business.secondary_category')
-        	->join('users', 'users.id', '=', 'business.user_id')
+            ->join('users', 'users.id', '=', 'business.user_id')
             ->where('business.slug', "$slug")
             ->first();
-       //dd($business);
-       $rating = [];
-       if($business){
-           $rating = BusinessReview::select('business_review.*','users.name','users.image')->join('users','users.id','=','business_review.user_id')->where(["business_review.business_id"=>$business->id,"business_review.status"=>"1"])->get()->toArray();
-       }
-       //dd($rating);
-        return view('frontend/business/details',compact('business','country','rating'));
+        //dd($business);
+        $rating = [];
+        if ($business) {
+            $rating = BusinessReview::select('business_review.*', 'users.name', 'users.image')->join('users', 'users.id', '=', 'business_review.user_id')->where(["business_review.business_id" => $business->id, "business_review.status" => "1"])->get()->toArray();
+        }
+        //dd($rating);
+        $category = Category::where('parent_id', 0)->orderBy('title', 'asc')->get();
+        if (!empty($category)) {
+            foreach ($category as $key => $cate) {
+                $subcategory = Category::where('parent_id', $cate->id)->get();
+                $category[$key]->subcat = $subcategory;
+            }
+        }
+
+        $country_info = Country::where('shortname', session('CountryCode'))->first();
+        $country_id = $country_info->id ?? 0;
+
+        if (session('CountryCode') == "NZ") {
+            $states = State::with(['cities' => function ($query) {
+                $query->orderBy('name', 'asc')->with(['towns' => function ($query) {
+                    $query->orderBy('suburb_name', 'asc');
+                }]);
+            }])->where('country_id', $country_id)->orderBy('name', 'asc')->get()->toArray();
+        } else {
+            $states = State::with(['cities' => function ($query) {
+                $query->orderBy('name', 'asc');
+            }])->where('country_id', $country_id)->orderBy('name', 'asc')->get()->toArray();
+        }
+
+        $country_name = strtolower(session('CountryCode') ?? 'nz');
+
+        return view('frontend/business/details', compact('business', 'country', 'rating', 'category', 'states', 'country_name'));
     }
     public function businessPrint($country,$cat,$subcat,$slug) {
         $business = Business::select('business.*', 'cat1.title', 'cat1.title_url', 'cat2.title as sec_title', 'cat2.title_url as sec_title_url')

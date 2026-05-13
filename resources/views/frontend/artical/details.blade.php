@@ -2,18 +2,23 @@
 
 <div class="mid_body">
     <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="brad_cam">
+                    <ul>
+                        <li><a href="{{ URL::to(strtolower(session('CountryCode') ?? 'nz') . '/business') }}">Top Business</a></li>
+                        <li><a href="{{ route('article.list') }}">Articles</a></li>
+                        <li class="active"><a href="{{ route('article.category', $article->category->slug) }}">{{ $article->category->title }}</a></li>
+                    </ul>
+                    <br class="clr" />
+                </div>
+            </div>
+        </div>
         <div class="full_midpan">
             <div class="row">
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_searchresults">
-                        <h3><img src="{{ asset('assets/images/article_icon2.png') }}" alt=""> Articles <br>
-                            <span><a href="{{ url('/') }}" style="color: #729b0f; text-decoration: none;">Home</a> > <a
-                                    href="{{ route('article.list') }}"
-                                    style="color: #729b0f; text-decoration: none;">Articles</a> > <a
-                                    href="{{ route('article.category', $article->category->slug) }}"
-                                    style="color: #729b0f; text-decoration: none;">{{ $article->category->title }}</a>
-                            </span>
-                        </h3>
+                        <h3><img src="{{ asset('assets/images/article_icon2.png') }}" alt=""> Articles</h3>
 
                         <div class="article_detailsbody">
                             @if($article->image)

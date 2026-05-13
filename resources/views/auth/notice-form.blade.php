@@ -1,18 +1,24 @@
 @include('includes/inner-header')
 <div class="mid_body">
     <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="brad_cam">
+                    <ul>
+                        <li><a href="{{ URL::to(strtolower(session('CountryCode') ?? 'nz') . '/business') }}">Top Business</a></li>
+                        <li><a href="{{ route('notice-board') }}">Notice Board</a></li>
+                        <li class="active"><a>Post Notice</a></li>
+                    </ul>
+                    <br class="clr" />
+                </div>
+            </div>
+        </div>
         <div class="full_midpan">
             <div class="row">
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_notice">
                         <div class="left_searchresults">
-                            <h3><img src="{{ asset('assets/images/notice_icon.png') }}" alt=""> Notice Board
-                                <br>
-                                <span><a href="{{ url('/') }}" style="color: #729b0f; text-decoration: none;">Home</a> >
-                                    <a href="{{ route('notice-board') }}"
-                                        style="color: #729b0f; text-decoration: none;">Notice Board</a> > Post
-                                    Notice</span>
-                            </h3>
+                            <h3><img src="{{ asset('assets/images/notice_icon.png') }}" alt=""> Notice Board</h3>
                         </div>
                         <form action="{{ route('notice-submit') }}" method="post" enctype='multipart/form-data'>
                             @csrf
