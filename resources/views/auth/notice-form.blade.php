@@ -51,21 +51,60 @@
                                     <div id="get_a_quote_fields" style="display:none;">
                                         <div class="frm_dv">
                                             <label>I'm Looking for:</label>
-                                            <input name="looking_for" type="text" placeholder="I'm Looking for">
+                                            <select name="looking_for">
+                                                <option value="">Select Service</option>
+                                                <option value="Architect and Drafting">Architect and Drafting</option>
+                                                <option value="Brick and block Laying">Brick and block Laying</option>
+                                                <option value="Building">Building</option>
+                                                <option value="Car Cleaning">Car Cleaning</option>
+                                                <option value="Carpet and Furniture cleaning">Carpet and Furniture cleaning</option>
+                                                <option value="Cleaning">Cleaning</option>
+                                                <option value="Computer Help">Computer Help</option>
+                                                <option value="Concreting">Concreting</option>
+                                                <option value="Electrical">Electrical</option>
+                                                <option value="Flooring">Flooring</option>
+                                                <option value="Gardening">Gardening</option>
+                                                <option value="Gib Fixing and Plastering">Gib Fixing and Plastering</option>
+                                                <option value="Handy person">Handy person</option>
+                                                <option value="House washing">House washing</option>
+                                                <option value="Interior Design">Interior Design</option>
+                                                <option value="Landscaping">Landscaping</option>
+                                                <option value="Locksmith">Locksmith</option>
+                                                <option value="Moving">Moving</option>
+                                                <option value="Painting">Painting</option>
+                                                <option value="Plumbing">Plumbing</option>
+                                                <option value="Roofing">Roofing</option>
+                                                <option value="Tiling">Tiling</option>
+                                            </select>
                                         </div>
-                                        <div class="frm_dv">
+                                        <div class="frm_dv quote_location_dv">
                                             <label>Where do you need the job done?:</label>
-                                            <input name="job_location" type="text"
-                                                placeholder="Where do you need the job done?">
+                                            <div class="location_input_wrapper">
+                                                <select name="job_location" id="quote_towns" placeholder="Select Suburb/City"></select>
+                                            </div>
                                         </div>
                                         <div class="frm_dv">
                                             <label>When do you need the work to start?:</label>
-                                            <input name="start_date" type="text"
-                                                placeholder="When do you need the work to start?">
+                                            <select name="start_date">
+                                                <option value="">Select Timing</option>
+                                                <option value="Emergency">Emergency</option>
+                                                <option value="ASAP">ASAP</option>
+                                                <option value="Next few days">Next few days</option>
+                                                <option value="I'm flexible">I'm flexible</option>
+                                                <option value="Next few weeks">Next few weeks</option>
+                                                <option value="Next few months">Next few months</option>
+                                            </select>
                                         </div>
                                         <div class="frm_dv">
                                             <label>Budget:</label>
-                                            <input name="budget" type="text" placeholder="Budget">
+                                            <select name="budget">
+                                                <option value="">Select Budget</option>
+                                                <option value="Under $300">Under $300</option>
+                                                <option value="$300 to $600">$300 to $600</option>
+                                                <option value="$600 to $1000">$600 to $1000</option>
+                                                <option value="More than $1000">More than $1000</option>
+                                                <option value="Not sure">Not sure</option>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -184,6 +223,64 @@
                                         .left_profileform .frm_dv textarea {
                                             min-height: 120px;
                                         }
+
+                                        /* Quote Location Field Enhancements */
+                                        .quote_location_dv .location_input_wrapper {
+                                            flex: 1;
+                                        }
+
+                                        .quote_location_dv .selectize-control {
+                                            width: 100%;
+                                            max-width: 455px;
+                                        }
+
+                                        .quote_location_dv .selectize-input {
+                                            padding: 0 12px !important;
+                                            border: 1px solid #9bcd22 !important;
+                                            border-radius: 0 !important;
+                                            box-shadow: none !important;
+                                            height: 40px !important;
+                                            background: #fff url('{{ asset('assets/images/location_icon.png') }}') no-repeat !important;
+                                            background-position: calc(100% - 12px) center !important;
+                                            background-size: 14px !important;
+                                            padding-right: 35px !important;
+                                            display: flex !important;
+                                            align-items: center !important;
+                                            font-family: 'Poppins', sans-serif !important;
+                                        }
+
+                                        .left_profileform .frm_dv select,
+                                        .left_profileform .frm_dv input[type="text"] {
+                                            border: 1px solid #9bcd22 !important;
+                                            height: 40px !important;
+                                            border-radius: 0 !important;
+                                            padding: 0 12px !important;
+                                            width: 100% !important;
+                                            max-width: 455px !important;
+                                            background: #fff !important;
+                                            font-family: 'Poppins', sans-serif !important;
+                                            transition: border-color 0.3s ease;
+                                        }
+
+                                        .left_profileform .frm_dv select:hover,
+                                        .left_profileform .frm_dv input[type="text"]:hover,
+                                        .quote_location_dv .selectize-input:hover,
+                                        .quote_location_dv .selectize-input.focus {
+                                            border-color: #729b0f !important;
+                                            outline: none !important;
+                                        }
+
+                                        .quote_location_dv .selectize-input input {
+                                            font-family: 'Poppins', sans-serif !important;
+                                            font-size: 14px !important;
+                                        }
+
+                                        .quote_location_dv .selectize-dropdown {
+                                            border-radius: 0 !important;
+                                            box-shadow: 0 6px 12px rgba(0,0,0,.1) !important;
+                                            border: 1px solid #e1e1e1 !important;
+                                            z-index: 1000 !important;
+                                        }
                                     </style>
 
                                     <div class="frm_dv">
@@ -253,6 +350,37 @@
                         </form>
 
                         <script>
+                            // Create a mapping of shortnames to IDs for the header dropdown
+                            const countryMap = {
+                                @foreach($country as $cnty)
+                                    "{{ $cnty['shortname'] }}": "{{ $cnty['id'] }}",
+                                @endforeach
+                            };
+
+                            function updateQuoteTowns() {
+                                const selectizeInstance = $('#quote_towns')[0]?.selectize;
+                                if (!selectizeInstance) return;
+
+                                const countryShortName = $('.countryChange').val();
+                                const countryId = countryMap[countryShortName];
+
+                                if (!countryId) return;
+
+                                $.ajax({
+                                    url: '{{ route('GetCityStatesameVal') }}',
+                                    method: 'POST',
+                                    data: {
+                                        country_id: countryId,
+                                        _token: $('input[name="_token"]').val()
+                                    },
+                                    success: function(response) {
+                                        selectizeInstance.clearOptions();
+                                        selectizeInstance.addOption(JSON.parse(response));
+                                        selectizeInstance.refreshOptions(false);
+                                    }
+                                });
+                            }
+
                             document.getElementById('category_id').addEventListener('change', function () {
                                 var categoryId = this.value;
                                 var restOfFields = document.getElementById('rest_of_fields');
@@ -279,6 +407,20 @@
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Provide a description of your job:';
                                         bodyTextarea.placeholder = 'Provide a description of your job';
+                                        
+                                        // Initialize Selectize for quote form if not already initialized
+                                        if (!$('#quote_towns').hasClass('selectized')) {
+                                            $('#quote_towns').selectize({
+                                                create: false,
+                                                placeholder: 'Select Suburb/City',
+                                                render: {
+                                                    no_results: function(data, escape) {
+                                                        return '<div class="no-results">No results found</div>';
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        updateQuoteTowns();
                                     } else {
                                         serviceDealFields.style.display = 'none';
                                         getAQuoteFields.style.display = 'none';
@@ -288,6 +430,18 @@
                                     }
                                 } else {
                                     restOfFields.style.display = 'none';
+                                }
+                            });
+
+                            $(document).ready(function() {
+                                // Listen for changes in the header country dropdown
+                                $('.countryChange').on('change', function() {
+                                    updateQuoteTowns();
+                                });
+
+                                // Initial load if category is already selected
+                                if ($('#category_id').val() == '2') {
+                                    setTimeout(updateQuoteTowns, 500); // Small delay to ensure selectize is ready
                                 }
                             });
 

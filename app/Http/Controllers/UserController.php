@@ -621,7 +621,8 @@ class UserController extends Controller
             $sideData = $ads->take(3);
         }
 
-        return view('auth.notice-form', compact('category', 'grouped', 'sideData'));
+        $country = Country::where('status', '1')->get()->toArray();
+        return view('auth.notice-form', compact('category', 'grouped', 'sideData', 'country'));
     }
     public function NoticePost(Request $request)
     {
