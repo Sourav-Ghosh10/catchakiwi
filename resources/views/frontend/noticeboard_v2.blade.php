@@ -13,10 +13,10 @@
 
             <!-- Search Section -->
             <div class="nb-v2-search-container">
-                <form action="#" method="GET" class="nb-v2-search-form">
+                <form action="{{ route('notices') }}" method="GET" class="nb-v2-search-form">
                     <div class="nb-v2-search-input-wrap">
                         <i class="fa fa-search nb-v2-search-icon"></i>
-                        <input type="text" name="search" placeholder="What are you looking for today?"
+                        <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="What are you looking for today?"
                             class="nb-v2-search-input">
                         <button type="submit" class="nb-v2-search-btn">Search</button>
                     </div>
@@ -24,18 +24,27 @@
             </div>
 
             <!-- Spotlight Section -->
+            @if($spotlightNotice)
+                <a href="{{ route('notice-board', ['category' => 'five-dollar-service-deal', 'search' => $spotlightNotice->heading]) }}" class="nb-v2-spotlight-link">
+            @endif
             <div class="nb-v2-spotlight">
                 <div class="nb-v2-spotlight-inner">
                     <span class="nb-v2-spotlight-badge">
                         Spotlight!
                     </span>
                     <span class="nb-v2-spotlight-text">
-                        ⭐ <span class="nb-v2-deal-link">$5 Deal of the Day:</span> $5 Lawn Mowing - First 5 Customers
-                        Only!
+                        @if($spotlightNotice)
+                            ⭐ <span class="nb-v2-deal-link">$5 Deal of the Day:</span> {{ $spotlightNotice->heading }}
+                        @else
+                            ⭐ <span class="nb-v2-deal-link">$5 Deal of the Day:</span> $5 Lawn Mowing - First 5 Customers Only!
+                        @endif
                     </span>
                     <i class="fa fa-chevron-right nb-v2-spotlight-arrow"></i>
                 </div>
             </div>
+            @if($spotlightNotice)
+                </a>
+            @endif
 
             <!-- Post Button -->
             <div class="text-right mb-4">
@@ -44,39 +53,29 @@
 
             <!-- Categories Grid -->
             <div class="row nb-v2-grid">
-                @php
-                    $displayCategories = [
-                        ['title' => '$5 Service Deals', 'subtitle' => 'Try a $5 starter service', 'icon_class' => 'nb-icon-1', 'color' => '#f0f9eb', 'id' => 1, 'type' => 'deals', 'active' => true],
-                        ['title' => ' Get a Quote', 'subtitle' => 'Local work offers', 'icon_class' => 'nb-icon-6', 'color' => '#f5f5ff', 'id' => 8, 'type' => 'jobs', 'new' => true, 'active' => true],
-                        ['title' => 'Catch-a-Ride', 'subtitle' => 'Share a ride or item', 'icon_class' => 'nb-icon-2', 'color' => '#ebf5ff', 'id' => 2, 'type' => 'rides'],
-                        ['title' => 'Garage Sales', 'subtitle' => 'Local Garage sales', 'icon_class' => 'nb-icon-3', 'color' => '#fff9eb', 'id' => 6, 'type' => 'sales'],
-                        ['title' => 'Vehicle Sales', 'subtitle' => 'Cars, vans, bikes for sale', 'icon_class' => 'nb-icon-4', 'color' => '#f5f7fa', 'id' => 3, 'type' => 'vehicles'],
-                        ['title' => 'Property & House Sales', 'subtitle' => 'Homes and rentals', 'icon_class' => 'nb-icon-5', 'color' => '#fff5f5', 'id' => 12, 'type' => 'property'],
-                        ['title' => 'Services Offered', 'subtitle' => 'Skills & small jobs offered', 'icon_class' => 'nb-icon-7', 'color' => '#f0fff4', 'id' => 13, 'type' => 'services'],
-                        ['title' => 'Items For Sale', 'subtitle' => 'Furniture, gadgets & more', 'icon_class' => 'nb-icon-8', 'color' => '#fffaf0', 'id' => 7, 'type' => 'items', 'new' => true],
-                        ['title' => 'Community Events', 'subtitle' => 'Local gatherings & fundraisers', 'icon_class' => 'nb-icon-9', 'color' => '#fff5f7', 'id' => 10, 'type' => 'events', 'new' => true],
-                    ];
-                @endphp
-
-                @foreach($displayCategories as $catInfo)
+                @foreach($categories as $catInfo)
                     @php
-                        $dbCat = $categories->firstWhere('id', $catInfo['id']);
-                        $count = $dbCat ? $dbCat->notices_count : 0;
+                        $count = $catInfo->notices_count;
                     @endphp
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <a href="{{ route('notice-board', ['category' => $catInfo['id']]) }}"
-                            class="nb-v2-card {{ (isset($catInfo['active']) && $catInfo['active']) ? 'active' : '' }}"
-                            data-type="{{ $catInfo['type'] }}">
-                            @if(isset($catInfo['new']) && $catInfo['new'])
+                        <a href="{{ ($catInfo->is_active) ? route('notice-board', $catInfo->slug) : '#' }}"
+                            class="nb-v2-card {{ ($catInfo->is_active) ? 'active' : '' }} {{ (isset($categoryId) && $categoryId == $catInfo->id) ? 'selected-cat' : '' }}"
+                            data-type="{{ $catInfo->type }}">
+                            @if($catInfo->is_new)
                                 <span class="nb-v2-new-badge">New!</span>
                             @endif
                             <div class="nb-v2-card-icon-wrap">
-                                <img src="{{ asset('assets/images/notice/' . $catInfo['icon_class'] . '.png') }}"
-                                    alt="{{ $catInfo['title'] }}" class="nb-v2-card-img-icon">
+                                @if($catInfo->icon)
+                                    <img src="{{ asset($catInfo->icon) }}"
+                                        alt="{{ $catInfo->category }}" class="nb-v2-card-img-icon">
+                                @else
+                                    <img src="{{ asset('assets/images/notice/nb-icon-default.png') }}"
+                                        alt="{{ $catInfo->category }}" class="nb-v2-card-img-icon">
+                                @endif
                             </div>
                             <div class="nb-v2-card-body">
-                                <h3 class="nb-v2-card-title">{{ $catInfo['title'] }}</h3>
-                                <p class="nb-v2-card-subtitle">{{ $catInfo['subtitle'] }}
+                                <h3 class="nb-v2-card-title">{{ $catInfo->category }}</h3>
+                                <p class="nb-v2-card-subtitle">{{ $catInfo->subtitle }}
                                     <strong>({{ str_pad($count, 2, '0', STR_PAD_LEFT) }})</strong>
                                 </p>
                             </div>
@@ -98,20 +97,53 @@
             <!-- Latest Posts -->
             <div class="nb-v2-latest-section mt-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="nb-v2-section-title">Latest Posts</h2>
-                    <a href="#" class="nb-v2-view-more">View More Posts</a>
+                    <h2 class="nb-v2-section-title">
+                        @if($search)
+                            Search Results for "{{ $search }}"
+                        @elseif($categoryId)
+                            @php $activeCat = $categories->firstWhere('id', $categoryId); @endphp
+                            {{ $activeCat ? $activeCat->category : 'Notices' }}
+                        @else
+                            Latest Posts
+                        @endif
+                    </h2>
+                    @if($search || $categoryId)
+                        <a href="{{ route('notices') }}" class="nb-v2-view-more">View All Posts</a>
+                    @else
+                        <a href="#" class="nb-v2-view-more">View More Posts</a>
+                    @endif
                 </div>
                 <div class="nb-v2-latest-list">
                     @forelse($latestNotices as $notice)
-                        <div class="nb-v2-latest-item">
-                            <i class="fa fa-bullhorn nb-v2-latest-icon"></i>
-                            <span class="nb-v2-latest-text">{{ $notice->heading }} </span>
-                            @if(\Carbon\Carbon::parse($notice->created_at)->isToday())
-                                <span class="nb-v2-new-tag">New!</span>
-                            @endif
+                        <div class="nb-v2-latest-item-wrap mb-3 p-3 border rounded shadow-sm bg-white">
+                            <div class="d-flex align-items-start">
+                                <div class="nb-v2-latest-icon-box mr-3">
+                                    <i class="fa fa-bullhorn nb-v2-latest-icon"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h4 class="mb-0 font-weight-bold" style="font-size: 16px;">{{ $notice->heading }}</h4>
+                                        <span class="badge badge-light text-muted" style="font-size: 11px;">{{ $notice->category_name }}</span>
+                                    </div>
+                                    <p class="text-muted mb-2" style="font-size: 14px;">{{ Str::limit($notice->content, 100) }}</p>
+                                    
+                                    @if(isset($noticeImages[$notice->id]))
+                                        <div class="notice_thum mb-2">
+                                            @foreach($noticeImages[$notice->id] as $img)
+                                                <img src="{{ asset($img->img_path) }}" alt="" style="width: 60px; height: 40px; object-fit: cover; margin-right: 5px; border-radius: 4px;">
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <small class="text-muted"><i class="fa fa-map-marker mr-1"></i> {{ $notice->town_suburb ?? 'N/A' }}</small>
+                                        <small class="text-muted"><i class="fa fa-clock-o mr-1"></i> {{ \Carbon\Carbon::parse($notice->created_at)->diffForHumans() }}</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     @empty
-                        <div class="nb-v2-latest-item">No recent notices found.</div>
+                        <div class="nb-v2-latest-item">No notices found matching your criteria.</div>
                     @endforelse
                 </div>
             </div>

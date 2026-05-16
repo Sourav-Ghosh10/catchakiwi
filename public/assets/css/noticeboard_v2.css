@@ -189,11 +189,21 @@
 .nb-v2-card.active {
     filter: grayscale(0);
     opacity: 1;
-    border: 2px solid #a3d900;
-    box-shadow: 0 10px 25px rgba(163, 217, 0, 0.15);
-    transform: translateY(-5px);
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     cursor: pointer !important;
     pointer-events: auto;
+}
+
+.nb-v2-card.active:hover {
+    transform: translateY(-5px);
+    border-color: #a3d900;
+}
+
+.nb-v2-card.selected-cat {
+    border: 2px solid #f7941d !important;
+    box-shadow: 0 10px 25px rgba(247, 148, 29, 0.2) !important;
+    transform: translateY(-5px);
 }
 
 .nb-v2-card-icon-wrap {
@@ -374,4 +384,4 @@
     border-radius: 5px;
     margin-left: 10px;
     border: 1px solid #ffccbc;
-}
+}.nb-v2-spotlight-link { text-decoration: none !important; display: block; }

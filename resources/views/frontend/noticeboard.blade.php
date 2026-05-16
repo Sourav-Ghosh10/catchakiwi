@@ -5,13 +5,14 @@
 <div class="mid_body">
     <!-- Search Section -->
     <div class="nb-v2-search-container">
-        <form action="#" method="GET" class="nb-v2-search-form">
+        <form action="{{ route('notice-board') }}" method="GET" class="nb-v2-search-form">
             <div class="nb-v2-search-input-wrap">
                 <i class="fa fa-search nb-v2-search-icon"></i>
-                <input type="text" name="search" placeholder="What are you looking for today?"
+                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="What are you looking for today?"
                     class="nb-v2-search-input">
                 <button type="submit" class="nb-v2-search-btn">Search</button>
             </div>
+        </form>
     </div>
     <div class="container">
         <div class="full_midpan">
@@ -19,121 +20,58 @@
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_notice">
                         <div class="left_notice_header">
-                            <h2>$5 Service Deals<br>
-                                <span>Try a new local service for $5 and help a small business get started.</span>
+                            <h2>{{ $activeCategory ? $activeCategory->category : 'Catchakiwi Noticeboard' }}<br>
+                                <span>{{ $activeCategory ? 'Explore notices in ' . $activeCategory->category : 'Connect, Share, Discover local notices' }}</span>
                             </h2>
                             <div class="left_notice_actions">
                                 <!-- <a href="#" class="getquote_button">Get a Quote</a> -->
-                                <a href="#" class="postfree_button">Post a Free Notice</a>
+                                <a href="{{ route('notice-post') }}" class="postfree_button">Post a Free Notice</a>
                             </div>
                         </div>
-                        <!-- <div class="notice_refineresults">
+                        <div class="notice_refineresults">
                             <h3>Refine Results:</h3>
                             <div class="row">
-                                <div class="col-md-4">
-                                    <ul>
-                                        <li><a href="#">$5 Service Deal</a></li>
-                                        <li><a href="#">CAR-CatchARide</a></li>
-                                        <li><a href="#">Cars and Vehicles (2)</a></li>
-                                        <li><a href="#">Found</a></li>
-                                        <li><a href="#">Free</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <ul>
-                                        <li><a href="#">Garage Sales (106)</a></li>
-                                        <li><a href="#">Goods to Sell, Buy or Trade</a></li>
-                                        <li><a href="#">Help a Kiwi - Volunteer</a></li>
-                                        <li><a href="#">House for Rent</a></li>
-                                        <li><a href="#">Local Events</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-4">
-                                    <ul>
-                                        <li><a href="#">Pets and Animals</a></li>
-                                        <li><a href="#">Real Estate</a></li>
-                                        <li><a href="#">Services (1)</a></li>
-                                        <li><a href="#">Thanking People</a></li>
-                                    </ul>
-                                </div>
+                                @foreach($categories->chunk(ceil($categories->count() / 3)) as $chunk)
+                                    <div class="col-md-4">
+                                        <ul>
+                                            @foreach($chunk as $cat)
+                                                <li>
+                                                    <a href="{{ route('notice-board', $cat->slug) }}" 
+                                                       style="{{ (isset($activeCategory) && $activeCategory->id == $cat->id) ? 'font-weight:bold; color:#729b0f;' : '' }}">
+                                                        {{ $cat->category }} ({{ str_pad($cat->notices_count, 2, '0', STR_PAD_LEFT) }})
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endforeach
                             </div>
-                        </div> -->
-                    </div>
-
-                    <!-- Notice Box 1 -->
-                    <div class="notice_boxes">
-                        <!-- <span class="sale_strip">Window</span> -->
-                        <h3>Window Cleaning Sample Listing</h3>
-                        <p class="notice_des">Add your window cleaning here. FREE Map placement, photo with internal
-                            messaging. Window cleaning listings are removed on Sunday night</p>
-                        <p class="location_txt">40 Bowen Street, Wellington</p>
-                        <div class="notice_thum">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                        </div>
-                        <div class="notice_bottompan">
-                            <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
-                            <p>Catchakiwi <span class="not_date">23/12/17</span></p>
-                            <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
                         </div>
                     </div>
 
-                    <!-- Notice Box 2 -->
-                    <div class="notice_boxes">
-                        <!-- <span class="sale_strip">Door</span> -->
-                        <h3>Door Cleaning Sample Listing</h3>
-                        <p class="notice_des">Add your door cleaning here. FREE Map placement, photo with internal
-                            messaging. Door cleaning listings are removed on Sunday night</p>
-                        <p class="location_txt">Domett Street, New Plymouth Airport, Waitara, @ St Johns</p>
-                        <div class="notice_thum">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
+                    @forelse($notices as $notice)
+                        <div class="notice_boxes">
+                            <h3>{{ $notice->heading }}</h3>
+                            <p class="notice_des">{{ $notice->content }}</p>
+                            @if($notice->town_suburb)
+                                <p class="location_txt">{{ $notice->town_suburb }}</p>
+                            @endif
+                            @if(isset($noticeImages[$notice->id]))
+                                <div class="notice_thum">
+                                    @foreach($noticeImages[$notice->id] as $img)
+                                        <img src="{{ asset($img->img_path) }}" alt="">
+                                    @endforeach
+                                </div>
+                            @endif
+                            <div class="notice_bottompan">
+                                <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
+                                <p>{{ $notice->user_name ?? 'Catchakiwi' }} <span class="not_date">{{ \Carbon\Carbon::parse($notice->created_at)->format('d/m/y') }}</span></p>
+                                <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
+                            </div>
                         </div>
-                        <div class="notice_bottompan">
-                            <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
-                            <p>Catchakiwi <span class="not_date">23/12/17</span></p>
-                            <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
-                        </div>
-                    </div>
-
-                    <!-- Notice Box 3 -->
-                    <div class="notice_boxes">
-                        <!-- <span class="sale_strip">Door</span> -->
-                        <h3>Glass Cleaning Sample Listing</h3>
-                        <p class="notice_des">Add your glass cleaning here. FREE Map placement, photo with internal
-                            messaging. Glass cleaning listings are removed on Sunday night</p>
-                        <p class="location_txt">Domett Street, New Plymouth Airport, Waitara, @ St Johns</p>
-                        <div class="notice_thum">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                        </div>
-                        <div class="notice_bottompan">
-                            <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
-                            <p>Catchakiwi <span class="not_date">23/12/17</span></p>
-                            <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
-                        </div>
-                    </div>
-                    <!-- Notice Box 4 -->
-                    <div class="notice_boxes">
-                        <!-- <span class="sale_strip">Door</span> -->
-                        <h3>Frame Cleaning Sample Listing</h3>
-                        <p class="notice_des">Add your frame cleaning here. FREE Map placement, photo with internal
-                            messaging. Frame cleaning listings are removed on Sunday night</p>
-                        <p class="location_txt">Domett Street, New Plymouth Airport, Waitara, @ St Johns</p>
-                        <div class="notice_thum">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                            <img src="{{ asset('assets/images/notice_thum.png')}}" alt="">
-                        </div>
-                        <div class="notice_bottompan">
-                            <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
-                            <p>Catchakiwi <span class="not_date">23/12/17</span></p>
-                            <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
-                        </div>
-                    </div>
+                    @empty
+                        <div class="alert alert-info">No notices found.</div>
+                    @endforelse
 
                     <!-- <ul class="pagination">
                         <li><a href="#"><i class="fa fa-angle-left"></i></a></li>

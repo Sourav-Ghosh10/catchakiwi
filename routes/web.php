@@ -122,6 +122,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('articles/{id}/edit', [\App\Http\Controllers\Admin\ArticleController::class, 'edit'])->name('articles.edit');
     Route::put('articles/{id}', [\App\Http\Controllers\Admin\ArticleController::class, 'update'])->name('articles.update');
     Route::get('articles/status/{id}/{status}', [\App\Http\Controllers\Admin\ArticleController::class, 'changeStatus'])->name('articles.status');
+
+    // Notice Management
+    Route::resource('notice-categories', \App\Http\Controllers\Admin\NoticeCategoryController::class)->names('notice-categories');
 });
 /*
 ---------------------------------------------------------------------
@@ -130,7 +133,7 @@ FRONTEND CONTROLLER BEGIN
 */
 Route::post('/login', [CustomAuthenticatedSessionController::class, 'store']);
 
-Route::get('/notice-board', [NoticeController::class, 'noticeBoard'])->name('notice-board');
+Route::get('/notice-board/{category?}', [NoticeController::class, 'noticeBoard'])->name('notice-board');
 Route::get('/notices', [NoticeController::class, 'noticeBoardV2'])->name('notices');
 
 Route::get('/get-a-quote', [BusinessController::class, 'getaQuote'])->name('get-a-quote');

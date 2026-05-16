@@ -6,7 +6,7 @@
 .left_notice_header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 30px;
     gap: 20px;
 }
@@ -38,12 +38,12 @@
 }
 
 .notice_refineresults h3 {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 16px;
+    font-weight: 700;
     color: #1a202c;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f7f9fc;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f3f5;
 }
 
 .notice_refineresults ul {
@@ -54,20 +54,24 @@
 
 .notice_refineresults a {
     display: flex;
-    align-items: center;
-    padding: 8px 0;
+    align-items: flex-start;
+    padding: 5px 0;
     color: #4a5568;
-    font-size: 14px;
+    font-size: 13px;
     text-decoration: none !important;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    line-height: 1.4;
 }
 
 .notice_refineresults a::before {
     content: '\f105';
     font-family: FontAwesome;
-    margin-right: 10px;
+    margin-right: 8px;
     color: #f7941d;
     font-weight: 900;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .notice_refineresults a:hover {
