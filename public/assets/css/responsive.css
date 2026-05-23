@@ -279,7 +279,7 @@ display: inline-block;
 font-size: 12px;
 padding-left: 27px;
 }
-.for_cellphonepara{display:block; background:#fff; text-align: center; padding:15px 15px 34px 15px;
+.for_cellphonepara{display:block; background:#fff; text-align: center; padding:15px 15px 0px 15px;
 border-bottom: 1px solid #ccc;
 background: #f4f4f4;
 color: #2B2B2B;}	
@@ -291,6 +291,7 @@ color: #2B2B2B;}
   max-height: 80%;*/
   width:auto;
   }
+  .footer_links{padding-top: 14px;}
  .notification_homebased{margin-left: 0;}
  .right_advertisesec img:first-child {
   margin-left: -36px;

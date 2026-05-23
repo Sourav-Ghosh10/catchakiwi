@@ -852,6 +852,7 @@ textarea {
   width: 200px;
   margin: 0 auto;
   margin-top: -20px;
+  display: none;
 }
 
 .fot_copyr p.social a {
