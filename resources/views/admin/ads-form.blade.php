@@ -374,12 +374,12 @@
         // Initialize Cropper when modal opens
         $modalElement.addEventListener('shown.bs.modal', function () {
             var uploadtype = document.getElementById("uploadtype").value;
-            var aspect_ratio = 1 / 1;
+            var aspect_ratio = 3 / 2;
 
             if (uploadtype && uploadtype.toLowerCase() == "mid") {
                 aspect_ratio = 1074 / 400;
             } else if (uploadtype && uploadtype.toLowerCase() == "side") {
-                aspect_ratio = 1 / 1;
+                aspect_ratio = 3 / 2;
             }
 
             cropper = new Cropper(image, {
@@ -416,11 +416,11 @@
             };
 
             if (uploadtype && uploadtype.toLowerCase() == "side") {
-                canvas = cropper.getCroppedCanvas({ width: 400, height: 400, ...options });
+                canvas = cropper.getCroppedCanvas({ width: 600, height: 400, ...options });
             } else if (uploadtype && uploadtype.toLowerCase() == "mid") {
                 canvas = cropper.getCroppedCanvas({ width: 1074, height: 400, ...options });
             } else {
-                canvas = cropper.getCroppedCanvas({ width: 400, height: 400, ...options });
+                canvas = cropper.getCroppedCanvas({ width: 600, height: 400, ...options });
             }
 
             if (canvas) {

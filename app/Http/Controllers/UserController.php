@@ -604,7 +604,7 @@ class UserController extends Controller
     }
     public function Notice()
     {
-        $category = NoticeCategory::where('status', '1')->get();
+        $category = NoticeCategory::where('is_active', 1)->get();
         $countryCode = session('CountryCode');
 
         $ads = Ads::where('country', $countryCode)->get();
@@ -637,6 +637,7 @@ class UserController extends Controller
             'start_date' => 'nullable|string',
             'budget' => 'nullable|string',
             'message_text' => 'nullable|string',
+            'item_type' => 'nullable|string',
         ]);
 
         $category_id = $request->input('category_id');
@@ -655,7 +656,7 @@ class UserController extends Controller
         $notice->heading = $notice_title;
         $notice->content = $notice_body;
         $notice->town_suburb = $request->input('town_suburb');
-        $notice->looking_for = $request->input('looking_for');
+        $notice->looking_for = $request->input('looking_for') ?: $request->input('item_type');
         $notice->job_location = $request->input('job_location');
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');

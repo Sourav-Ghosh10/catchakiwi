@@ -59,7 +59,7 @@
                 });
             }else if(uploadtype.startsWith("noticeimg")){
                 cropper = new Cropper(image, {
-                    aspectRatio: 1/1,
+                    aspectRatio: 600/400,
                     viewMode: 1,
                 });
             }else if(uploadtype == "businessimage" || uploadtype == "articleimage"){
@@ -82,7 +82,7 @@
                 }else if(uploadtype=="coverupload"){
                     canvas = cropper.getCroppedCanvas({ width: 1074, height: 400 });
                 }else if(uploadtype.startsWith("noticeimg")){
-                    canvas = cropper.getCroppedCanvas({ width: 640, height: 480 });
+                    canvas = cropper.getCroppedCanvas({ width: 600, height: 400 });
                 }else if(uploadtype == "businessimage" || uploadtype == "articleimage"){
                     canvas = cropper.getCroppedCanvas({ width: 800, height: 600 });
                 }

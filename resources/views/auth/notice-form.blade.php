@@ -32,6 +32,14 @@
                                 </div>
 
                                 <div id="rest_of_fields" style="display:none;">
+                                    <div id="item_options_fields" class="frm_dv" style="display:none;">
+                                        <label>Item Options:</label>
+                                        <div class="radiogbutt"><input name="item_type" type="radio" value="Item for sale" checked>
+                                            Item for sale</div>
+                                        <div class="radiogbutt"><input name="item_type" type="radio" value="Item Wanted">
+                                            Item Wanted</div>
+                                    </div>
+
                                     <div class="frm_dv">
                                         <label>Notice Options:</label>
                                         <div class="radiogbutt"><input name="noticetype" type="radio" value="standard">
@@ -114,15 +122,6 @@
                                             <label>Town/Suburb:</label>
                                             <input name="town_suburb" type="text" placeholder="Town/Suburb">
                                         </div>
-                                        <div class="frm_dv">
-                                            <label>User name:</label>
-                                            <input type="text" value="{{ Auth::user()->name }}" disabled>
-                                        </div>
-                                        <div class="frm_dv">
-                                            <label>Date listed:</label>
-                                            <input type="text" value="{{ date('d/m/Y') }}" disabled>
-                                        </div>
-
                                     </div>
 
                                     <div class="frm_dv textareadv">
@@ -389,15 +388,24 @@
                                 var additionalImagesSection = document.getElementById('additional_images_section');
                                 var bodyLabel = document.getElementById('body_label');
                                 var bodyTextarea = document.getElementsByName('notice_body')[0];
+                                var itemOptionsFields = document.getElementById('item_options_fields');
 
                                 if (categoryId) {
                                     restOfFields.style.display = 'block';
+                                    itemOptionsFields.style.display = 'none'; // hidden by default
 
                                     // ID 1 is $5 Service Deal
                                     // ID 2 is Get a Quote
                                     if (categoryId == '1') {
                                         serviceDealFields.style.display = 'block';
                                         getAQuoteFields.style.display = 'none';
+                                        additionalImagesSection.style.display = 'none';
+                                        bodyLabel.innerText = 'Description:';
+                                        bodyTextarea.placeholder = 'Description';
+                                    } else if (categoryId == '9') {
+                                        serviceDealFields.style.display = 'block';
+                                        getAQuoteFields.style.display = 'none';
+                                        itemOptionsFields.style.display = 'block';
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Description:';
                                         bodyTextarea.placeholder = 'Description';
