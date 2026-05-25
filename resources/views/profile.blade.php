@@ -317,7 +317,37 @@
                                                 <th align="left"
                                                    valign="top">&nbsp;</th>
                                              </tr>
-
+                                              @if(!empty($notice))
+                                                  @foreach($notice as $ntc)
+                                                      <tr>
+                                                          <td align="left" valign="top" class="left">{{ $ntc->heading }}</td>
+                                                          <td align="left" valign="top">{{ $ntc->noticecategory->category ?? 'N/A' }}</td>
+                                                          <td align="center" valign="top" class="stuaactive">
+                                                              @if($ntc->status == '1' || $ntc->status == 'active')
+                                                                  <img src="{{ asset('assets/images/thikmark_icon.png') }}" alt="Active">
+                                                              @else
+                                                                  <span style="color:#aaa;">Inactive</span>
+                                                              @endif
+                                                          </td>
+                                                          <td align="left" valign="top"><img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $ntc->views ?? 0 }}</td>
+                                                          <td align="left" valign="top">{{ $ntc->expire_at ? \Carbon\Carbon::parse($ntc->expire_at)->format('d M Y') : 'N/A' }}</td>
+                                                          <td align="left" valign="top">&nbsp;</td>
+                                                          <td align="left" valign="top">
+                                                              <form action="{{ route('notice.delete', $ntc->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this notice?');">
+                                                                  @csrf
+                                                                  @method('DELETE')
+                                                                  <button type="submit" class="delete" style="background:none; border:none; padding:0; cursor:pointer;">
+                                                                      <img src="{{ asset('assets/images/delete_icon.png') }}" alt="Delete">
+                                                                  </button>
+                                                              </form>
+                                                          </td>
+                                                      </tr>
+                                                  @endforeach
+                                              @else
+                                                  <tr>
+                                                      <td colspan="7" align="center" style="padding:15px; color:#999;">No notices posted yet.</td>
+                                                  </tr>
+                                              @endif
                                           </table>
                                        </div>
                                     </div>

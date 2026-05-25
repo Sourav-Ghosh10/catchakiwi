@@ -630,7 +630,7 @@ class UserController extends Controller
             'category_id' => 'required',
             'noticetype' => 'required',
             'notice_title' => 'required|string|max:35',
-            'notice_body' => 'required|string|max:155',
+            'notice_body' => 'required|string|max:300',
             'town_suburb' => 'nullable|string',
             'looking_for' => 'nullable|string',
             'job_location' => 'nullable|string',
@@ -1047,5 +1047,21 @@ class UserController extends Controller
             ]);
 
         return response()->json(['success' => true]);
+    }
+    public function NoticeDelete(Request $request, $id)
+    {
+        $user_id = Auth::user()->id;
+        $notice = Notice::where('id', $id)->where('user_id', $user_id)->first();
+
+        if (!$notice) {
+            return redirect()->route('profile')->with('error', 'Notice not found or you do not have permission to delete it.');
+        }
+
+        // Delete associated images
+        NoticeImg::where('notice_id', $id)->delete();
+
+        $notice->delete();
+
+        return redirect()->route('profile')->with('success', 'Notice deleted successfully.');
     }
 }

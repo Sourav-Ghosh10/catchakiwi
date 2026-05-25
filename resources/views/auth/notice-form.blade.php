@@ -118,14 +118,17 @@
 
                                     <!-- $5 Service Deal Fields -->
                                     <div id="service_deal_fields" style="display:none;">
-                                        <div class="frm_dv">
+                                        <div class="frm_dv service_location_dv">
                                             <label>Town/Suburb:</label>
-                                            <input name="town_suburb" type="text" placeholder="Town/Suburb">
+                                            <div class="location_input_wrapper">
+                                                <select name="town_suburb" id="service_deal_towns" placeholder="Select Town/Suburb"></select>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="frm_dv textareadv">
                                         <label id="body_label">Add your content: </label><textarea name="notice_body"
+                                            id="notice_body"
                                             cols="" rows=""
                                             placeholder="Add notice body text (155 char max)."></textarea>
                                     </div>
@@ -223,17 +226,20 @@
                                             min-height: 120px;
                                         }
 
-                                        /* Quote Location Field Enhancements */
-                                        .quote_location_dv .location_input_wrapper {
+                                        /* Quote & Service Deal Location Field Enhancements */
+                                        .quote_location_dv .location_input_wrapper,
+                                        .service_location_dv .location_input_wrapper {
                                             flex: 1;
                                         }
 
-                                        .quote_location_dv .selectize-control {
+                                        .quote_location_dv .selectize-control,
+                                        .service_location_dv .selectize-control {
                                             width: 100%;
                                             max-width: 455px;
                                         }
 
-                                        .quote_location_dv .selectize-input {
+                                        .quote_location_dv .selectize-input,
+                                        .service_location_dv .selectize-input {
                                             padding: 0 12px !important;
                                             border: 1px solid #9bcd22 !important;
                                             border-radius: 0 !important;
@@ -264,17 +270,21 @@
                                         .left_profileform .frm_dv select:hover,
                                         .left_profileform .frm_dv input[type="text"]:hover,
                                         .quote_location_dv .selectize-input:hover,
-                                        .quote_location_dv .selectize-input.focus {
+                                        .quote_location_dv .selectize-input.focus,
+                                        .service_location_dv .selectize-input:hover,
+                                        .service_location_dv .selectize-input.focus {
                                             border-color: #729b0f !important;
                                             outline: none !important;
                                         }
 
-                                        .quote_location_dv .selectize-input input {
+                                        .quote_location_dv .selectize-input input,
+                                        .service_location_dv .selectize-input input {
                                             font-family: 'Poppins', sans-serif !important;
                                             font-size: 14px !important;
                                         }
 
-                                        .quote_location_dv .selectize-dropdown {
+                                        .quote_location_dv .selectize-dropdown,
+                                        .service_location_dv .selectize-dropdown {
                                             border-radius: 0 !important;
                                             box-shadow: 0 6px 12px rgba(0,0,0,.1) !important;
                                             border: 1px solid #e1e1e1 !important;
@@ -356,8 +366,7 @@
                                 @endforeach
                             };
 
-                            function updateQuoteTowns() {
-                                const selectizeInstance = $('#quote_towns')[0]?.selectize;
+                            function loadTowns(selectizeInstance) {
                                 if (!selectizeInstance) return;
 
                                 const countryShortName = $('.countryChange').val();
@@ -378,6 +387,14 @@
                                         selectizeInstance.refreshOptions(false);
                                     }
                                 });
+                            }
+
+                            function updateQuoteTowns() {
+                                loadTowns($('#quote_towns')[0]?.selectize);
+                            }
+
+                            function updateServiceDealTowns() {
+                                loadTowns($('#service_deal_towns')[0]?.selectize);
                             }
 
                             document.getElementById('category_id').addEventListener('change', function () {
@@ -401,21 +418,51 @@
                                         getAQuoteFields.style.display = 'none';
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Description:';
-                                        bodyTextarea.placeholder = 'Description';
+                                        bodyTextarea.placeholder = 'Description (300 char max).';
+                                        bodyTextarea.maxLength = 300;
+
+                                        // Initialize Selectize for service deal town field
+                                        if (!$('#service_deal_towns').hasClass('selectized')) {
+                                            $('#service_deal_towns').selectize({
+                                                create: false,
+                                                placeholder: 'Select Town/Suburb',
+                                                render: {
+                                                    no_results: function(data, escape) {
+                                                        return '<div class="no-results">No results found</div>';
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        updateServiceDealTowns();
                                     } else if (categoryId == '9') {
                                         serviceDealFields.style.display = 'block';
                                         getAQuoteFields.style.display = 'none';
                                         itemOptionsFields.style.display = 'block';
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Description:';
-                                        bodyTextarea.placeholder = 'Description';
+                                        bodyTextarea.placeholder = 'Description (300 char max).';
+                                        bodyTextarea.maxLength = 300;
+
+                                        // Initialize Selectize for service deal town field
+                                        if (!$('#service_deal_towns').hasClass('selectized')) {
+                                            $('#service_deal_towns').selectize({
+                                                create: false,
+                                                placeholder: 'Select Town/Suburb',
+                                                render: {
+                                                    no_results: function(data, escape) {
+                                                        return '<div class="no-results">No results found</div>';
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        updateServiceDealTowns();
                                     } else if (categoryId == '2') {
                                         serviceDealFields.style.display = 'none';
                                         getAQuoteFields.style.display = 'block';
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Provide a description of your job:';
                                         bodyTextarea.placeholder = 'Provide a description of your job';
-                                        
+
                                         // Initialize Selectize for quote form if not already initialized
                                         if (!$('#quote_towns').hasClass('selectized')) {
                                             $('#quote_towns').selectize({
@@ -435,6 +482,7 @@
                                         additionalImagesSection.style.display = 'block';
                                         bodyLabel.innerText = 'Add your content:';
                                         bodyTextarea.placeholder = 'Add notice body text (155 char max).';
+                                        bodyTextarea.maxLength = 155;
                                     }
                                 } else {
                                     restOfFields.style.display = 'none';
@@ -445,11 +493,15 @@
                                 // Listen for changes in the header country dropdown
                                 $('.countryChange').on('change', function() {
                                     updateQuoteTowns();
+                                    updateServiceDealTowns();
                                 });
 
                                 // Initial load if category is already selected
-                                if ($('#category_id').val() == '2') {
-                                    setTimeout(updateQuoteTowns, 500); // Small delay to ensure selectize is ready
+                                var initialCat = $('#category_id').val();
+                                if (initialCat == '2') {
+                                    setTimeout(updateQuoteTowns, 500);
+                                } else if (initialCat == '1' || initialCat == '9') {
+                                    setTimeout(updateServiceDealTowns, 500);
                                 }
                             });
 

@@ -138,6 +138,7 @@
                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                         <small class="text-muted"><i class="fa fa-map-marker mr-1"></i> {{ $notice->town_suburb ?? 'N/A' }}</small>
                                         <small class="text-muted"><i class="fa fa-clock-o mr-1"></i> {{ \Carbon\Carbon::parse($notice->created_at)->diffForHumans() }}</small>
+                                        <small class="text-muted"><i class="fa fa-eye mr-1"></i> {{ $notice->views ?? 0 }} views</small>
                                     </div>
                                 </div>
                             </div>
@@ -150,5 +151,14 @@
         </div>
     </div>
 </div>
+
+<script>
+// Increment view count for each notice visible on this page
+document.addEventListener('DOMContentLoaded', function () {
+    @foreach($latestNotices as $notice)
+    fetch('{{ url("/notice/view") }}/{{ $notice->id }}');
+    @endforeach
+});
+</script>
 
 @include('includes/footer')

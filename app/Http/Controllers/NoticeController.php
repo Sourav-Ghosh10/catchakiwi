@@ -118,4 +118,13 @@ class NoticeController extends Controller
 
         return view('frontend/noticeboard_v2', compact('sideData', 'categories', 'latestNotices', 'search', 'categoryId', 'noticeImages', 'spotlightNotice'));
     }
+
+    public function incrementView($id)
+    {
+        \Illuminate\Support\Facades\DB::table('notice')
+            ->where('id', $id)
+            ->update(['views' => \Illuminate\Support\Facades\DB::raw('COALESCE(views, 0) + 1')]);
+
+        return response()->json(['success' => true]);
+    }
 }

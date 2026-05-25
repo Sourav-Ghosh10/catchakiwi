@@ -11,7 +11,7 @@ class Notice extends Model
     public $timestamps = false;
     public function noticecategory()
     {
-        return $this->belongsTo(NoticeCategory::class);
+        return $this->belongsTo(NoticeCategory::class, 'category_id');
     }
     
 }

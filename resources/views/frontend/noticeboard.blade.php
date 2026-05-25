@@ -66,6 +66,9 @@
                             <div class="notice_bottompan">
                                 <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
                                 <p>{{ $notice->user_name ?? 'Catchakiwi' }} <span class="not_date">{{ \Carbon\Carbon::parse($notice->created_at)->format('d/m/y') }}</span></p>
+                                <span class="notice_views" style="font-size:12px;color:#888;margin-left:auto;display:flex;align-items:center;gap:4px;">
+                                    <i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}
+                                </span>
                                 <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
                             </div>
                         </div>
@@ -107,4 +110,13 @@
         </div>
     </div>
 </div>
+<script>
+// Increment view count for each notice visible on this page
+document.addEventListener('DOMContentLoaded', function () {
+    @foreach($notices as $notice)
+    fetch('{{ url("/notice/view") }}/{{ $notice->id }}');
+    @endforeach
+});
+</script>
+
 @include('includes/footer')

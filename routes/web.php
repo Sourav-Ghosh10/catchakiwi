@@ -135,6 +135,7 @@ Route::post('/login', [CustomAuthenticatedSessionController::class, 'store']);
 
 Route::get('/notice-board/{category?}', [NoticeController::class, 'noticeBoard'])->name('notice-board');
 Route::get('/notices', [NoticeController::class, 'noticeBoardV2'])->name('notices');
+Route::get('/notice/view/{id}', [NoticeController::class, 'incrementView'])->name('notice.view');
 
 Route::get('/get-a-quote', [BusinessController::class, 'getaQuote'])->name('get-a-quote');
 Route::get('/{country}/business', [BusinessController::class, 'list']);
@@ -155,6 +156,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/notice-post', [UserController::class, 'Notice'])->name('notice-post');
     Route::post('/notice-submit', [UserController::class, 'NoticePost'])->name('notice-submit');
+    Route::delete('/notice/delete/{id}', [UserController::class, 'NoticeDelete'])->name('notice.delete');
 
     Route::post('/store/profilebanner', [UserController::class, 'StoreProfileBanner'])->name('store.profilebanner');
     Route::post('/store/profilepic', [UserController::class, 'StoreProfilePic'])->name('store.profilepic');
