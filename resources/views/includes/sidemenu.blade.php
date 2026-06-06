@@ -99,7 +99,7 @@
                         </ul>
                      </li>
                      <li class="init-arrow-down subm">
-                        <a href="javascript:void(0)"> <img src="{{ asset('assets/images/noticeboard.png') }}" alt=""><span class="gw-menu-text">Notice Board</span> <b class="gw-arrow icon-arrow-up8"></b> </a>
+                        <a href="{{ route('notices') }}"> <img src="{{ asset('assets/images/noticeboard.png') }}" alt=""><span class="gw-menu-text">Notice Board</span> <b class="gw-arrow icon-arrow-up8"></b> </a>
                         <ul class="gw-submenu">
                            <li><a href="{{ route('notices') }}">Find Notice Board</a></li>
                            <li> <a href="javascript:void(0)">Add a notice</a> </li>
@@ -128,7 +128,7 @@
          @else
             <ul class="bflmenu">
                 <li><a href="{{ URL::to(strtolower(session('CountryCode')).'/business') }}">Businesses</a></li>
-                <li><a href="{{ route('notice-board') }}">Notice Board</a></li>
+                <li><a href="{{ route('notices') }}">Notice Board</a></li>
                 <li><a href="{{ route('article.list') }}">Articles</a></li>
                 <li><a href="#">Forum</a></li>
             </ul>
