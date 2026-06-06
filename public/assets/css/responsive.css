@@ -292,6 +292,11 @@ background: rgba(255, 245, 245, 0.5);}
 }
 	}
 @media only screen and (max-width: 767px) {
+  .nb-v2-spotlight-inner{
+  flex-wrap: wrap;
+  gap: 20px;}
+  .nb-v2-container{padding: 0 15px;}
+  .nb-v2-search-input{font-size: 14px;}
   .home_midbody{padding: 0 15px;}
   .modal-content {
  /* max-width: 80%;

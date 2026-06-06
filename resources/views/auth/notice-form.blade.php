@@ -202,6 +202,7 @@
                                             display: flex;
                                             align-items: flex-start;
                                             margin-bottom: 15px;
+                                            gap: 12px;
                                         }
 
                                         .left_profileform .frm_dv label {
@@ -289,6 +290,104 @@
                                             box-shadow: 0 6px 12px rgba(0,0,0,.1) !important;
                                             border: 1px solid #e1e1e1 !important;
                                             z-index: 1000 !important;
+                                        }
+
+                                        @media only screen and (max-width: 767px) {
+                                            .left_profileform.notice_posefrm .frm_dv {
+                                                display: flex !important;
+                                                flex-direction: column;
+                                                gap: 7px;
+                                                margin-bottom: 18px;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv label {
+                                                width: 100% !important;
+                                                min-width: 0 !important;
+                                                padding-top: 0;
+                                                margin-bottom: 0;
+                                                line-height: 1.35;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv input[type="text"],
+                                            .left_profileform.notice_posefrm .frm_dv select,
+                                            .left_profileform.notice_posefrm .frm_dv textarea,
+                                            .left_profileform.notice_posefrm .frm_dv .location_input_wrapper,
+                                            .left_profileform.notice_posefrm .frm_dv .quote_location_dv,
+                                            .left_profileform.notice_posefrm .frm_dv .service_location_dv,
+                                            .left_profileform.notice_posefrm .frm_dv .chk_addtnlbox {
+                                                width: 100% !important;
+                                                max-width: 100% !important;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv input[type="text"],
+                                            .left_profileform.notice_posefrm .frm_dv select {
+                                                height: 48px !important;
+                                                padding: 0 16px !important;
+                                                font-size: 16px !important;
+                                                line-height: 48px !important;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv textarea {
+                                                min-height: 150px;
+                                                padding: 14px 16px !important;
+                                                font-size: 16px !important;
+                                                line-height: 1.5;
+                                            }
+
+                                            .quote_location_dv .selectize-control,
+                                            .service_location_dv .selectize-control {
+                                                width: 100% !important;
+                                                max-width: 100% !important;
+                                            }
+
+                                            .quote_location_dv .selectize-input,
+                                            .service_location_dv .selectize-input {
+                                                min-height: 48px !important;
+                                                padding: 0 16px !important;
+                                                font-size: 16px !important;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv .radiogbutt {
+                                                width: 100%;
+                                                min-height: 46px;
+                                                margin-bottom: 8px;
+                                                padding: 11px 14px;
+                                                border: 1px solid #dedede;
+                                                border-radius: 6px;
+                                                background: #fff;
+                                                line-height: 1.4;
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 8px;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv .radiogbutt input[type="radio"] {
+                                                flex: 0 0 auto;
+                                                margin: 0;
+                                            }
+
+                                            .image-upload-grid {
+                                                grid-template-columns: repeat(3, minmax(0, 1fr));
+                                                gap: 8px;
+                                                width: 100%;
+                                            }
+
+                                            .image-upload-box {
+                                                width: 100%;
+                                                height: auto;
+                                                min-height: 82px;
+                                            }
+
+                                            .left_profileform.notice_posefrm input[type="submit"] {
+                                                width: 100%;
+                                                max-width: 260px;
+                                            }
+                                        }
+
+                                        @media only screen and (max-width: 420px) {
+                                            .image-upload-grid {
+                                                grid-template-columns: repeat(2, minmax(0, 1fr));
+                                            }
                                         }
                                     </style>
 
