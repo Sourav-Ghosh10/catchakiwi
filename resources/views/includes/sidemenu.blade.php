@@ -101,7 +101,7 @@
                      <li class="init-arrow-down subm">
                         <a href="javascript:void(0)"> <img src="{{ asset('assets/images/noticeboard.png') }}" alt=""><span class="gw-menu-text">Notice Board</span> <b class="gw-arrow icon-arrow-up8"></b> </a>
                         <ul class="gw-submenu">
-                           <li><a href="{{ route('notice-board') }}">Find Notice Board</a></li>
+                           <li><a href="{{ route('notices') }}">Find Notice Board</a></li>
                            <li> <a href="javascript:void(0)">Add a notice</a> </li>
                            <li> <a href="javascript:void(0)">View latest notices</a> </li>
                            <li> <a href="javascript:void(0)">Notice categories</a> </li>
