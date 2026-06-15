@@ -19,7 +19,7 @@ use App\Models\NoticeImg;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Mail;
+use App\Services\ZohoMailService;
 use App\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -703,23 +703,22 @@ class UserController extends Controller
         ]);
 
         $suburb = City::with('state.country')->find($request->post('suburb_id'));
-        Mail::send(
-            'email',
-            [
-                'name' => $request->post('name'),
-                'email' => $request->post('email'),
-                'phone_no' => $request->post('phone_no') ?? '',
-                'country' => ($request->post('country') == "others") ? $request->post('otherscoun') : $suburb->name . "," . $suburb->state->name . "," . $suburb->state->country->name,
-                'msg' => $request->post('message'),
-                'ip' => $request->ip()
-            ],
-            function ($message) {
-                $message->from('no-reply@catchakiwi.com');
-                $message->to('catchakiwi@hotmail.co.nz', 'Catchakiwi')
-                    ->subject('Your Website Contact Form');
-                $message->bcc(['souravghoshmgu1@gmail.com']);
-                $message->priority(1);
-            }
+        $htmlBody = ZohoMailService::renderView('email', [
+            'name'     => $request->post('name'),
+            'email'    => $request->post('email'),
+            'phone_no' => $request->post('phone_no') ?? '',
+            'country'  => ($request->post('country') == 'others')
+                            ? $request->post('otherscoun')
+                            : $suburb->name . ',' . $suburb->state->name . ',' . $suburb->state->country->name,
+            'msg'      => $request->post('message'),
+            'ip'       => $request->ip(),
+        ]);
+
+        (new ZohoMailService())->send(
+            'catchakiwi@hotmail.co.nz',
+            'Your Website Contact Form',
+            $htmlBody,
+            ['souravghoshmgu1@gmail.com']
         );
 
 
@@ -827,91 +826,20 @@ class UserController extends Controller
             "Requested At : " . now()->format('d M Y, h:i A') . "\n\n<br>" .
             "Please review and approve/reject in the admin panel.";
 
-        $toEmail = 'souravghoshmgu1@gmail.com'; // Change to your actual admin email
+        $toEmail = 'souravghoshmgu1@gmail.com';
         $subject = "Email Change Request - User: {$user->name} (ID: {$user->id})";
 
-        // Step 1: Get Access Token
-        $client_id = env('ZOHO_CLIENT_ID');
-        $client_secret = env('ZOHO_CLIENT_SECRET');
-        $refresh_token = env('ZOHO_REFRESH_TOKEN');
-        $token_url = "https://accounts.zoho.com/oauth/v2/token";
+        $sent = (new ZohoMailService())->send($toEmail, $subject, $htmlContent);
 
-        $tokenData = [
-            "refresh_token" => $refresh_token,
-            "client_id" => $client_id,
-            "client_secret" => $client_secret,
-            "grant_type" => "refresh_token"
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $token_url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($tokenData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $response = curl_exec($ch);
-
-        if (curl_error($ch)) {
-            curl_close($ch);
-            \Log::error('Zoho Token cURL Error: ' . curl_error($ch));
-            return response()->json(['success' => false, 'message' => 'Failed to connect to email service'], 500);
-        }
-        curl_close($ch);
-
-        $tokenResponse = json_decode($response, true);
-
-        if (!isset($tokenResponse['access_token'])) {
-            \Log::error('Zoho Access Token Failed', $tokenResponse);
-            return response()->json(['success' => false, 'message' => 'Email service authentication failed'], 500);
-        }
-
-        $access_token = $tokenResponse['access_token'];
-
-        // === Step 2: Send Email via Zoho Mail API ===
-        $account_id = env('ZOHO_ACCOUNT_ID');
-        $api_url = "https://mail.zoho.com/api/accounts/{$account_id}/messages";
-
-        $mailData = [
-            "fromAddress" => "support@catchakiwi.co.nz",
-            "toAddress" => $toEmail,
-            "subject" => $subject,
-            "content" => $htmlContent
-            // Remove "fromName" — this was causing EXTRA_KEY_FOUND_IN_JSON
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $api_url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Zoho-oauthtoken {$access_token}",
-            "Content-Type: application/json"
-        ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($mailData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $sendResponse = curl_exec($ch);
-
-        if (curl_error($ch)) {
-            curl_close($ch);
-            \Log::error('Zoho Send Mail cURL Error: ' . curl_error($ch));
-            return response()->json(['success' => false, 'message' => 'Failed to send email'], 500);
-        }
-        curl_close($ch);
-
-        $result = json_decode($sendResponse, true);
-
-        // Success check (Zoho returns status.code = 200 on success)
-        if (isset($result['status']['code']) && $result['status']['code'] == 200) {
+        if ($sent) {
             return response()->json(['success' => true, 'message' => 'Email change request sent successfully']);
-        } else {
-            \Log::error('Zoho Mail API Error', $result ?? ['response' => $sendResponse]);
-            return response()->json(['success' => false, 'message' => 'Failed to send notification email'], 500);
         }
+
+        return response()->json(['success' => false, 'message' => 'Failed to send notification email'], 500);
     }
+
+
+
     public function requestPasswordChange(Request $request)
     {
         $request->validate([
@@ -930,7 +858,11 @@ class UserController extends Controller
             "Valid for 10 minutes.\n\n" .
             "Catch A Kiwi Team";
 
-        $this->sendZohoEmail(Auth::user()->email, "Password Change OTP", $content);
+        (new ZohoMailService())->send(
+            Auth::user()->email,
+            'Password Change OTP',
+            $content
+        );
 
         return response()->json(['success' => true]);
     }
@@ -953,89 +885,7 @@ class UserController extends Controller
 
         return response()->json(['success' => true]);
     }
-    private function sendZohoEmail($toEmail, $subject, $content)
-    {
-        // === Step 1: Get Access Token ===
-        $client_id = env('ZOHO_CLIENT_ID');
-        $client_secret = env('ZOHO_CLIENT_SECRET');
-        $refresh_token = env('ZOHO_REFRESH_TOKEN');
-        $token_url = "https://accounts.zoho.com/oauth/v2/token";
 
-        $tokenData = [
-            "refresh_token" => $refresh_token,
-            "client_id" => $client_id,
-            "client_secret" => $client_secret,
-            "grant_type" => "refresh_token"
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $token_url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($tokenData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $response = curl_exec($ch);
-
-        if (curl_error($ch)) {
-            \Log::error('Zoho Token cURL Error: ' . curl_error($ch));
-            curl_close($ch);
-            return false;
-        }
-        curl_close($ch);
-
-        $tokenResponse = json_decode($response, true);
-
-        if (!isset($tokenResponse['access_token'])) {
-            \Log::error('Zoho Access Token Failed', $tokenResponse);
-            return false;
-        }
-
-        $access_token = $tokenResponse['access_token'];
-
-        // === Step 2: Send Email via Zoho Mail API ===
-        $account_id = env('ZOHO_ACCOUNT_ID');
-        $api_url = "https://mail.zoho.com/api/accounts/{$account_id}/messages";
-
-        $mailData = [
-            "fromAddress" => "support@catchakiwi.co.nz",
-            "toAddress" => $toEmail,
-            "subject" => $subject,
-            "content" => $content
-            // "fromName" removed intentionally to avoid EXTRA_KEY_FOUND_IN_JSON error
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $api_url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Zoho-oauthtoken {$access_token}",
-            "Content-Type: application/json"
-        ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($mailData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $sendResponse = curl_exec($ch);
-
-        if (curl_error($ch)) {
-            \Log::error('Zoho Send Mail cURL Error: ' . curl_error($ch));
-            curl_close($ch);
-            return false;
-        }
-        curl_close($ch);
-
-        $result = json_decode($sendResponse, true);
-
-        if (isset($result['status']['code']) && $result['status']['code'] == 200) {
-            return true;
-        } else {
-            \Log::error('Zoho Mail Send Failed', $result ?? ['response' => $sendResponse]);
-            return false;
-        }
-    }
     public function markAsRead(Request $request)
     {
         $request->validate(['notification_id' => 'required|exists:notifications,id']);

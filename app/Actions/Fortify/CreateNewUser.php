@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Services\ZohoMailService;
 use App\Models\City;
 use App\Models\Towns;
 use Illuminate\Support\Facades\Http;
@@ -97,23 +97,24 @@ class CreateNewUser implements CreatesNewUsers
               $ip_location = ($response['city'] ?? 'Unknown') . "," . ($response['country'] ?? 'Unknown');
           }
       }
-      Mail::send('register-email', [
-                'name' => $input['name'],
-                'email' => $input['email'],
-                'phone_no' => $input['phone_no']??'',
-                'country' => $country,
-                'location' => $addressLine,
-                'ip' => $ip,
+      $htmlBody = ZohoMailService::renderView('register-email', [
+                'name'        => $input['name'],
+                'email'       => $input['email'],
+                'phone_no'    => $input['phone_no'] ?? '',
+                'country'     => $country,
+                'location'    => $addressLine,
+                'ip'          => $ip,
                 'ip_location' => $ip_location,
-                'date' => now()->format('d-m-Y'),
-        		'time' => now()->format('h:i:sa')],
-                function ($message) {
-                        $message->from('no-reply@catchakiwi.com');
-                        $message->to(['catchakiwi@hotmail.co.nz','catchakiwinz@gmail.com'], 'Catchakiwi') 
-                        ->subject('New Register Mail');
-                        $message->bcc(['souravghoshmgu1@gmail.com','no-reply@catchakiwi.com','no-reply@mail.catchakiwi.com']);
-                        $message->priority(1);
-        });
+                'date'        => now()->format('d-m-Y'),
+                'time'        => now()->format('h:i:sa'),
+      ]);
+
+      (new ZohoMailService())->send(
+          ['catchakiwi@hotmail.co.nz', 'catchakiwinz@gmail.com'],
+          'New Register Mail',
+          $htmlBody,
+          ['souravghoshmgu1@gmail.com', 'support@catchakiwi.co.nz']
+      );
       return $userCreate;
     }
 }
