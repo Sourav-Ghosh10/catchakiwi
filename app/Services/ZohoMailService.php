@@ -14,8 +14,8 @@ class ZohoMailService
 
     public function __construct()
     {
-        $this->accountId    = env('ZOHO_ACCOUNT_ID');
-        $this->clientId     = env('ZOHO_CLIENT_ID');
+        $this->accountId = env('ZOHO_ACCOUNT_ID');
+        $this->clientId = env('ZOHO_CLIENT_ID');
         $this->clientSecret = env('ZOHO_CLIENT_SECRET');
         $this->refreshToken = env('ZOHO_REFRESH_TOKEN');
     }
@@ -27,17 +27,17 @@ class ZohoMailService
     {
         $ch = curl_init();
         curl_setopt_array($ch, [
-            CURLOPT_URL            => 'https://accounts.zoho.com/oauth/v2/token',
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => http_build_query([
+            CURLOPT_URL => 'https://accounts.zoho.com/oauth/v2/token',
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query([
                 'refresh_token' => $this->refreshToken,
-                'client_id'     => $this->clientId,
+                'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
-                'grant_type'    => 'refresh_token',
+                'grant_type' => 'refresh_token',
             ]),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_TIMEOUT => 30,
         ]);
 
         $response = curl_exec($ch);
@@ -87,9 +87,9 @@ class ZohoMailService
 
         $payload = [
             'fromAddress' => $fromAddress,
-            'toAddress'   => $toAddress,
-            'subject'     => $subject,
-            'content'     => $htmlContent,
+            'toAddress' => $toAddress,
+            'subject' => $subject,
+            'content' => $htmlContent,
         ];
 
         if (!empty($bcc)) {
@@ -100,16 +100,16 @@ class ZohoMailService
 
         $ch = curl_init();
         curl_setopt_array($ch, [
-            CURLOPT_URL            => $apiUrl,
-            CURLOPT_POST           => true,
-            CURLOPT_HTTPHEADER     => [
+            CURLOPT_URL => $apiUrl,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
                 "Authorization: Zoho-oauthtoken {$accessToken}",
                 "Content-Type: application/json",
             ],
-            CURLOPT_POSTFIELDS     => json_encode($payload),
+            CURLOPT_POSTFIELDS => json_encode($payload),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_TIMEOUT => 30,
         ]);
 
         $response = curl_exec($ch);
