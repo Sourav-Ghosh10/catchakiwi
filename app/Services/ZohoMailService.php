@@ -7,17 +7,17 @@ use Illuminate\Support\Facades\Log;
 class ZohoMailService
 {
     protected string $fromAddress = 'support@catchakiwi.co.nz';
-    protected string $accountId;
-    protected string $clientId;
-    protected string $clientSecret;
-    protected string $refreshToken;
+    protected ?string $accountId;
+    protected ?string $clientId;
+    protected ?string $clientSecret;
+    protected ?string $refreshToken;
 
     public function __construct()
     {
-        $this->accountId = env('ZOHO_ACCOUNT_ID');
-        $this->clientId = env('ZOHO_CLIENT_ID');
-        $this->clientSecret = env('ZOHO_CLIENT_SECRET');
-        $this->refreshToken = env('ZOHO_REFRESH_TOKEN');
+        $this->accountId = config('services.zoho.account_id');
+        $this->clientId = config('services.zoho.client_id');
+        $this->clientSecret = config('services.zoho.client_secret');
+        $this->refreshToken = config('services.zoho.refresh_token');
     }
 
     /**
