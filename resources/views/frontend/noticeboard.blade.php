@@ -69,7 +69,9 @@
                                 <span class="notice_views" style="font-size:12px;color:#888;margin-left:auto;display:flex;align-items:center;gap:4px;">
                                     <i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}
                                 </span>
-                                <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="" class="notice_chat">
+                                <a href="{{ url('/profile#parentHorizontalTab3') }}">
+                                    <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message" class="notice_chat">
+                                </a>
                             </div>
                         </div>
                     @empty

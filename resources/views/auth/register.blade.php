@@ -15,11 +15,18 @@
                         <h2><span>Create an Account</span></h2>
                         <p>Or register here. Just fill in the fields below
                             <br> (all are required) to set up a new account.</p>
-                            <x-jet-validation-errors class="mb-4" />
+
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
-                            <input id="name" class="block mt-1 w-full f_name" placeholder="First Name" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" >
-                            <input id="email" class="block mt-1 w-full" type="email" placeholder="Email" name="email" :value="old('email')" required>
+                            <input id="name" class="block mt-1 w-full f_name" placeholder="First Name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" >
+                            @error('name')
+                                <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                            @enderror
+                            
+                            <input id="email" class="block mt-1 w-full" type="email" placeholder="Email" name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                            @enderror
                              <div class="form-group row">    
                                <!-- <label for="role" class="col-md-12 col-form-label text-md-left">{{ __('Select Suburb') }}</label> -->
                                    <div class="col-sm-12">
@@ -28,22 +35,36 @@
                                               <option value="" disabled selected>Select Country</option>
                                               @if(!empty($country))
                                                 @foreach($country as $cnty)
-                                                    <option value="{{$cnty['id']}}" <?= (isset($suburb) && $suburb->country_name==$cnty['shortname'])?'selected':'' ?>>{{$cnty['name']}}</option>
+                                                    <option value="{{$cnty['id']}}" {{ old('country') == $cnty['id'] ? 'selected' : ((isset($suburb) && $suburb->country_name==$cnty['shortname']) ? 'selected' : '') }}>{{$cnty['name']}}</option>
                                                 @endforeach
                                               @endif;
                                               </select>
+                                              @error('country')
+                                                  <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                                              @enderror
                                           </div>
                                     </div>
                                 </div>
                             <div class="form-group row">    
                                    <div class="col-sm-12">
                                         <select class="livesearch form-control" name="towns_id" id="towns_id" placeholder="Type Suburb/City" ></select>
+                                        <input type="hidden" id="old_towns_id" value="{{ old('towns_id') }}">
+                                        @error('towns_id')
+                                            <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                                        @enderror
                                    </div>
                           </div>
 
                           <!--<div id="region_district_dtls"></div>-->
                             <input id="password" class="block mt-1 w-full" placeholder="Password" type="password" name="password" required autocomplete="new-password">
+                            @error('password')
+                                <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                            @enderror
+                            
                              <input id="password_confirmation" class="block mt-1 w-full" placeholder="Re-Enter Password" type="password" name="password_confirmation" required autocomplete="new-password">
+                            @error('password_confirmation')
+                                <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                            @enderror
                             <!--<input name="" type="text" placeholder="City or District" class="c_name"> -->
                             
                             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
@@ -53,6 +74,9 @@
                                         'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Privacy Policy').'</a>',
                                 ]) !!}
                             </div>
+                            @error('terms')
+                                <span class="text-danger" style="font-size: 12px; display: block; text-align: left; padding-left: 5px;">{{ $message }}</span>
+                            @enderror
                             @endif
                             <button type="submit" class="regbutton">{{ __('Register Now') }}</button>
                         </form>

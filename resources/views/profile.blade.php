@@ -2020,6 +2020,21 @@ function clearSearch() {
         });
     });
 </script>
+<script>
+    $(document).ready(function() {
+        // If coming from notice board (or anywhere) with this hash, scroll to chat
+        if (window.location.hash === '#parentHorizontalTab3') {
+            setTimeout(function() {
+                var target = $('.newmsgchatbox');
+                if (target.length) {
+                    $('html, body').animate({
+                        scrollTop: target.offset().top - 80
+                    }, 800);
+                }
+            }, 300); // slight delay to allow tab to open
+        }
+    });
+</script>
    <!-- body start end-->
 
    @include('includes/footer-js')

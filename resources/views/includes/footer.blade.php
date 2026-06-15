@@ -124,6 +124,12 @@ if(country_id == 157){
                     selectizeInstance.clearOptions();
                     selectizeInstance.addOption(JSON.parse(response));
                     selectizeInstance.refreshOptions(false);
+                    
+                    var oldTownsId = $('#old_towns_id').val();
+                    if (oldTownsId) {
+                        selectizeInstance.setValue(oldTownsId);
+                        $('#old_towns_id').val(''); // Clear it so manual changes aren't overridden
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error(error);

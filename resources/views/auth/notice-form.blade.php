@@ -51,8 +51,11 @@
                                     </div>
 
                                     <div class="frm_dv">
-                                        <label>Notice Title:</label><input name="notice_title" type="text"
-                                            placeholder="Enter Notice Title (35 char max)">
+                                        <label>Notice Title:</label>
+                                        <div style="flex: 1; display: block;">
+                                            <input name="notice_title" id="notice_title" type="text" placeholder="Enter Notice Title (35 char max)" maxlength="35">
+                                            <div id="title_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 455px;">0 / 35 characters</div>
+                                        </div>
                                     </div>
 
                                     <!-- Get a Quote Fields -->
@@ -127,10 +130,11 @@
                                     </div>
 
                                     <div class="frm_dv textareadv">
-                                        <label id="body_label">Add your content: </label><textarea name="notice_body"
-                                            id="notice_body"
-                                            cols="" rows=""
-                                            placeholder="Add notice body text (155 char max)."></textarea>
+                                        <label id="body_label">Add your content: </label>
+                                        <div style="flex: 1; display: block;">
+                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)." maxlength="155" style="width: 100%; max-width: 455px;"></textarea>
+                                            <div id="body_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 455px;">0 / 155 characters</div>
+                                        </div>
                                     </div>
                                     <style>
                                         .image-upload-grid {
@@ -519,6 +523,7 @@
                                         bodyLabel.innerText = 'Description:';
                                         bodyTextarea.placeholder = 'Description (300 char max).';
                                         bodyTextarea.maxLength = 300;
+                                        document.getElementById('body_counter').innerText = bodyTextarea.value.length + ' / 300 characters';
 
                                         // Initialize Selectize for service deal town field
                                         if (!$('#service_deal_towns').hasClass('selectized')) {
@@ -541,6 +546,7 @@
                                         bodyLabel.innerText = 'Description:';
                                         bodyTextarea.placeholder = 'Description (300 char max).';
                                         bodyTextarea.maxLength = 300;
+                                        document.getElementById('body_counter').innerText = bodyTextarea.value.length + ' / 300 characters';
 
                                         // Initialize Selectize for service deal town field
                                         if (!$('#service_deal_towns').hasClass('selectized')) {
@@ -582,6 +588,7 @@
                                         bodyLabel.innerText = 'Add your content:';
                                         bodyTextarea.placeholder = 'Add notice body text (155 char max).';
                                         bodyTextarea.maxLength = 155;
+                                        document.getElementById('body_counter').innerText = bodyTextarea.value.length + ' / 155 characters';
                                     }
                                 } else {
                                     restOfFields.style.display = 'none';
@@ -609,6 +616,16 @@
                                 if (categorySelect.value !== "") {
                                     categorySelect.dispatchEvent(new Event('change'));
                                 }
+                            });
+
+                            // Character counter logic
+                            document.getElementById('notice_title').addEventListener('input', function() {
+                                document.getElementById('title_counter').innerText = this.value.length + ' / 35 characters';
+                            });
+
+                            document.getElementById('notice_body').addEventListener('input', function() {
+                                var max = this.maxLength > 0 ? this.maxLength : 155;
+                                document.getElementById('body_counter').innerText = this.value.length + ' / ' + max + ' characters';
                             });
                         </script>
                     </div>

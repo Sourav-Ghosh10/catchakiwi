@@ -35,10 +35,14 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => $this->passwordRules(),
-            //'suburb_id' => ['required'],
+            'password' => array_filter($this->passwordRules(), fn($rule) => $rule !== 'confirmed'),
+            'password_confirmation' => ['required', 'same:password'],
+            'country' => ['required'],
             'towns_id' => ['required'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '', 
+        ], [], [
+            'towns_id' => 'suburb/city',
+            'country' => 'country',
         ])->validate();
 
         //dd($input);
