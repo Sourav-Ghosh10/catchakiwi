@@ -1,7 +1,7 @@
 @include('includes/inner-header')
 <div class="mid_body">
     <div class="container">
-        <div class="full_midpan">
+        <div class="full_midpan notice-post-page">
             <div class="row">
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_notice">
@@ -67,9 +67,9 @@
 
                                     <div class="frm_dv">
                                         <label>Notice Title:</label>
-                                        <div style="flex: 1; display: block;">
+                                        <div class="notice-field-column">
                                             <input name="notice_title" id="notice_title" type="text" placeholder="Enter Notice Title (35 char max)" maxlength="35">
-                                            <div id="title_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 535px;">0 / 35 characters</div>
+                                            <div id="title_counter" class="notice-character-counter">0 / 35 characters</div>
                                         </div>
                                     </div>
 
@@ -146,9 +146,9 @@
 
                                     <div class="frm_dv textareadv">
                                         <label id="body_label">Add your content: </label>
-                                        <div style="flex: 1; display: block;">
-                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)." maxlength="155" style="width: 100%; max-width: 535px;"></textarea>
-                                            <div id="body_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 535px;">0 / 155 characters</div>
+                                        <div class="notice-field-column">
+                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)." maxlength="155"></textarea>
+                                            <div id="body_counter" class="notice-character-counter">0 / 155 characters</div>
                                         </div>
                                     </div>
                                     <style>
@@ -435,7 +435,7 @@
 
                                     <div class="frm_dv">
                                         <label id="notice_images_label">Images (3 places):</label>
-                                        <div style="flex: 1;">
+                                        <div class="notice-images-field">
                                             <div class="image-upload-grid">
                                                 <!-- Box 1 -->
                                                 <div class="image-upload-box"
@@ -491,8 +491,7 @@
                                                     </div>
                                                 @endforeach
                                             </div>
-                                            <span
-                                                style="font-size: 11px; color: #999; display: block; margin-top: 10px;">Recommended
+                                            <span class="notice-image-recommendation">Recommended
                                                 size: 600 x 400px | JPG, GIF, PNG</span>
                                         </div>
                                     </div>

@@ -4845,6 +4845,38 @@ button.remove-bus-image:hover {
 }
 
 /* Post notice options help tooltip */
+.notice-post-page .notice-field-column,
+.notice-post-page .notice-images-field {
+  flex: 1;
+  display: block;
+  width: 100%;
+  max-width: 535px;
+}
+
+.notice-post-page .notice-character-counter {
+  width: 100%;
+  max-width: 535px;
+  margin-top: 4px;
+  color: #666;
+  font-size: 12px;
+  text-align: right;
+}
+
+.notice-post-page .notice-image-recommendation {
+  display: block;
+  margin-top: 10px;
+  color: #999;
+  font-size: 11px;
+}
+
+.notice-post-page .notice_posefrm .frm_dv textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 535px;
+  border: 1px solid #9bcd22;
+  border-radius: 0;
+}
+
 .notice_posefrm .service_location_dv .selectize-control.single .selectize-input,
 .notice_posefrm .quote_location_dv .selectize-control.single .selectize-input {
   height: 40px !important;
@@ -4941,5 +4973,109 @@ button.remove-bus-image:hover {
     left: 0;
     width: min(535px, calc(100vw - 40px));
     font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  .notice-post-page > .row > .col-md-8,
+  .notice-post-page > .row > .col-md-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv > label {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-bottom: 0;
+    padding-top: 0;
+  }
+
+  .notice-post-page .notice-field-column,
+  .notice-post-page .notice-images-field,
+  .notice-post-page .notice-options,
+  .notice-post-page .location_input_wrapper,
+  .notice-post-page .quote_location_dv .selectize-control,
+  .notice-post-page .service_location_dv .selectize-control,
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv input[type="text"],
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv select,
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv textarea,
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv .chk_addtnlbox {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv input[type="text"],
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv select,
+  .notice-post-page .quote_location_dv .selectize-control.single .selectize-input,
+  .notice-post-page .service_location_dv .selectize-control.single .selectize-input,
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv .radiogbutt,
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv .chk_addtnlbox {
+    box-sizing: border-box !important;
+    min-height: 48px !important;
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv input[type="text"],
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv select,
+  .notice-post-page .quote_location_dv .selectize-control.single .selectize-input,
+  .notice-post-page .service_location_dv .selectize-control.single .selectize-input {
+    height: 48px !important;
+    padding: 0 16px !important;
+    font-size: 16px !important;
+    line-height: 48px !important;
+  }
+
+  .notice-post-page .notice-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .notice-post-page .image-upload-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 10px;
+  }
+
+  .notice-post-page .image-upload-box {
+    width: 100%;
+    height: auto;
+    min-height: 100px;
+  }
+
+  .notice-post-page .right_advertisesec img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .notice-post-page .notice-options {
+    grid-template-columns: 1fr;
+  }
+
+  .notice-post-page .image-upload-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv .radiogbutt {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .notice-post-page .notice-help-text {
+    left: 0;
+    width: min(535px, calc(100vw - 40px));
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm input[type="submit"] {
+    width: 100%;
+    max-width: 100%;
   }
 }
