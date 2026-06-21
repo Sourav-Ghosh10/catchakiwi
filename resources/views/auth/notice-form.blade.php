@@ -23,7 +23,7 @@
                                         <option value="" {{ old('category_id') ? '' : 'selected' }}>Choose your Category</option>
                                         @if(!empty($category))
                                             @foreach($category as $cat)
-                                                <option value="{{ $cat->id }}" {{ (string) old('category_id') === (string) $cat->id ? 'selected' : '' }}>
+                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id') === (string) $cat->id ? 'selected' : '' }}>
                                                     {{ $cat->category }}
                                                 </option>
                                             @endforeach
@@ -34,10 +34,12 @@
                                 <div id="rest_of_fields" style="display:none;">
                                     <div id="item_options_fields" class="frm_dv" style="display:none;">
                                         <label>Item Options:</label>
-                                        <div class="radiogbutt"><input name="item_type" type="radio" value="Item for sale" checked>
-                                            Item for sale</div>
-                                        <div class="radiogbutt"><input name="item_type" type="radio" value="Item Wanted">
-                                            Item Wanted</div>
+                                        <div class="item-options">
+                                            <div class="radiogbutt"><input name="item_type" type="radio" value="Item for sale" checked>
+                                                Item for sale</div>
+                                            <div class="radiogbutt"><input name="item_type" type="radio" value="Item Wanted">
+                                                Item Wanted</div>
+                                        </div>
                                     </div>
 
                                     <div class="frm_dv">
@@ -554,6 +556,13 @@
 
                             document.getElementById('category_id').addEventListener('change', function () {
                                 var categoryId = this.value;
+                                var selectedCategory = this.options[this.selectedIndex];
+                                var categorySlug = selectedCategory ? selectedCategory.dataset.categorySlug : '';
+                                var categoryName = selectedCategory ? selectedCategory.textContent.trim().toLowerCase() : '';
+                                var itemCategorySlugs = ['items-for-sale', 'items-for-sale-or-wanted'];
+                                var itemCategoryNames = ['items for sale', 'items for sale or wanted'];
+                                var isItemsCategory = itemCategorySlugs.includes(categorySlug)
+                                    || itemCategoryNames.includes(categoryName);
                                 var restOfFields = document.getElementById('rest_of_fields');
                                 var getAQuoteFields = document.getElementById('get_a_quote_fields');
                                 var serviceDealFields = document.getElementById('service_deal_fields');
@@ -590,7 +599,7 @@
                                             });
                                         }
                                         updateServiceDealTowns();
-                                    } else if (categoryId == '9') {
+                                    } else if (isItemsCategory) {
                                         serviceDealFields.style.display = 'block';
                                         getAQuoteFields.style.display = 'none';
                                         itemOptionsFields.style.display = 'block';
