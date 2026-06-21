@@ -6,7 +6,7 @@
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_notice">
                         <div class="left_searchresults">
-                            <h3><img src="{{ asset('assets/images/notice_icon.png') }}" alt=""> Notice Board
+                            <h3><img src="{{ asset('assets/images/notice_titleicon.png') }}" alt="Notice Board"> Notice Board
                                 <br>
                                 <span><a href="{{ url('/') }}" style="color: #729b0f; text-decoration: none;">Home</a> >
                                     <a href="{{ route('notice-board') }}"
