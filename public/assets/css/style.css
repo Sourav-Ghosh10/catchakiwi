@@ -4843,3 +4843,95 @@ button.remove-bus-image:hover {
         transform: scale(1);
     }
 }
+
+/* Post notice options help tooltip */
+.notice-options-label {
+  position: relative;
+}
+
+.notice-help-button {
+  width: 22px;
+  height: 22px;
+  margin-left: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #484848;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.notice-help-button:focus {
+  outline: 2px solid #9bcd22;
+  outline-offset: 2px;
+}
+
+.notice-help-text {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  z-index: 100;
+  box-sizing: border-box;
+  width: 300px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  background: #414141;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.notice-help-text::after {
+  content: '';
+  position: absolute;
+  left: 145px;
+  bottom: -9px;
+  border-width: 9px 9px 0;
+  border-style: solid;
+  border-color: #414141 transparent transparent;
+}
+
+.notice-help-text[hidden] {
+  display: none;
+}
+
+.notice-help-text ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.notice-help-text strong {
+  display: block;
+  text-align: left;
+}
+
+.notice-help-text li {
+  position: relative;
+  margin-top: 4px;
+  padding-left: 22px;
+  margin-left: 0;
+}
+
+.notice-help-text li::before {
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  color: #9bcd22;
+  font-weight: 700;
+}
+
+@media only screen and (max-width: 767px) {
+  .notice-help-text {
+    left: 0;
+    width: min(535px, calc(100vw - 40px));
+    font-size: 14px;
+  }
+}

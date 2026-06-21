@@ -20,10 +20,10 @@
                                 <div class="frm_dv">
                                     <label>Category:</label>
                                     <select name="category_id" id="category_id" required>
-                                        <option value="">Choose your Category</option>
+                                        <option value="" {{ old('category_id') ? '' : 'selected' }}>Choose your Category</option>
                                         @if(!empty($category))
                                             @foreach($category as $cat)
-                                                <option value="{{ $cat->id }}" {{ $loop->first ? 'selected' : '' }}>
+                                                <option value="{{ $cat->id }}" {{ (string) old('category_id') === (string) $cat->id ? 'selected' : '' }}>
                                                     {{ $cat->category }}
                                                 </option>
                                             @endforeach
@@ -41,7 +41,20 @@
                                     </div>
 
                                     <div class="frm_dv">
-                                        <label>Notice Options:</label>
+                                        <label class="notice-options-label">
+                                            Notice Options:
+                                            <button type="button" class="notice-help-button" id="notice_options_help_button"
+                                                aria-label="About notice options" aria-expanded="false"
+                                                aria-controls="notice_options_help_text">?</button>
+                                            <span class="notice-help-text" id="notice_options_help_text" role="tooltip" hidden>
+                                                <strong>Feature Notice benefits:</strong>
+                                                <ul>
+                                                    <li>Active for 28 days</li>
+                                                    <li>Add 3 extra photos</li>
+                                                    <li>More visibility for your notice</li>
+                                                </ul>
+                                            </span>
+                                        </label>
                                         <div class="notice-options">
                                             <div class="radiogbutt"><input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
                                                 7 day Notice (Free) $0.00</div>
@@ -651,6 +664,31 @@
                             document.getElementById('notice_body').addEventListener('input', function() {
                                 var max = this.maxLength > 0 ? this.maxLength : 155;
                                 document.getElementById('body_counter').innerText = this.value.length + ' / ' + max + ' characters';
+                            });
+
+                            var noticeHelpButton = document.getElementById('notice_options_help_button');
+                            var noticeHelpText = document.getElementById('notice_options_help_text');
+
+                            noticeHelpButton.addEventListener('click', function(event) {
+                                event.stopPropagation();
+                                var willOpen = noticeHelpText.hidden;
+                                noticeHelpText.hidden = !willOpen;
+                                noticeHelpButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                            });
+
+                            document.addEventListener('click', function(event) {
+                                if (!noticeHelpText.hidden && !noticeHelpText.contains(event.target)) {
+                                    noticeHelpText.hidden = true;
+                                    noticeHelpButton.setAttribute('aria-expanded', 'false');
+                                }
+                            });
+
+                            document.addEventListener('keydown', function(event) {
+                                if (event.key === 'Escape' && !noticeHelpText.hidden) {
+                                    noticeHelpText.hidden = true;
+                                    noticeHelpButton.setAttribute('aria-expanded', 'false');
+                                    noticeHelpButton.focus();
+                                }
                             });
                         </script>
                     </div>
