@@ -44,9 +44,9 @@
                                         <label>Notice Options:</label>
                                         <div class="notice-options">
                                             <div class="radiogbutt"><input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
-                                                Standard 7 day Notice (Free) $0.00</div>
+                                                7 day Notice (Free) $0.00</div>
                                             <div class="radiogbutt"><input name="noticetype" type="radio" value="feature" {{ old('noticetype') === 'feature' ? 'checked' : '' }}>
-                                                Feature Notice(Lasts 28 days)$3.00
+                                                28 day Feature Notice ( $3.00)
                                                 <img src="images/help_icon.png" alt="" class="help_icon">
                                             </div>
                                         </div>
