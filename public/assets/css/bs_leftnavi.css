@@ -203,6 +203,7 @@ z-index:3
   box-shadow: 0 2px 5px rgba(95, 56, 0, .18);
   cursor: pointer;
   transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+  margin-right: 0px !important;
 }
 
 .gw-nav-list>li.subm .gw-submenu-toggle:hover {
