@@ -434,7 +434,7 @@
                                     </style>
 
                                     <div class="frm_dv">
-                                        <label>Images (3 places):</label>
+                                        <label id="notice_images_label">Images (3 places):</label>
                                         <div style="flex: 1;">
                                             <div class="image-upload-grid">
                                                 <!-- Box 1 -->
@@ -475,6 +475,21 @@
                                                     <input type="hidden" name="noticeimgbase64[]"
                                                         class="noticeimgbase64" id="noticeimgbase643">
                                                 </div>
+
+                                                <!-- Feature notice boxes 4-6 -->
+                                                @foreach(range(4, 6) as $imageIndex)
+                                                    <div class="image-upload-box feature-image-slot" data-image-index="{{ $imageIndex }}" hidden
+                                                        onclick="document.getElementById('noticeimg{{ $imageIndex }}').click();">
+                                                        <div id="noticeimgshow{{ $imageIndex }}" class="noticeimgshow{{ $imageIndex }} placeholder-icon">
+                                                            <i class="fa fa-camera"></i>
+                                                            <span>Image {{ $imageIndex }}</span>
+                                                        </div>
+                                                        <input type="file" name="noticeimg[]" class="imageUpload"
+                                                            id="noticeimg{{ $imageIndex }}" hidden>
+                                                        <input type="hidden" name="noticeimgbase64[]"
+                                                            class="noticeimgbase64" id="noticeimgbase64{{ $imageIndex }}">
+                                                    </div>
+                                                @endforeach
                                             </div>
                                             <span
                                                 style="font-size: 11px; color: #999; display: block; margin-top: 10px;">Recommended
@@ -665,6 +680,31 @@
                                 var max = this.maxLength > 0 ? this.maxLength : 155;
                                 document.getElementById('body_counter').innerText = this.value.length + ' / ' + max + ' characters';
                             });
+
+                            function updateFeatureImageSlots() {
+                                var featureSelected = document.querySelector('input[name="noticetype"][value="feature"]').checked;
+                                document.getElementById('notice_images_label').textContent = featureSelected
+                                    ? 'Images (6 places):'
+                                    : 'Images (3 places):';
+
+                                document.querySelectorAll('.feature-image-slot').forEach(function(slot) {
+                                    slot.hidden = !featureSelected;
+
+                                    if (!featureSelected) {
+                                        var index = slot.dataset.imageIndex;
+                                        document.getElementById('noticeimg' + index).value = '';
+                                        document.getElementById('noticeimgbase64' + index).value = '';
+                                        document.getElementById('noticeimgshow' + index).classList.add('placeholder-icon');
+                                        document.getElementById('noticeimgshow' + index).innerHTML =
+                                            '<i class="fa fa-camera"></i><span>Image ' + index + '</span>';
+                                    }
+                                });
+                            }
+
+                            document.querySelectorAll('input[name="noticetype"]').forEach(function(option) {
+                                option.addEventListener('change', updateFeatureImageSlots);
+                            });
+                            updateFeatureImageSlots();
 
                             var noticeHelpButton = document.getElementById('notice_options_help_button');
                             var noticeHelpText = document.getElementById('notice_options_help_text');

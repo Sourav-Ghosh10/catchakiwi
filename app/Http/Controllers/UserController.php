@@ -628,7 +628,7 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'category_id' => 'required',
-            'noticetype' => 'required',
+            'noticetype' => 'required|in:standard,feature',
             'notice_title' => 'required|string|max:35',
             'notice_body' => 'required|string|max:300',
             'town_suburb' => 'nullable|string',
@@ -667,7 +667,8 @@ class UserController extends Controller
         $notice->save();
         $noticeimgbase64 = $request->input('noticeimgbase64');
         if ($noticeimgbase64 && is_array($noticeimgbase64)) {
-            foreach ($noticeimgbase64 as $imgBase64) {
+            $maxImages = $noticetype === 'feature' ? 6 : 3;
+            foreach (array_slice($noticeimgbase64, 0, $maxImages) as $imgBase64) {
                 if ($imgBase64) {
                     $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $imgBase64);
                     $binaryImageData = base64_decode($base64_data);
