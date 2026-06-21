@@ -4845,6 +4845,14 @@ button.remove-bus-image:hover {
 }
 
 /* Post notice options help tooltip */
+.notice_posefrm .service_location_dv .selectize-control.single .selectize-input,
+.notice_posefrm .quote_location_dv .selectize-control.single .selectize-input {
+  height: 40px !important;
+  border: 1px solid #9bcd22 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
 .notice-options-label {
   position: relative;
 }
