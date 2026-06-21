@@ -42,11 +42,13 @@
 
                                     <div class="frm_dv">
                                         <label>Notice Options:</label>
-                                        <div class="radiogbutt"><input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
-                                            Standard 7 day Notice (Free) $0.00</div>
-                                        <div class="radiogbutt"><input name="noticetype" type="radio" value="feature" {{ old('noticetype') === 'feature' ? 'checked' : '' }}>
-                                            Feature Notice(Lasts 28 days)$3.00
-                                            <img src="images/help_icon.png" alt="" class="help_icon">
+                                        <div class="notice-options">
+                                            <div class="radiogbutt"><input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
+                                                Standard 7 day Notice (Free) $0.00</div>
+                                            <div class="radiogbutt"><input name="noticetype" type="radio" value="feature" {{ old('noticetype') === 'feature' ? 'checked' : '' }}>
+                                                Feature Notice(Lasts 28 days)$3.00
+                                                <img src="images/help_icon.png" alt="" class="help_icon">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -54,7 +56,7 @@
                                         <label>Notice Title:</label>
                                         <div style="flex: 1; display: block;">
                                             <input name="notice_title" id="notice_title" type="text" placeholder="Enter Notice Title (35 char max)" maxlength="35">
-                                            <div id="title_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 455px;">0 / 35 characters</div>
+                                            <div id="title_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 535px;">0 / 35 characters</div>
                                         </div>
                                     </div>
 
@@ -132,8 +134,8 @@
                                     <div class="frm_dv textareadv">
                                         <label id="body_label">Add your content: </label>
                                         <div style="flex: 1; display: block;">
-                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)." maxlength="155" style="width: 100%; max-width: 455px;"></textarea>
-                                            <div id="body_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 455px;">0 / 155 characters</div>
+                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)." maxlength="155" style="width: 100%; max-width: 535px;"></textarea>
+                                            <div id="body_counter" style="font-size: 12px; color: #666; text-align: right; margin-top: 4px; max-width: 535px;">0 / 155 characters</div>
                                         </div>
                                     </div>
                                     <style>
@@ -231,6 +233,23 @@
                                             min-height: 120px;
                                         }
 
+                                        .left_profileform .frm_dv .notice-options {
+                                            display: grid;
+                                            grid-template-columns: repeat(2, minmax(0, 1fr));
+                                            width: 100%;
+                                            max-width: 535px;
+                                            gap: 12px;
+                                        }
+
+                                        .left_profileform .frm_dv .notice-options .radiogbutt {
+                                            box-sizing: border-box;
+                                            width: 100%;
+                                            max-width: 100%;
+                                            min-width: 0;
+                                            overflow: hidden;
+                                            white-space: nowrap;
+                                        }
+
                                         /* Quote & Service Deal Location Field Enhancements */
                                         .quote_location_dv .location_input_wrapper,
                                         .service_location_dv .location_input_wrapper {
@@ -240,7 +259,7 @@
                                         .quote_location_dv .selectize-control,
                                         .service_location_dv .selectize-control {
                                             width: 100%;
-                                            max-width: 455px;
+                                            max-width: 535px;
                                         }
 
                                         .quote_location_dv .selectize-input,
@@ -266,7 +285,7 @@
                                             border-radius: 0 !important;
                                             padding: 0 12px !important;
                                             width: 100% !important;
-                                            max-width: 455px !important;
+                                            max-width: 535px !important;
                                             background: #fff !important;
                                             font-family: 'Poppins', sans-serif !important;
                                             transition: border-color 0.3s ease;
@@ -363,6 +382,12 @@
                                                 display: flex;
                                                 align-items: center;
                                                 gap: 8px;
+                                            }
+
+                                            .left_profileform.notice_posefrm .frm_dv .notice-options {
+                                                grid-template-columns: 1fr;
+                                                max-width: 100%;
+                                                gap: 0;
                                             }
 
                                             .left_profileform.notice_posefrm .frm_dv .radiogbutt input[type="radio"] {
