@@ -4974,6 +4974,11 @@ button.remove-bus-image:hover {
     width: min(535px, calc(100vw - 40px));
     font-size: 14px;
   }
+
+  .notice-post-page #item_options_fields,
+  .notice-post-page #additional_images_section {
+    display: none !important;
+  }
 }
 
 @media only screen and (max-width: 991px) {
