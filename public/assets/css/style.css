@@ -5009,7 +5009,7 @@ button.remove-bus-image:hover {
   .notice-post-page .location_input_wrapper,
   .notice-post-page .quote_location_dv .selectize-control,
   .notice-post-page .service_location_dv .selectize-control,
-  .notice-post-page .left_profileform.notice_posefrm .frm_dv input[type="text"],
+  .notice-post-page .left_profileform.notice_posefrm #notice_title,
   .notice-post-page .left_profileform.notice_posefrm .frm_dv select,
   .notice-post-page .left_profileform.notice_posefrm .frm_dv textarea,
   .notice-post-page .left_profileform.notice_posefrm .frm_dv .chk_addtnlbox {
@@ -5018,7 +5018,7 @@ button.remove-bus-image:hover {
     max-width: 100% !important;
   }
 
-  .notice-post-page .left_profileform.notice_posefrm .frm_dv input[type="text"],
+  .notice-post-page .left_profileform.notice_posefrm #notice_title,
   .notice-post-page .left_profileform.notice_posefrm .frm_dv select,
   .notice-post-page .quote_location_dv .selectize-control.single .selectize-input,
   .notice-post-page .service_location_dv .selectize-control.single .selectize-input,
@@ -5028,14 +5028,44 @@ button.remove-bus-image:hover {
     min-height: 48px !important;
   }
 
-  .notice-post-page .left_profileform.notice_posefrm .frm_dv input[type="text"],
-  .notice-post-page .left_profileform.notice_posefrm .frm_dv select,
-  .notice-post-page .quote_location_dv .selectize-control.single .selectize-input,
-  .notice-post-page .service_location_dv .selectize-control.single .selectize-input {
+  .notice-post-page .left_profileform.notice_posefrm #notice_title,
+  .notice-post-page .left_profileform.notice_posefrm .frm_dv select {
     height: 48px !important;
     padding: 0 16px !important;
     font-size: 16px !important;
     line-height: 48px !important;
+  }
+
+  .notice-post-page .quote_location_dv .selectize-control.single .selectize-input,
+  .notice-post-page .service_location_dv .selectize-control.single .selectize-input {
+    display: flex !important;
+    align-items: center !important;
+    height: 48px !important;
+    padding: 0 35px 0 16px !important;
+    overflow: hidden;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+  }
+
+  .notice-post-page .left_profileform.notice_posefrm .quote_location_dv .selectize-input > input,
+  .notice-post-page .left_profileform.notice_posefrm .service_location_dv .selectize-input > input {
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
+  }
+
+  .notice-post-page .quote_location_dv .selectize-dropdown,
+  .notice-post-page .service_location_dv .selectize-dropdown,
+  .notice-post-page .quote_location_dv .selectize-dropdown .option,
+  .notice-post-page .service_location_dv .selectize-dropdown .option {
+    line-height: 1.4 !important;
+  }
+
+  .notice-post-page .quote_location_dv .selectize-dropdown .option,
+  .notice-post-page .service_location_dv .selectize-dropdown .option {
+    padding: 10px 12px !important;
+    white-space: normal;
   }
 
   .notice-post-page .notice-options {
