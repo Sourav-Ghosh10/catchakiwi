@@ -6,30 +6,28 @@ $(document).ready(function () {
             $('.gw-nav > li > ul > li').removeClass('active');
 
             var checkElement = $(this).parent();
-            var ulDom = checkElement.find('.gw-submenu')[0];
+            checkElement.addClass('active');
+            gw_nav.find('li').find('ul:visible').slideUp(220);
+            gw_nav.find('.gw-submenu-toggle').attr('aria-expanded', 'false');
+        });
 
-            if (ulDom == undefined) {
-                checkElement.addClass('active');
-                $('.gw-nav').find('li').find('ul:visible').slideUp();
-                return;
-            }
-            if (ulDom.style.display != 'block') {
-                gw_nav.find('li').find('ul:visible').slideUp();
-                gw_nav.find('li.init-arrow-up').removeClass('init-arrow-up').addClass('arrow-down');
-                gw_nav.find('li.arrow-up').removeClass('arrow-up').addClass('arrow-down');
-                checkElement.removeClass('init-arrow-down');
-                checkElement.removeClass('arrow-down');
-                checkElement.addClass('arrow-up');
-                checkElement.addClass('active');
-                checkElement.find('ul').slideDown(300);
-            } else {
-                checkElement.removeClass('init-arrow-up');
-                checkElement.removeClass('arrow-up');
-                checkElement.removeClass('active');
-                checkElement.addClass('arrow-down');
-                checkElement.find('ul').slideUp(300);
+        $('.gw-submenu-toggle').click(function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-            }
+            var toggle = $(this);
+            var checkElement = toggle.closest('li.subm');
+            var submenu = checkElement.children('.gw-submenu');
+            var isOpen = submenu.is(':visible');
+            var gw_nav = $('.gw-nav');
+
+            gw_nav.find('li.subm').not(checkElement).removeClass('active arrow-up').addClass('arrow-down')
+                .children('.gw-submenu:visible').slideUp(220);
+            gw_nav.find('.gw-submenu-toggle').not(toggle).attr('aria-expanded', 'false');
+
+            checkElement.toggleClass('active arrow-up', !isOpen).toggleClass('arrow-down', isOpen);
+            toggle.attr('aria-expanded', String(!isOpen));
+            submenu.stop(true, true)[isOpen ? 'slideUp' : 'slideDown'](220);
         });
         $('.gw-nav > li > ul > li > a').click(function () {
             $(this).parent().parent().parent().removeClass('active');
@@ -39,4 +37,3 @@ $(document).ready(function () {
     };
     nav();
 });
-

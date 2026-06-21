@@ -88,7 +88,10 @@
                         <a href="javascript:void(0)"><img src="{{ asset('assets/images/catch-a-ride.png') }}" alt=""> <span class="gw-menu-text">Catch-a-Ride</span> <b></b> </a>
                      </li>
                      <li class="init-arrow-down subm">
-                        <a href="javascript:void(0)"><img src="{{ asset('assets/images/bussiness.png') }}" alt=""> Business</a><span class="gw-menu-text"></span> <b class="gw-arrow"></b>
+                        <div class="gw-parent-row">
+                           <a class="gw-parent-link" href="{{ URL::to(strtolower(session('CountryCode')).'/business') }}"><img src="{{ asset('assets/images/bussiness.png') }}" alt=""><span class="gw-menu-text">Business</span></a>
+                           <button class="gw-submenu-toggle" type="button" aria-expanded="false" aria-label="Show Business submenu"></button>
+                        </div>
                         <ul class="gw-submenu">
                            <li><a href="{{ URL::to(strtolower(session('CountryCode')).'/business') }}">Find Business</a></li>
                            <li> <a href="{{ URL::to('/add-your-business') }}">Add your business</a> </li>
@@ -99,7 +102,10 @@
                         </ul>
                      </li>
                      <li class="init-arrow-down subm">
-                        <a href="{{ route('notices') }}"> <img src="{{ asset('assets/images/noticeboard.png') }}" alt=""><span class="gw-menu-text">Notice Board</span> <b class="gw-arrow icon-arrow-up8"></b> </a>
+                        <div class="gw-parent-row">
+                           <a class="gw-parent-link" href="{{ route('notices') }}"><img src="{{ asset('assets/images/noticeboard.png') }}" alt=""><span class="gw-menu-text">Notice Board</span></a>
+                           <button class="gw-submenu-toggle" type="button" aria-expanded="false" aria-label="Show Notice Board submenu"></button>
+                        </div>
                         <ul class="gw-submenu">
                            <li><a href="{{ route('notices') }}">Find Notice Board</a></li>
                            <li> <a href="javascript:void(0)">Add a notice</a> </li>
@@ -109,7 +115,10 @@
                         </ul>
                      </li>
                      <li class="init-arrow-down subm">
-                        <a href="javascript:void(0)"><img src="{{ asset('assets/images/Articles.png') }}" alt=""> <span class="gw-menu-text">Articles</span> <b></b> </a>
+                        <div class="gw-parent-row">
+                           <a class="gw-parent-link" href="{{ route('article.list') }}"><img src="{{ asset('assets/images/Articles.png') }}" alt=""><span class="gw-menu-text">Articles</span></a>
+                           <button class="gw-submenu-toggle" type="button" aria-expanded="false" aria-label="Show Articles submenu"></button>
+                        </div>
                         <ul class="gw-submenu">
                            <li><a href="{{ route('article.list') }}">Find Articles</a></li>
                            <li> <a href="{{ route('article.add') }}">Add an Article</a> </li>
