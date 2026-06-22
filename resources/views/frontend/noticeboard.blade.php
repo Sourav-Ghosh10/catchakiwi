@@ -1,6 +1,6 @@
 @include('includes/inner-header')
 
-<link href="{{ asset('assets/css/noticeboard.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/noticeboard.css') }}?v={{ filemtime(public_path('assets/css/noticeboard.css')) }}" rel="stylesheet" type="text/css" />
 
 <div class="mid_body">
     <!-- Search Section -->
@@ -31,7 +31,8 @@
                         <div class="notice_refineresults">
                             <h3>Refine Results:</h3>
                             <div class="row">
-                                @foreach($categories->chunk(ceil($categories->count() / 3)) as $chunk)
+                                @php $catsCollection = collect($categories); @endphp
+                                @foreach($catsCollection->chunk(ceil($catsCollection->count() / 3)) as $chunk)
                                     <div class="col-md-4">
                                         <ul>
                                             @foreach($chunk as $cat)

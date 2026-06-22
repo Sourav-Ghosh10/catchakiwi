@@ -1,6 +1,6 @@
 @include('includes/inner-header')
 
-<link href="{{ asset('assets/css/noticeboard_v2.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/noticeboard_v2.css') }}?v={{ filemtime(public_path('assets/css/noticeboard_v2.css')) }}" rel="stylesheet" type="text/css" />
 
 <div class="mid_body nb-v2-bg">
     <div class="container">
@@ -101,7 +101,7 @@
                         @if($search)
                             Search Results for "{{ $search }}"
                         @elseif($categoryId)
-                            @php $activeCat = $categories->firstWhere('id', $categoryId); @endphp
+                            @php $activeCat = collect($categories)->firstWhere('id', $categoryId); @endphp
                             {{ $activeCat ? $activeCat->category : 'Notices' }}
                         @else
                             Latest Posts
