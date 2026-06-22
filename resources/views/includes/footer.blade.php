@@ -208,8 +208,8 @@ $(document).ready(function(){
   });
 });
 </script>-->
-<script src="{{ asset('assets/js/custom.js') }}"></script>
-<script src="{{ asset('assets/js/home_popup.js') }}"></script>
+<script src="{{ asset('assets/js/custom.js') }}?v={{ filemtime(public_path('assets/js/custom.js')) }}"></script>
+<script src="{{ asset('assets/js/home_popup.js') }}?v={{ filemtime(public_path('assets/js/home_popup.js')) }}"></script>
 <style>
     .selectize-dropdown{
         /*display:none;*/

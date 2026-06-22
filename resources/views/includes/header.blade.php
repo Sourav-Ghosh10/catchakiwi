@@ -19,27 +19,27 @@
 <!--<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap" rel="stylesheet">--> 
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet"> 
 <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/css/home_popup.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/home_popup.css') }}?v={{ filemtime(public_path('assets/css/home_popup.css')) }}" rel="stylesheet" type="text/css" />
 
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/easy-responsive-tabs.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/easy-responsive-tabs.css') }}?v={{ filemtime(public_path('assets/css/easy-responsive-tabs.css')) }}" />
 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css" integrity="sha512-b2QcS5SsA8tZodcDtGRELiGv5SaKSk1vDHDaQRda0htPYWZ6046lr3kJ5bAAQdpV2mmA/4v0wQF9MyU6/pDIAg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js" integrity="sha512-WW8/jxkELe2CAiE4LvQfwm1rajOS8PHasCCx+knHG0gBHt8EXxS6T6tJRTGuDQVnluuAvMxWF4j8SNFDKceLFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
-<link href="{{ asset('assets/css/style.css') }}?time=<?= date("His") ?>" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/css/styles-popup.css') }}?time=<?= date("His") ?>" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/css/responsive.css') }}?time=<?= date("His") ?>" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/bs_leftnavi.css') }}">
-<link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/styles-popup.css') }}?v={{ filemtime(public_path('assets/css/styles-popup.css')) }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/responsive.css') }}?v={{ filemtime(public_path('assets/css/responsive.css')) }}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/bs_leftnavi.css') }}?v={{ filemtime(public_path('assets/css/bs_leftnavi.css')) }}">
+<link href="{{ asset('assets/css/custom.css') }}?v={{ filemtime(public_path('assets/css/custom.css')) }}" rel="stylesheet" type="text/css" />
 <!--<script src="{{ asset('assets/js/jquery.min.js') }}"></script>-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <!--<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>-->
-<script src="{{ asset('assets/js/bs_leftnavi.js') }}"></script>
+<script src="{{ asset('assets/js/bs_leftnavi.js') }}?v={{ filemtime(public_path('assets/js/bs_leftnavi.js')) }}"></script>
 <!--<script src="{{ asset('assets/js/jquery-ui.js') }}"></script>-->
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <link rel="stylesheet"
  href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<script src="{{ asset('assets/js/easyResponsiveTabs.js') }}"></script>
+<script src="{{ asset('assets/js/easyResponsiveTabs.js') }}?v={{ filemtime(public_path('assets/js/easyResponsiveTabs.js')) }}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.default.min.css">
 
 <style>
