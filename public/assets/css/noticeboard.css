@@ -30,7 +30,7 @@
 
     .nb-v2-search-btn {
         flex: 0 0 auto;
-        padding: 9px 16px !important;
+        padding: 9px 15px !important;
         font-size: 13px !important;
     }
 
@@ -91,15 +91,15 @@
     }
 
     .left_notice h2 {
-        font-size: 22px !important;
-        line-height: 1.25 !important;
+        font-size: 20px !important;
+        line-height: 1.2 !important;
     }
 
     .left_notice h2 span {
         display: block !important;
-        font-size: 13px !important;
+        font-size: 12px !important;
         line-height: 1.4 !important;
-        margin-top: 5px !important;
+        margin-top: 4px !important;
     }
 
     .left_notice_actions {
@@ -186,12 +186,26 @@
         padding: 0 10px !important;
     }
 
+    .nb-v2-search-input-wrap {
+        padding: 4px 4px 4px 12px !important;
+    }
+
     .nb-v2-search-input {
-        font-size: 13px !important;
+        font-size: 12px !important;
     }
 
     .nb-v2-search-btn {
-        padding: 8px 12px !important;
+        padding: 7px 10px !important;
+        font-size: 12px !important;
+        border-radius: 8px !important;
+    }
+
+    .left_notice h2 {
+        font-size: 18px !important;
+    }
+
+    .left_notice h2 span {
+        font-size: 11px !important;
     }
 
     .notice_refineresults .col-md-4 {
@@ -593,7 +607,9 @@
 
 @media (max-width: 480px) {
     .nb-v2-search-btn {
-        display: none; /* Hide text on very small screens or use icon */
+        display: inline-block !important;
+        padding: 6px 10px !important;
+        font-size: 11px !important;
     }
     
     .nb-v2-search-input-wrap::after {

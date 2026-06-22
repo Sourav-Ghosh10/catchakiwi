@@ -7,7 +7,7 @@
 .nb-v2-container {
     background: #fff;
     border-radius: 15px;
-    padding: 40px;
+    padding: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     max-width: 1000px;
     margin: 0 auto;
@@ -31,7 +31,7 @@
 
 /* Search Bar */
 .nb-v2-search-container {
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 }
 
 .nb-v2-search-input-wrap {
@@ -391,10 +391,26 @@
         padding: 20px 0;
     }
 
-    .nb-v2-container {
-        padding: 20px 12px;
-        border-radius: 10px;
+    .nb-v2-latest-item-wrap {
+        border-radius: 12px !important;
+        border: 1px solid #edf2f7 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
     }
+
+    .nb-v2-title {
+        font-size: 26px;
+        background: linear-gradient(135deg, #273038 0%, #4a5568 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+    }
+
+    .nb-v2-subtitle {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+
 
     .nb-v2-search-input-wrap {
         padding: 4px 4px 4px 14px;
@@ -409,7 +425,7 @@
         min-width: 0;
         width: 100%;
     }
-    .nb-v2-search-input{font-size: 13px;}
+    .nb-v2-search-input{font-size: 11px;}
     .nb-v2-search-btn {
         flex: 0 0 auto;
         padding: 9px 16px;
@@ -456,6 +472,57 @@
         right: 6px;
         font-size: 10px;
         padding: 2px 7px;
+    }
+    .nb-v2-spotlight {
+        padding: 16px;
+        background: linear-gradient(135deg, #fffef0 0%, #fff9e3 100%);
+        border: 1px solid rgba(124, 165, 22, 0.2);
+        box-shadow: 0 10px 25px rgba(124, 165, 22, 0.08);
+        border-radius: 16px;
+        border-bottom: 4px solid #e8e3c1;
+    }
+
+    .nb-v2-spotlight-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .nb-v2-spotlight-badge {
+        margin-right: 0;
+        font-size: 11px;
+        padding: 5px 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        animation: subtlePulse 3s infinite;
+    }
+
+    @keyframes subtlePulse {
+        0% { transform: scale(1); box-shadow: 2px 2px 0 #5a7a10; }
+        50% { transform: scale(1.03); box-shadow: 3px 3px 5px rgba(90, 122, 16, 0.3); }
+        100% { transform: scale(1); box-shadow: 2px 2px 0 #5a7a10; }
+    }
+
+    .nb-v2-spotlight-text {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #2d3748;
+        padding-right: 25px;
+    }
+
+    .nb-v2-deal-link {
+        color: #f7941d;
+        border-bottom: 2px solid rgba(247, 148, 29, 0.3);
+        text-decoration: none !important;
+    }
+
+    .nb-v2-spotlight-arrow {
+        right: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+        font-size: 18px;
     }
 }
 
