@@ -1,6 +1,7 @@
 @include('includes/inner-header')
 
-<link href="{{ asset('assets/css/noticeboard.css') }}?v={{ filemtime(public_path('assets/css/noticeboard.css')) }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/css/noticeboard.css') }}?v={{ filemtime(public_path('assets/css/noticeboard.css')) }}"
+    rel="stylesheet" type="text/css" />
 
 <div class="mid_body">
     <!-- Search Section -->
@@ -8,8 +9,8 @@
         <form action="{{ route('notice-board') }}" method="GET" class="nb-v2-search-form">
             <div class="nb-v2-search-input-wrap">
                 <i class="fa fa-search nb-v2-search-icon"></i>
-                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="What are you looking for today?"
-                    class="nb-v2-search-input">
+                <input type="text" name="search" value="{{ $search ?? '' }}"
+                    placeholder="What are you looking for today?" class="nb-v2-search-input">
                 <button type="submit" class="nb-v2-search-btn">Search</button>
             </div>
         </form>
@@ -37,9 +38,10 @@
                                         <ul>
                                             @foreach($chunk as $cat)
                                                 <li>
-                                                    <a href="{{ route('notice-board', $cat->slug) }}" 
-                                                       style="{{ (isset($activeCategory) && $activeCategory->id == $cat->id) ? 'font-weight:bold; color:#729b0f;' : '' }}">
-                                                        {{ $cat->category }} ({{ str_pad($cat->notices_count, 2, '0', STR_PAD_LEFT) }})
+                                                    <a href="{{ route('notice-board', $cat->slug) }}"
+                                                        style="{{ (isset($activeCategory) && $activeCategory->id == $cat->id) ? 'font-weight:bold; color:#729b0f;' : '' }}">
+                                                        {{ $cat->category }}
+                                                        ({{ str_pad($cat->notices_count, 2, '0', STR_PAD_LEFT) }})
                                                     </a>
                                                 </li>
                                             @endforeach
@@ -50,47 +52,38 @@
                         </div>
                     </div>
 
-                    <div class="notice_grid_v2">
-                        @forelse($notices as $notice)
-                            <div class="notice_boxes">
-                                <div class="card_image_container">
-                                    @if(isset($notice->is_featured) && $notice->is_featured)
-                                        <span class="featured_tag">Featured listing</span>
-                                    @endif
-                                    
-                                    @if(isset($noticeImages[$notice->id]) && count($noticeImages[$notice->id]) > 0)
-                                        <img src="{{ asset($noticeImages[$notice->id][0]->img_path) }}" alt="{{ $notice->heading }}">
-                                    @else
-                                        <img src="{{ asset('assets/images/notice_logoimg.png') }}" style="object-fit: contain; padding: 20px; background: #f8f9fa;">
-                                    @endif
+                    @forelse($notices as $notice)
+                        <div class="notice_boxes">
+                            <h3>{{ $notice->heading }}</h3>
+                            <p class="notice_des">{{ $notice->content }}</p>
+                            @if($notice->town_suburb)
+                                <p class="location_txt">{{ $notice->town_suburb }}</p>
+                            @endif
+                            @if(isset($noticeImages[$notice->id]))
+                                <div class="notice_thum">
+                                    @foreach($noticeImages[$notice->id] as $img)
+                                        <img src="{{ asset($img->img_path) }}" alt="">
+                                    @endforeach
                                 </div>
-
-                                <div class="card_body_v2">
-                                    <div class="price_tag_v2">
-                                        {{ $notice->budget > 0 ? '$'.number_format($notice->budget) : 'FREE' }}
-                                    </div>
-                                    <h3 class="card-title-fixed">
-                                        <img src="{{ asset('assets/images/notice_logoimg.png') }}" alt="icon">
-                                        {{ $notice->heading }}
-                                    </h3>
-                                    
-                                    <div class="card_footer_v2">
-                                        <div class="location_v2">
-                                            <i class="fa fa-map-marker-alt" style="color: #f7941d; margin-right: 5px;"></i> 
-                                            {{ $notice->town_suburb ?? 'Wellington' }}
-                                        </div>
-                                        <a href="{{ url('/profile#parentHorizontalTab3') }}" class="chat_btn_v3" title="Chat with seller">
-                                            <img src="{{ asset('assets/images/notice_chaticon.png') }}" alt="Message">
-                                        </a>
-                                    </div>
-                                </div>
+                            @endif
+                            <div class="notice_bottompan">
+                                <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice_logo">
+                                <p>{{ $notice->user_name ?? 'Catchakiwi' }} <span
+                                        class="not_date">{{ \Carbon\Carbon::parse($notice->created_at)->format('d/m/y') }}</span>
+                                </p>
+                                <span class="notice_views"
+                                    style="font-size:12px;color:#888;margin-left:auto;display:flex;align-items:center;gap:4px;">
+                                    <i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}
+                                </span>
+                                <a href="{{ url('/profile#parentHorizontalTab3') }}">
+                                    <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message"
+                                        class="notice_chat">
+                                </a>
                             </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="alert alert-info">No notices found in this category.</div>
-                            </div>
-                        @endforelse
-                    </div>
+                        </div>
+                    @empty
+                        <div class="alert alert-info">No notices found.</div>
+                    @endforelse
 
                     <!-- <ul class="pagination">
                         <li><a href="#"><i class="fa fa-angle-left"></i></a></li>
@@ -127,12 +120,15 @@
     </div>
 </div>
 <script>
-// Increment view count for each notice visible on this page
-document.addEventListener('DOMContentLoaded', function () {
-    @foreach($notices as $notice)
-    fetch('{{ url("/notice/view") }}/{{ $notice->id }}');
-    @endforeach
+    // Increment view count for each notice visible on this page
+    document.addEventListener('DOMContentLoaded', function () {
+        @foreach($notices as $notice)
+            fetch('{{ url("/notice/view") }}/{{ $notice->id }}');
+        @endforeach
 });
+</script>
+
+@include('includes/footer')
 </script>
 
 @include('includes/footer')
