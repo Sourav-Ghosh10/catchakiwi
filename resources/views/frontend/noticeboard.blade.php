@@ -69,11 +69,14 @@
                                     <div class="price_tag_v2">
                                         {{ $notice->budget > 0 ? '$'.number_format($notice->budget) : 'FREE' }}
                                     </div>
-                                    <h3>{{ $notice->heading }}</h3>
+                                    <h3 class="card-title-fixed">
+                                        <img src="{{ asset('assets/images/notice_logoimg.png') }}" alt="icon">
+                                        {{ $notice->heading }}
+                                    </h3>
                                     
                                     <div class="card_footer_v2">
                                         <div class="location_v2">
-                                            <i class="fa fa-map-marker-alt" style="color: #f7941d;"></i> 
+                                            <i class="fa fa-map-marker-alt" style="color: #f7941d; margin-right: 5px;"></i> 
                                             {{ $notice->town_suburb ?? 'Wellington' }}
                                         </div>
                                         <a href="{{ url('/profile#parentHorizontalTab3') }}" class="chat_btn_v3" title="Chat with seller">
