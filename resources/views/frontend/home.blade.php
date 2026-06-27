@@ -335,9 +335,9 @@
                </form>
             </div>
             @if(Auth::user())
-                <div class="add_getqutebutton"><a href="{{ URL::to('/add-your-business') }}">Add Your Business</a> <a href="{{ URL::to('/get-a-quote') }}">Get a Quote</a></div>
+                <div class="add_getqutebutton"><a href="{{ URL::to('/add-your-business') }}">Add Your Business</a> <a href="{{ URL::to('/notice-post?category=2') }}">Get a Quote</a></div>
             @else
-                <div class="add_getqutebutton"><a href="{{ URL::to('/login?redirect=add-your-business') }}">Add Your Business</a> <a href="{{ URL::to('/login?redirect=get-a-quote') }}">Get a  Quote</a></div>
+                <div class="add_getqutebutton"><a href="{{ URL::to('/login?redirect=add-your-business') }}">Add Your Business</a> <a href="{{ URL::to('/login?redirect=notice-post%3Fcategory%3D2') }}">Get a Quote</a></div>
             @endif
             
          </div>

@@ -101,7 +101,7 @@ class NoticeController extends Controller
             $latestNoticesQuery->where('notice.category_id', $categoryId);
         }
 
-        $latestNotices = $latestNoticesQuery->limit(10)->get();
+        $latestNotices = $latestNoticesQuery->limit(3)->get();
 
         // Fetch spotlight notice ($5 Service Deal - ID 1)
         $spotlightNotice = \Illuminate\Support\Facades\DB::table('notice')

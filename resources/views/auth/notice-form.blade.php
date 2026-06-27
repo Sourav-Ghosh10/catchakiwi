@@ -20,10 +20,10 @@
                                 <div class="frm_dv">
                                     <label>Category:</label>
                                     <select name="category_id" id="category_id" required>
-                                        <option value="" {{ old('category_id') ? '' : 'selected' }}>Choose your Category</option>
+                                        <option value="" {{ old('category_id', request()->query('category')) ? '' : 'selected' }}>Choose your Category</option>
                                         @if(!empty($category))
                                             @foreach($category as $cat)
-                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id') === (string) $cat->id ? 'selected' : '' }}>
+                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id', request()->query('category')) === (string) $cat->id ? 'selected' : '' }}>
                                                     {{ $cat->category }}
                                                 </option>
                                             @endforeach
@@ -42,7 +42,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="frm_dv">
+                                    <div class="frm_dv" id="notice_options_fields">
                                         <label class="notice-options-label">
                                             Notice Options:
                                             <button type="button" class="notice-help-button" id="notice_options_help_button"
@@ -332,7 +332,7 @@
 
                                         @media only screen and (max-width: 767px) {
                                             .left_profileform.notice_posefrm .frm_dv {
-                                                display: flex !important;
+                                                display: flex;
                                                 flex-direction: column;
                                                 gap: 7px;
                                                 margin-bottom: 18px;
@@ -570,10 +570,12 @@
                                 var bodyLabel = document.getElementById('body_label');
                                 var bodyTextarea = document.getElementsByName('notice_body')[0];
                                 var itemOptionsFields = document.getElementById('item_options_fields');
+                                var noticeOptionsFields = document.getElementById('notice_options_fields');
 
                                 if (categoryId) {
                                     restOfFields.style.display = 'block';
-                                    itemOptionsFields.style.display = 'none'; // hidden by default
+                                    if (itemOptionsFields) itemOptionsFields.style.setProperty('display', 'none', 'important'); // hidden by default
+                                    if (noticeOptionsFields) noticeOptionsFields.style.display = ''; // shown by default
 
                                     // ID 1 is $5 Service Deal
                                     // ID 2 is Get a Quote
@@ -626,6 +628,8 @@
                                         serviceDealFields.style.display = 'none';
                                         getAQuoteFields.style.display = 'block';
                                         additionalImagesSection.style.display = 'none';
+                                        if (itemOptionsFields) itemOptionsFields.style.setProperty('display', 'none', 'important');
+                                        if (noticeOptionsFields) noticeOptionsFields.style.setProperty('display', 'none', 'important');
                                         bodyLabel.innerText = 'Provide a description of your job:';
                                         bodyTextarea.placeholder = 'Provide a description of your job';
 
