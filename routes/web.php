@@ -125,6 +125,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
     // Notice Management
     Route::resource('notice-categories', \App\Http\Controllers\Admin\NoticeCategoryController::class)->names('notice-categories');
+    Route::get('notices', [\App\Http\Controllers\Admin\NoticeController::class, 'index'])->name('notices.index');
+    Route::post('notices/{id}/approve', [\App\Http\Controllers\Admin\NoticeController::class, 'approve'])->name('notices.approve');
+    Route::post('notices/{id}/reject', [\App\Http\Controllers\Admin\NoticeController::class, 'reject'])->name('notices.reject');
 });
 /*
 ---------------------------------------------------------------------

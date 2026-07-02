@@ -323,10 +323,18 @@
                                                           <td align="left" valign="top" class="left">{{ $ntc->heading }}</td>
                                                           <td align="left" valign="top">{{ $ntc->noticecategory->category ?? 'N/A' }}</td>
                                                           <td align="center" valign="top" class="stuaactive">
-                                                              @if($ntc->status == '1' || $ntc->status == 'active')
-                                                                  <img src="{{ asset('assets/images/thikmark_icon.png') }}" alt="Active">
+                                                              @if($ntc->status == '1')
+                                                                  @if($ntc->expire_at && \Carbon\Carbon::parse($ntc->expire_at)->isPast())
+                                                                      <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Expired</span>
+                                                                  @else
+                                                                      <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                                                          <i class="fa fa-check"></i> Active
+                                                                      </span>
+                                                                  @endif
+                                                              @elseif($ntc->status === '0' || $ntc->status === 0)
+                                                                  <span class="badge badge-warning" style="background-color: #ffc107; color: #212529; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">Pending Approval</span>
                                                               @else
-                                                                  <span style="color:#aaa;">Inactive</span>
+                                                                  <span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Inactive</span>
                                                               @endif
                                                           </td>
                                                           <td align="left" valign="top"><img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $ntc->views ?? 0 }}</td>

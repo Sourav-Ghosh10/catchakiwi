@@ -123,12 +123,20 @@
           <li class="nav-item nav-category">
             <span class="nav-link">Notice Management</span>
           </li>
-          <li class="nav-item menu-items" style="border-bottom: 1px solid #2c2e33; margin-bottom: 20px; padding-bottom: 10px;">
+          <li class="nav-item menu-items">
             <a class="nav-link" href="{{ route('admin.notice-categories.index') }}">
               <span class="menu-icon">
                 <i class="mdi mdi-bullhorn-variant"></i>
               </span>
               <span class="menu-title">Notice Categories</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items" style="border-bottom: 1px solid #2c2e33; margin-bottom: 20px; padding-bottom: 10px;">
+            <a class="nav-link" href="{{ route('admin.notices.index') }}">
+              <span class="menu-icon">
+                <i class="mdi mdi-clipboard-text"></i>
+              </span>
+              <span class="menu-title">Notice Submissions</span>
             </a>
           </li>
 

@@ -622,7 +622,17 @@ class UserController extends Controller
         }
 
         $country = Country::where('status', '1')->get()->toArray();
-        return view('auth.notice-form', compact('category', 'grouped', 'sideData', 'country'));
+
+        $user_id = Auth::user()->id ?? null;
+        $activeStandardNotice = null;
+        if ($user_id) {
+            $activeStandardNotice = Notice::where('user_id', $user_id)
+                ->where('noticetype', 'standard')
+                ->where('notice_EXPIRE', '>', Carbon::now())
+                ->first();
+        }
+
+        return view('auth.notice-form', compact('category', 'grouped', 'sideData', 'country', 'activeStandardNotice'));
     }
     public function NoticePost(Request $request)
     {
@@ -641,13 +651,23 @@ class UserController extends Controller
         ]);
 
         $category_id = $request->input('category_id');
-        $noticetype = $request->input('noticetype');
+        $noticetype = ($category_id == '2') ? 'standard' : $request->input('noticetype');
         $notice_title = $request->input('notice_title');
         $notice_body = $request->input('notice_body');
         $noticeimgbase64 = $request->input('noticeimgbase64');
         $noticeimg = $request->file('noticeimg');
 
         $user_id = Auth::user()->id ?? null;
+
+        if ($noticetype === 'standard') {
+            $activeStandardNotice = Notice::where('user_id', $user_id)
+                ->where('noticetype', 'standard')
+                ->where('notice_EXPIRE', '>', Carbon::now())
+                ->first();
+            if ($activeStandardNotice) {
+                return redirect()->back()->withInput()->with('error', 'You already have an active 7-Day Notice. You can only submit another one after it expires on ' . Carbon::parse($activeStandardNotice->notice_EXPIRE)->format('d M Y, h:i A') . '.');
+            }
+        }
 
         $notice = new Notice();
         $notice->user_id = $user_id;
@@ -662,8 +682,29 @@ class UserController extends Controller
         $notice->budget = $request->input('budget');
         $notice->message_text = $request->input('message_text');
         $notice->created_at = Carbon::now();
-        $notice->expire_at = Carbon::now();
-        //dd($notice);
+
+        if ($noticetype === 'standard') {
+            $standardNoticesCount = Notice::where('user_id', $user_id)
+                ->where('noticetype', 'standard')
+                ->count();
+            if ($standardNoticesCount < 2) {
+                // Initial notice (0) & first unlock (1) are automatically approved
+                $notice->status = '1';
+                $notice->notice_EXPIRE = Carbon::now()->addDays(7);
+                $notice->expire_at = Carbon::now()->addDays(7);
+            } else {
+                // Second unlock onwards (>= 2) requires admin approval
+                $notice->status = '0';
+                $notice->notice_EXPIRE = Carbon::now()->addDays(7);
+                $notice->expire_at = Carbon::now()->addDays(7);
+            }
+        } else {
+            // Featured notices require admin approval
+            $notice->status = '0';
+            $notice->notice_EXPIRE = Carbon::now()->addDays(28);
+            $notice->expire_at = Carbon::now()->addDays(28);
+        }
+
         $notice->save();
         $noticeimgbase64 = $request->input('noticeimgbase64');
         if ($noticeimgbase64 && is_array($noticeimgbase64)) {
@@ -691,8 +732,12 @@ class UserController extends Controller
                 }
             }
         }
-        return redirect()->route('notice-post')->with('success', 'Notice created successfully!');
 
+        $successMessage = 'Notice created successfully!';
+        if ($notice->status === '0') {
+            $successMessage = 'Notice submitted successfully! Since approval is required, it will be published after admin review.';
+        }
+        return redirect()->route('notice-post')->with('success', $successMessage);
     }
     public function contactUsSub(Request $request)
     {

@@ -18,7 +18,7 @@ class NoticeController extends Controller
         $search = $request->input('search');
 
         $categories = \Illuminate\Support\Facades\DB::table('notice_category')
-            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw('(SELECT COUNT(*) FROM notice WHERE notice.category_id = notice_category.id) as notices_count'))
+            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(SELECT COUNT(*) FROM notice WHERE notice.category_id = notice_category.id AND notice.status = '1' AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "') as notices_count"))
             ->get();
 
         $activeCategory = null;
@@ -35,6 +35,8 @@ class NoticeController extends Controller
             ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
             ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
+            ->where('notice.status', '1')
+            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
             ->orderBy('notice.created_at', 'desc');
 
         if ($categoryId) {
@@ -71,7 +73,7 @@ class NoticeController extends Controller
 
         // Fetch categories with counts
         $categories = \Illuminate\Support\Facades\DB::table('notice_category')
-            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw('(SELECT COUNT(*) FROM notice WHERE notice.category_id = notice_category.id) as notices_count'))
+            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(SELECT COUNT(*) FROM notice WHERE notice.category_id = notice_category.id AND notice.status = '1' AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "') as notices_count"))
             ->get();
 
         $activeCategory = null;
@@ -88,6 +90,8 @@ class NoticeController extends Controller
         $latestNoticesQuery = \Illuminate\Support\Facades\DB::table('notice')
             ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
             ->select('notice.*', 'notice_category.category as category_name')
+            ->where('notice.status', '1')
+            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
             ->orderBy('notice.created_at', 'desc');
 
         if ($search) {
@@ -106,6 +110,8 @@ class NoticeController extends Controller
         // Fetch spotlight notice ($5 Service Deal - ID 1)
         $spotlightNotice = \Illuminate\Support\Facades\DB::table('notice')
             ->where('category_id', 1)
+            ->where('status', '1')
+            ->where('notice_EXPIRE', '>=', \Carbon\Carbon::now())
             ->orderBy('created_at', 'desc')
             ->first();
 

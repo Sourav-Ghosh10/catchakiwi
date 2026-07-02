@@ -16,6 +16,26 @@
                         </div>
                         <form action="{{ route('notice-submit') }}" method="post" enctype='multipart/form-data'>
                             @csrf
+                            
+                            @if(session('success'))
+                                <div class="alert alert-success" style="border-left: 4px solid #729b0f; background-color: #f6fbf0; color: #40570b; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-family: 'Poppins', sans-serif;">
+                                    <i class="fa fa-check-circle" style="margin-right: 8px;"></i>
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            @if(session('error'))
+                                <div class="alert alert-danger" style="border-left: 4px solid #d9534f; background-color: #fdf7f7; color: #b94a48; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-family: 'Poppins', sans-serif;">
+                                    <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
+                            <div id="active_standard_warning" class="alert alert-danger" style="display: none; border-left: 4px solid #d9534f; background-color: #fdf7f7; color: #b94a48; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-family: 'Poppins', sans-serif;">
+                                <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                <span>You already have an active 7-Day notice. You cannot submit this notice type until it expires.</span>
+                            </div>
+
                             <div class="left_profileform notice_posefrm">
                                 <div class="frm_dv">
                                     <label>Category:</label>
@@ -58,12 +78,27 @@
                                             </span>
                                         </label>
                                         <div class="notice-options">
-                                            <div class="radiogbutt"><input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
-                                                7 day Notice (Free) $0.00</div>
-                                            <div class="radiogbutt"><input name="noticetype" type="radio" value="feature" {{ old('noticetype') === 'feature' ? 'checked' : '' }}>
-                                                28 day Feature Notice ( $3.00)
-                                                <img src="images/help_icon.png" alt="" class="help_icon">
-                                            </div>
+                                            @if($activeStandardNotice)
+                                                <div class="radiogbutt" style="opacity: 0.6; cursor: not-allowed; display: flex; align-items: center; gap: 8px;" title="You already have an active 7-day notice.">
+                                                    <input name="noticetype" type="radio" value="standard" disabled>
+                                                    7 day Notice (Free) $0.00 (Locked - active notice expires {{ \Carbon\Carbon::parse($activeStandardNotice->notice_EXPIRE)->format('d M Y') }})
+                                                </div>
+                                                <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
+                                                    <input name="noticetype" type="radio" value="feature" checked>
+                                                    28 day Feature Notice ( $3.00)
+                                                    <img src="images/help_icon.png" alt="" class="help_icon">
+                                                </div>
+                                            @else
+                                                <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
+                                                    <input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
+                                                    7 day Notice (Free) $0.00
+                                                </div>
+                                                <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
+                                                    <input name="noticetype" type="radio" value="feature" {{ old('noticetype') === 'feature' ? 'checked' : '' }}>
+                                                    28 day Feature Notice ( $3.00)
+                                                    <img src="images/help_icon.png" alt="" class="help_icon">
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -676,12 +711,46 @@
                                 }
                             });
 
-                            window.addEventListener('load', function () {
-                                var categorySelect = document.getElementById('category_id');
-                                if (categorySelect.value !== "") {
-                                    categorySelect.dispatchEvent(new Event('change'));
-                                }
-                            });
+                             function checkSubmissionValidity() {
+                                 var hasActiveStandard = {{ $activeStandardNotice ? 'true' : 'false' }};
+                                 if (!hasActiveStandard) return;
+                                 
+                                 var categorySelect = document.getElementById('category_id');
+                                 var categoryId = categorySelect.value;
+                                 var noticetypeOption = document.querySelector('input[name="noticetype"]:checked');
+                                 var noticetype = noticetypeOption ? noticetypeOption.value : 'standard';
+                                 var activeWarning = document.getElementById('active_standard_warning');
+                                 var submitBtn = document.querySelector('input[name="submit"]');
+
+                                 if (categoryId == '2' || (categoryId !== '' && noticetype === 'standard')) {
+                                     activeWarning.style.display = 'block';
+                                     if (categoryId == '2') {
+                                         activeWarning.querySelector('span').innerHTML = '<strong>Get a Quote</strong> requests are 7-Day Notices. You cannot submit one while you have an active 7-Day Notice.';
+                                     } else {
+                                         activeWarning.querySelector('span').innerHTML = 'You cannot submit a <strong>7-Day Notice</strong> while you have an active 7-Day Notice. Please select 28-Day Featured Notice.';
+                                     }
+                                     if (submitBtn) {
+                                         submitBtn.disabled = true;
+                                         submitBtn.style.opacity = 0.5;
+                                         submitBtn.style.cursor = 'not-allowed';
+                                     }
+                                 } else {
+                                     activeWarning.style.display = 'none';
+                                     if (submitBtn) {
+                                         submitBtn.disabled = false;
+                                         submitBtn.style.opacity = 1;
+                                         submitBtn.style.cursor = 'pointer';
+                                     }
+                                 }
+                             }
+
+                             window.addEventListener('load', function () {
+                                 var categorySelect = document.getElementById('category_id');
+                                 if (categorySelect.value !== "") {
+                                     categorySelect.dispatchEvent(new Event('change'));
+                                 }
+                                 checkSubmissionValidity();
+                             });
 
                             // Character counter logic
                             document.getElementById('notice_title').addEventListener('input', function() {
@@ -713,10 +782,15 @@
                                 });
                             }
 
-                            document.querySelectorAll('input[name="noticetype"]').forEach(function(option) {
-                                option.addEventListener('change', updateFeatureImageSlots);
-                            });
-                            updateFeatureImageSlots();
+                             document.getElementById('category_id').addEventListener('change', checkSubmissionValidity);
+                             document.querySelectorAll('input[name="noticetype"]').forEach(function(option) {
+                                 option.addEventListener('change', function() {
+                                     updateFeatureImageSlots();
+                                     checkSubmissionValidity();
+                                 });
+                             });
+                             updateFeatureImageSlots();
+                             checkSubmissionValidity();
 
                             var noticeHelpButton = document.getElementById('notice_options_help_button');
                             var noticeHelpText = document.getElementById('notice_options_help_text');
