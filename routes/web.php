@@ -160,6 +160,8 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/notice-post', [UserController::class, 'Notice'])->name('notice-post');
     Route::post('/notice-submit', [UserController::class, 'NoticePost'])->name('notice-submit');
+    Route::get('/notice/edit/{id}', [UserController::class, 'NoticeEdit'])->name('notice.edit');
+    Route::put('/notice/update/{id}', [UserController::class, 'NoticeUpdate'])->name('notice.update');
     Route::delete('/notice/delete/{id}', [UserController::class, 'NoticeDelete'])->name('notice.delete');
 
     Route::post('/store/profilebanner', [UserController::class, 'StoreProfileBanner'])->name('store.profilebanner');

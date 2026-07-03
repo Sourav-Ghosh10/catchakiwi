@@ -10,12 +10,15 @@
                                 <br>
                                 <span><a href="{{ url('/') }}" style="color: #729b0f; text-decoration: none;">Home</a> >
                                     <a href="{{ route('notice-board') }}"
-                                        style="color: #729b0f; text-decoration: none;">Notice Board</a> > Post
-                                    Notice</span>
+                                        style="color: #729b0f; text-decoration: none;">Notice Board</a> > 
+                                    {{ isset($notice) ? 'Edit Notice' : 'Post Notice' }}</span>
                             </h3>
                         </div>
-                        <form action="{{ route('notice-submit') }}" method="post" enctype='multipart/form-data'>
+                        <form action="{{ isset($notice) ? route('notice.update', $notice->id) : route('notice-submit') }}" method="post" enctype='multipart/form-data'>
                             @csrf
+                            @if(isset($notice))
+                                @method('PUT')
+                            @endif
                             
                             @if(session('success'))
                                 <div class="alert alert-success" style="border-left: 4px solid #729b0f; background-color: #f6fbf0; color: #40570b; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-family: 'Poppins', sans-serif;">
@@ -40,10 +43,10 @@
                                 <div class="frm_dv">
                                     <label>Category:</label>
                                     <select name="category_id" id="category_id" required>
-                                        <option value="" {{ old('category_id', request()->query('category')) ? '' : 'selected' }}>Choose your Category</option>
+                                        <option value="" {{ old('category_id', isset($notice) ? $notice->category_id : request()->query('category')) ? '' : 'selected' }}>Choose your Category</option>
                                         @if(!empty($category))
                                             @foreach($category as $cat)
-                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id', request()->query('category')) === (string) $cat->id || (string) old('category_id', request()->query('category')) === (string) $cat->slug ? 'selected' : '' }}>
+                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id', isset($notice) ? $notice->category_id : request()->query('category')) === (string) $cat->id || (string) old('category_id', isset($notice) ? $notice->category_id : request()->query('category')) === (string) $cat->slug ? 'selected' : '' }}>
                                                     {{ $cat->category }}
                                                 </option>
                                             @endforeach
@@ -55,9 +58,9 @@
                                     <div id="item_options_fields" class="frm_dv" style="display:none;">
                                         <label>Item Options:</label>
                                         <div class="item-options">
-                                            <div class="radiogbutt"><input name="item_type" type="radio" value="Item for sale" checked>
+                                            <div class="radiogbutt"><input name="item_type" type="radio" value="Item for sale" {{ old('item_type', isset($notice) ? $notice->looking_for : 'Item for sale') === 'Item for sale' ? 'checked' : '' }}>
                                                 Item for sale</div>
-                                            <div class="radiogbutt"><input name="item_type" type="radio" value="Item Wanted">
+                                            <div class="radiogbutt"><input name="item_type" type="radio" value="Item Wanted" {{ old('item_type', isset($notice) ? $notice->looking_for : '') === 'Item Wanted' ? 'checked' : '' }}>
                                                 Item Wanted</div>
                                         </div>
                                     </div>
@@ -90,11 +93,11 @@
                                                 </div>
                                             @else
                                                 <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
-                                                    <input name="noticetype" type="radio" value="standard" {{ old('noticetype', 'standard') === 'standard' ? 'checked' : '' }}>
+                                                    <input name="noticetype" type="radio" value="standard" {{ old('noticetype', isset($notice) ? $notice->noticetype : 'standard') === 'standard' ? 'checked' : '' }}>
                                                     7 day Notice (Free) $0.00
                                                 </div>
                                                 <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
-                                                    <input name="noticetype" type="radio" value="feature" {{ old('noticetype') === 'feature' ? 'checked' : '' }}>
+                                                    <input name="noticetype" type="radio" value="feature" {{ old('noticetype', isset($notice) ? $notice->noticetype : '') === 'feature' ? 'checked' : '' }}>
                                                     28 day Feature Notice ( $3.00)
                                                     <img src="images/help_icon.png" alt="" class="help_icon">
                                                 </div>
@@ -105,8 +108,8 @@
                                     <div class="frm_dv">
                                         <label>Notice Title:</label>
                                         <div class="notice-field-column">
-                                            <input name="notice_title" id="notice_title" type="text" placeholder="Enter Notice Title (35 char max)" maxlength="35">
-                                            <div id="title_counter" class="notice-character-counter">0 / 35 characters</div>
+                                            <input name="notice_title" id="notice_title" type="text" placeholder="Enter Notice Title (35 char max)" maxlength="35" value="{{ old('notice_title', $notice->heading ?? '') }}">
+                                            <div id="title_counter" class="notice-character-counter">{{ isset($notice) ? strlen($notice->heading) : 0 }} / 35 characters</div>
                                         </div>
                                     </div>
 
@@ -116,28 +119,9 @@
                                             <label>I'm Looking for:</label>
                                             <select name="looking_for">
                                                 <option value="">Select Service</option>
-                                                <option value="Architect and Drafting">Architect and Drafting</option>
-                                                <option value="Brick and block Laying">Brick and block Laying</option>
-                                                <option value="Building">Building</option>
-                                                <option value="Car Cleaning">Car Cleaning</option>
-                                                <option value="Carpet and Furniture cleaning">Carpet and Furniture cleaning</option>
-                                                <option value="Cleaning">Cleaning</option>
-                                                <option value="Computer Help">Computer Help</option>
-                                                <option value="Concreting">Concreting</option>
-                                                <option value="Electrical">Electrical</option>
-                                                <option value="Flooring">Flooring</option>
-                                                <option value="Gardening">Gardening</option>
-                                                <option value="Gib Fixing and Plastering">Gib Fixing and Plastering</option>
-                                                <option value="Handy person">Handy person</option>
-                                                <option value="House washing">House washing</option>
-                                                <option value="Interior Design">Interior Design</option>
-                                                <option value="Landscaping">Landscaping</option>
-                                                <option value="Locksmith">Locksmith</option>
-                                                <option value="Moving">Moving</option>
-                                                <option value="Painting">Painting</option>
-                                                <option value="Plumbing">Plumbing</option>
-                                                <option value="Roofing">Roofing</option>
-                                                <option value="Tiling">Tiling</option>
+                                                @foreach(['Architect and Drafting', 'Brick and block Laying', 'Building', 'Car Cleaning', 'Carpet and Furniture cleaning', 'Cleaning', 'Computer Help', 'Concreting', 'Electrical', 'Flooring', 'Gardening', 'Gib Fixing and Plastering', 'Handy person', 'House washing', 'Interior Design', 'Landscaping', 'Locksmith', 'Moving', 'Painting', 'Plumbing', 'Roofing', 'Tiling'] as $service)
+                                                    <option value="{{ $service }}" {{ old('looking_for', $notice->looking_for ?? '') === $service ? 'selected' : '' }}>{{ $service }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="frm_dv quote_location_dv">
@@ -150,23 +134,18 @@
                                             <label>When do you need the work to start?:</label>
                                             <select name="start_date">
                                                 <option value="">Select Timing</option>
-                                                <option value="Emergency">Emergency</option>
-                                                <option value="ASAP">ASAP</option>
-                                                <option value="Next few days">Next few days</option>
-                                                <option value="I'm flexible">I'm flexible</option>
-                                                <option value="Next few weeks">Next few weeks</option>
-                                                <option value="Next few months">Next few months</option>
+                                                @foreach(['Emergency', 'ASAP', 'Next few days', "I'm flexible", 'Next few weeks', 'Next few months'] as $timing)
+                                                    <option value="{{ $timing }}" {{ old('start_date', $notice->start_date ?? '') === $timing ? 'selected' : '' }}>{{ $timing }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="frm_dv">
                                             <label>Budget:</label>
                                             <select name="budget">
                                                 <option value="">Select Budget</option>
-                                                <option value="Under $300">Under $300</option>
-                                                <option value="$300 to $600">$300 to $600</option>
-                                                <option value="$600 to $1000">$600 to $1000</option>
-                                                <option value="More than $1000">More than $1000</option>
-                                                <option value="Not sure">Not sure</option>
+                                                @foreach(['Under $300', '$300 to $600', '$600 to $1000', 'More than $1000', 'Not sure'] as $b)
+                                                    <option value="{{ $b }}" {{ old('budget', $notice->budget ?? '') === $b ? 'selected' : '' }}>{{ $b }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -184,8 +163,8 @@
                                     <div class="frm_dv textareadv">
                                         <label id="body_label">Add your content: </label>
                                         <div class="notice-field-column">
-                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text (155 char max)." maxlength="155"></textarea>
-                                            <div id="body_counter" class="notice-character-counter">0 / 155 characters</div>
+                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text." maxlength="{{ isset($notice) && in_array($notice->category_id, [1, 9]) ? '300' : '155' }}">{{ old('notice_body', $notice->content ?? '') }}</textarea>
+                                            <div id="body_counter" class="notice-character-counter">{{ isset($notice) ? strlen($notice->content) : 0 }} / {{ isset($notice) && in_array($notice->category_id, [1, 9]) ? '300' : '155' }} characters</div>
                                         </div>
                                     </div>
                                     <style>
@@ -477,54 +456,87 @@
                                                 <!-- Box 1 -->
                                                 <div class="image-upload-box"
                                                     onclick="document.getElementById('noticeimg1').click();">
-                                                    <div id="noticeimgshow1" class="noticeimgshow placeholder-icon">
-                                                        <i class="fa fa-camera"></i>
-                                                        <span>Image 1</span>
-                                                    </div>
+                                                    @if(isset($noticeImages) && isset($noticeImages[0]))
+                                                        <div id="noticeimgshow1" class="noticeimgshow">
+                                                            <img src="{{ asset($noticeImages[0]->img_path) }}" alt="">
+                                                            <div class="remove-img" data-index="1">X</div>
+                                                        </div>
+                                                    @else
+                                                        <div id="noticeimgshow1" class="noticeimgshow placeholder-icon">
+                                                            <i class="fa fa-camera"></i>
+                                                            <span>Image 1</span>
+                                                        </div>
+                                                    @endif
                                                     <input type="file" name="noticeimg[]" class="imageUpload"
                                                         id="noticeimg1" style="display:none;">
                                                     <input type="hidden" name="noticeimgbase64[]"
-                                                        class="noticeimgbase64" id="noticeimgbase641">
+                                                        class="noticeimgbase64" id="noticeimgbase641"
+                                                        value="{{ isset($noticeImages) && isset($noticeImages[0]) ? $noticeImages[0]->img_path : '' }}">
                                                 </div>
 
                                                 <!-- Box 2 -->
                                                 <div class="image-upload-box"
                                                     onclick="document.getElementById('noticeimg2').click();">
-                                                    <div id="noticeimgshow2" class="noticeimgshow2 placeholder-icon">
-                                                        <i class="fa fa-camera"></i>
-                                                        <span>Image 2</span>
-                                                    </div>
+                                                    @if(isset($noticeImages) && isset($noticeImages[1]))
+                                                        <div id="noticeimgshow2" class="noticeimgshow2">
+                                                            <img src="{{ asset($noticeImages[1]->img_path) }}" alt="">
+                                                            <div class="remove-img" data-index="2">X</div>
+                                                        </div>
+                                                    @else
+                                                        <div id="noticeimgshow2" class="noticeimgshow2 placeholder-icon">
+                                                            <i class="fa fa-camera"></i>
+                                                            <span>Image 2</span>
+                                                        </div>
+                                                    @endif
                                                     <input type="file" name="noticeimg[]" class="imageUpload"
                                                         id="noticeimg2" style="display:none;">
                                                     <input type="hidden" name="noticeimgbase64[]"
-                                                        class="noticeimgbase64" id="noticeimgbase642">
+                                                        class="noticeimgbase64" id="noticeimgbase642"
+                                                        value="{{ isset($noticeImages) && isset($noticeImages[1]) ? $noticeImages[1]->img_path : '' }}">
                                                 </div>
 
                                                 <!-- Box 3 -->
                                                 <div class="image-upload-box"
                                                     onclick="document.getElementById('noticeimg3').click();">
-                                                    <div id="noticeimgshow3" class="noticeimgshow3 placeholder-icon">
-                                                        <i class="fa fa-camera"></i>
-                                                        <span>Image 3</span>
-                                                    </div>
+                                                    @if(isset($noticeImages) && isset($noticeImages[2]))
+                                                        <div id="noticeimgshow3" class="noticeimgshow3">
+                                                            <img src="{{ asset($noticeImages[2]->img_path) }}" alt="">
+                                                            <div class="remove-img" data-index="3">X</div>
+                                                        </div>
+                                                    @else
+                                                        <div id="noticeimgshow3" class="noticeimgshow3 placeholder-icon">
+                                                            <i class="fa fa-camera"></i>
+                                                            <span>Image 3</span>
+                                                        </div>
+                                                    @endif
                                                     <input type="file" name="noticeimg[]" class="imageUpload"
                                                         id="noticeimg3" style="display:none;">
                                                     <input type="hidden" name="noticeimgbase64[]"
-                                                        class="noticeimgbase64" id="noticeimgbase643">
+                                                        class="noticeimgbase64" id="noticeimgbase643"
+                                                        value="{{ isset($noticeImages) && isset($noticeImages[2]) ? $noticeImages[2]->img_path : '' }}">
                                                 </div>
 
                                                 <!-- Feature notice boxes 4-6 -->
                                                 @foreach(range(4, 6) as $imageIndex)
+                                                    @php $imgKey = $imageIndex - 1; @endphp
                                                     <div class="image-upload-box feature-image-slot" data-image-index="{{ $imageIndex }}" hidden
                                                         onclick="document.getElementById('noticeimg{{ $imageIndex }}').click();">
-                                                        <div id="noticeimgshow{{ $imageIndex }}" class="noticeimgshow{{ $imageIndex }} placeholder-icon">
-                                                            <i class="fa fa-camera"></i>
-                                                            <span>Image {{ $imageIndex }}</span>
-                                                        </div>
+                                                        @if(isset($noticeImages) && isset($noticeImages[$imgKey]))
+                                                            <div id="noticeimgshow{{ $imageIndex }}" class="noticeimgshow{{ $imageIndex }}">
+                                                                <img src="{{ asset($noticeImages[$imgKey]->img_path) }}" alt="">
+                                                                <div class="remove-img" data-index="{{ $imageIndex }}">X</div>
+                                                            </div>
+                                                        @else
+                                                            <div id="noticeimgshow{{ $imageIndex }}" class="noticeimgshow{{ $imageIndex }} placeholder-icon">
+                                                                <i class="fa fa-camera"></i>
+                                                                <span>Image {{ $imageIndex }}</span>
+                                                            </div>
+                                                        @endif
                                                         <input type="file" name="noticeimg[]" class="imageUpload"
                                                             id="noticeimg{{ $imageIndex }}" hidden>
                                                         <input type="hidden" name="noticeimgbase64[]"
-                                                            class="noticeimgbase64" id="noticeimgbase64{{ $imageIndex }}">
+                                                            class="noticeimgbase64" id="noticeimgbase64{{ $imageIndex }}"
+                                                            value="{{ isset($noticeImages) && isset($noticeImages[$imgKey]) ? $noticeImages[$imgKey]->img_path : '' }}">
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -544,7 +556,7 @@
                                     <div class="frm_dv">
                                     </div>
                                     <div class="frm_dv"><label></label>
-                                        <input name="submit" type="submit" value="Create Notice">
+                                        <input name="submit" type="submit" value="{{ isset($notice) ? 'Update Notice' : 'Create Notice' }}">
                                     </div>
                                 </div>
                             </div>
@@ -558,7 +570,7 @@
                                 @endforeach
                             };
 
-                            function loadTowns(selectizeInstance) {
+                            function loadTowns(selectizeInstance, selectedVal = '') {
                                 if (!selectizeInstance) return;
 
                                 const countryShortName = $('.countryChange').val();
@@ -571,22 +583,26 @@
                                     method: 'POST',
                                     data: {
                                         country_id: countryId,
+                                        selected: selectedVal,
                                         _token: $('input[name="_token"]').val()
                                     },
                                     success: function(response) {
                                         selectizeInstance.clearOptions();
                                         selectizeInstance.addOption(JSON.parse(response));
                                         selectizeInstance.refreshOptions(false);
+                                        if (selectedVal) {
+                                            selectizeInstance.setValue(selectedVal, true);
+                                        }
                                     }
                                 });
                             }
 
                             function updateQuoteTowns() {
-                                loadTowns($('#quote_towns')[0]?.selectize);
+                                loadTowns($('#quote_towns')[0]?.selectize, "{{ $notice->job_location ?? '' }}");
                             }
 
                             function updateServiceDealTowns() {
-                                loadTowns($('#service_deal_towns')[0]?.selectize);
+                                loadTowns($('#service_deal_towns')[0]?.selectize, "{{ $notice->town_suburb ?? '' }}");
                             }
 
                             document.getElementById('category_id').addEventListener('change', function () {

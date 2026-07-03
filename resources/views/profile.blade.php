@@ -339,7 +339,11 @@
                                                           </td>
                                                           <td align="left" valign="top"><img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $ntc->views ?? 0 }}</td>
                                                           <td align="left" valign="top">{{ $ntc->expire_at ? \Carbon\Carbon::parse($ntc->expire_at)->format('d M Y') : 'N/A' }}</td>
-                                                          <td align="left" valign="top">&nbsp;</td>
+                                                          <td align="left" valign="top"><a
+                                                                href="{{ route('notice.edit', $ntc->id) }}"
+                                                                class="edit">Edit <img
+                                                                   src="{{ asset('assets/images/edit_icon.png') }}"
+                                                                   alt="Edit"></a></td>
                                                           <td align="left" valign="top">
                                                               <form action="{{ route('notice.delete', $ntc->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this notice?');">
                                                                   @csrf

@@ -944,6 +944,144 @@ class UserController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function NoticeEdit($id)
+    {
+        $user_id = Auth::user()->id;
+        $notice = Notice::where('id', $id)->where('user_id', $user_id)->firstOrFail();
+        $noticeImages = NoticeImg::where('notice_id', $id)->get();
+        
+        $category = NoticeCategory::where('is_active', 1)->get();
+        $countryCode = session('CountryCode');
+
+        $ads = Ads::where('country', $countryCode)->get();
+        if ($ads->isEmpty()) {
+            $ads = Ads::whereNotNull('ads_image')->where('ads_image', '!=', '')->take(5)->get();
+        }
+
+        $grouped = collect($ads)->groupBy('type');
+        $sideData = [];
+        if ($grouped->has('side')) {
+            $sideData = $grouped->get('side');
+        } else {
+            $sideData = $ads->take(3);
+        }
+
+        $country = Country::where('status', '1')->get()->toArray();
+
+        $activeStandardNotice = Notice::where('user_id', $user_id)
+            ->where('noticetype', 'standard')
+            ->where('notice_EXPIRE', '>', Carbon::now())
+            ->where('id', '!=', $id)
+            ->first();
+
+        return view('auth.notice-form', compact('notice', 'noticeImages', 'category', 'grouped', 'sideData', 'country', 'activeStandardNotice'));
+    }
+
+    public function NoticeUpdate(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'category_id' => 'required',
+            'noticetype' => 'required|in:standard,feature',
+            'notice_title' => 'required|string|max:35',
+            'notice_body' => 'required|string|max:300',
+            'town_suburb' => 'nullable|string',
+            'looking_for' => 'nullable|string',
+            'job_location' => 'nullable|string',
+            'start_date' => 'nullable|string',
+            'budget' => 'nullable|string',
+            'message_text' => 'nullable|string',
+            'item_type' => 'nullable|string',
+        ]);
+
+        $user_id = Auth::user()->id;
+        $notice = Notice::where('id', $id)->where('user_id', $user_id)->firstOrFail();
+
+        $category_id = $request->input('category_id');
+        $noticetype = ($category_id == '2') ? 'standard' : $request->input('noticetype');
+        $notice_title = $request->input('notice_title');
+        $notice_body = $request->input('notice_body');
+
+        if ($noticetype === 'standard') {
+            $activeStandardNotice = Notice::where('user_id', $user_id)
+                ->where('noticetype', 'standard')
+                ->where('notice_EXPIRE', '>', Carbon::now())
+                ->where('id', '!=', $id)
+                ->first();
+            if ($activeStandardNotice) {
+                return redirect()->back()->withInput()->with('error', 'You already have another active 7-Day Notice.');
+            }
+        }
+
+        $notice->category_id = $category_id;
+        $notice->noticetype = $noticetype;
+        $notice->heading = $notice_title;
+        $notice->content = $notice_body;
+        $notice->town_suburb = $request->input('town_suburb');
+        $notice->looking_for = $request->input('looking_for') ?: $request->input('item_type');
+        $notice->job_location = $request->input('job_location');
+        $notice->start_date = $request->input('start_date');
+        $notice->budget = $request->input('budget');
+        $notice->message_text = $request->input('message_text');
+        
+        if ($noticetype === 'standard') {
+            $standardNoticesCount = Notice::where('user_id', $user_id)
+                ->where('noticetype', 'standard')
+                ->where('id', '!=', $id)
+                ->count();
+            if ($standardNoticesCount < 2) {
+                $notice->status = '1';
+            } else {
+                $notice->status = '0';
+            }
+        } else {
+            $notice->status = '0';
+        }
+
+        $notice->save();
+
+        $noticeimgbase64 = $request->input('noticeimgbase64');
+        if ($noticeimgbase64 && is_array($noticeimgbase64)) {
+            NoticeImg::where('notice_id', $id)->delete();
+            $maxImages = $noticetype === 'feature' ? 6 : 3;
+            foreach (array_slice($noticeimgbase64, 0, $maxImages) as $imgData) {
+                if ($imgData) {
+                    if (strpos($imgData, 'data:image/') === 0) {
+                        $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $imgData);
+                        $binaryImageData = base64_decode($base64_data);
+
+                        $dirPath = 'assets/notice';
+                        $physicalDir = public_path($dirPath);
+                        if (!file_exists($physicalDir)) {
+                            mkdir($physicalDir, 0777, true);
+                        }
+
+                        $fileName = uniqid() . rand(1111, 1111111111) . '.jpg';
+                        $physicalPath = $physicalDir . '/' . $fileName;
+                        file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
+
+                        $noticeImgObj = new NoticeImg();
+                        $noticeImgObj->notice_id = $notice->id;
+                        $noticeImgObj->img_path = $dirPath . '/' . $fileName;
+                        $noticeImgObj->created_at = Carbon::now();
+                        $noticeImgObj->save();
+                    } elseif (strpos($imgData, 'assets/notice/') === 0) {
+                        $noticeImgObj = new NoticeImg();
+                        $noticeImgObj->notice_id = $notice->id;
+                        $noticeImgObj->img_path = $imgData;
+                        $noticeImgObj->created_at = Carbon::now();
+                        $noticeImgObj->save();
+                    }
+                }
+            }
+        }
+
+        $successMessage = 'Notice updated successfully!';
+        if ($notice->status === '0') {
+            $successMessage = 'Notice updated successfully! It will be published after admin review.';
+        }
+        return redirect()->route('profile')->with('success', $successMessage);
+    }
+
     public function NoticeDelete(Request $request, $id)
     {
         $user_id = Auth::user()->id;
