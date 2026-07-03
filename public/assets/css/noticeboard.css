@@ -627,3 +627,197 @@
         border-radius: 8px;
     }
 }
+
+/* Premium Card Grid and Card Layout */
+.notice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+.notice-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.notice-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-color: #a3d900;
+}
+
+.notice-card-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background-color: #f7fafc;
+    overflow: hidden;
+}
+
+.notice-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.notice-card:hover .notice-card-img {
+    transform: scale(1.05);
+}
+
+.notice-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 48px;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #fff;
+    color: #1a202c;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    border-left: 3px solid #f7941d;
+}
+
+.notice-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.notice-card-category {
+    font-size: 11px;
+    font-weight: 800;
+    color: #729b0f;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.notice-card-heading {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.notice-card-desc {
+    font-size: 13.5px;
+    color: #718096;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    flex: 1;
+}
+
+.notice-card-location {
+    font-size: 12.5px;
+    color: #718096;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.notice-card-location i {
+    color: #f7941d;
+}
+
+.notice-card-footer {
+    border-top: 1px solid #f1f3f5;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafbfe;
+}
+
+.notice-card-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notice-card-user-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.notice-card-user span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.notice-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notice-card-views {
+    font-size: 12px;
+    color: #a0aec0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.notice-card-chat-btn {
+    display: flex;
+    align-items: center;
+}
+
+.notice-card-chat-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.notice-card-chat-icon:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .notice-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+    
+    .notice-card-image-wrapper {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notice-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

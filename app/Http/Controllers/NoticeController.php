@@ -37,6 +37,7 @@ class NoticeController extends Controller
             ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
             ->where('notice.status', '1')
             ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 
         if ($categoryId) {
@@ -92,6 +93,7 @@ class NoticeController extends Controller
             ->select('notice.*', 'notice_category.category as category_name')
             ->where('notice.status', '1')
             ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 
         if ($search) {
@@ -105,7 +107,11 @@ class NoticeController extends Controller
             $latestNoticesQuery->where('notice.category_id', $categoryId);
         }
 
-        $latestNotices = $latestNoticesQuery->limit(3)->get();
+        if ($search || $categoryId) {
+            $latestNotices = $latestNoticesQuery->get();
+        } else {
+            $latestNotices = $latestNoticesQuery->limit(3)->get();
+        }
 
         // Fetch spotlight notice ($5 Service Deal - ID 1)
         $spotlightNotice = \Illuminate\Support\Facades\DB::table('notice')
@@ -123,6 +129,63 @@ class NoticeController extends Controller
             ->groupBy('notice_id');
 
         return view('frontend/noticeboard_v2', compact('sideData', 'categories', 'latestNotices', 'search', 'categoryId', 'noticeImages', 'spotlightNotice'));
+    }
+
+    public function searchNotices(Request $request)
+    {
+        $ads = \App\Models\Ads::where('country', session('CountryCode'))->get();
+        $grouped = collect($ads)->groupBy('type');
+        $sideData = $grouped->get('side', []);
+
+        $search = $request->input('search');
+        $categoryParam = $request->input('category');
+
+        // Fetch categories with counts
+        $categories = \Illuminate\Support\Facades\DB::table('notice_category')
+            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(SELECT COUNT(*) FROM notice WHERE notice.category_id = notice_category.id AND notice.status = '1' AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "') as notices_count"))
+            ->get();
+
+        $activeCategory = null;
+        if ($categoryParam) {
+            if (is_numeric($categoryParam)) {
+                $activeCategory = $categories->firstWhere('id', $categoryParam);
+            } else {
+                $activeCategory = $categories->firstWhere('slug', $categoryParam);
+            }
+        }
+        $categoryId = $activeCategory ? $activeCategory->id : null;
+
+        // Fetch matching notices
+        $noticesQuery = \Illuminate\Support\Facades\DB::table('notice')
+            ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
+            ->leftJoin('users', 'users.id', '=', 'notice.user_id')
+            ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
+            ->where('notice.status', '1')
+            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
+            ->orderBy('notice.created_at', 'desc');
+
+        if ($search) {
+            $noticesQuery->where(function($q) use ($search) {
+                $q->where('notice.heading', 'like', "%{$search}%")
+                  ->orWhere('notice.content', 'like', "%{$search}%");
+            });
+        }
+
+        if ($categoryId) {
+            $noticesQuery->where('notice.category_id', $categoryId);
+        }
+
+        $notices = $noticesQuery->get();
+
+        // Fetch images for these notices
+        $noticeIds = $notices->pluck('id');
+        $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
+            ->whereIn('notice_id', $noticeIds)
+            ->get()
+            ->groupBy('notice_id');
+
+        return view('frontend/noticeboard_search', compact('sideData', 'categories', 'notices', 'search', 'categoryId', 'noticeImages', 'activeCategory'));
     }
 
     public function incrementView($id)

@@ -13,7 +13,7 @@
 
             <!-- Search Section -->
             <div class="nb-v2-search-container">
-                <form action="{{ route('notices') }}" method="GET" class="nb-v2-search-form">
+                <form action="{{ route('notices.search') }}" method="GET" class="nb-v2-search-form">
                     <div class="nb-v2-search-input-wrap">
                         <i class="fa fa-search nb-v2-search-icon"></i>
                         <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="What are you looking for today?"
@@ -48,7 +48,7 @@
 
             <!-- Post Button -->
             <div class="text-right mb-4">
-                <a href="{{ route('notice-post') }}" class="nb-v2-post-btn">Post a Free Notice ></a>
+                <a href="{{ route('notice-post', ['category' => $categoryId]) }}" class="nb-v2-post-btn">Post a Free Notice ></a>
             </div>
 
             <!-- Categories Grid -->
@@ -113,38 +113,54 @@
                         <a href="#" class="nb-v2-view-more">View More Posts</a>
                     @endif
                 </div>
-                <div class="nb-v2-latest-list">
+                <div class="notice-grid">
                     @forelse($latestNotices as $notice)
-                        <div class="nb-v2-latest-item-wrap mb-3 p-3 border rounded shadow-sm bg-white">
-                            <div class="d-flex align-items-start">
-                                <div class="nb-v2-latest-icon-box mr-3">
-                                    <i class="fa fa-bullhorn nb-v2-latest-icon"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <h4 class="mb-0 font-weight-bold" style="font-size: 16px;">{{ $notice->heading }}</h4>
-                                        <span class="badge badge-light text-muted" style="font-size: 11px;">{{ $notice->category_name }}</span>
+                        <div class="notice-card {{ $notice->noticetype == 'feature' ? 'featured-card' : '' }}">
+                            <div class="notice-card-image-wrapper">
+                                @if($notice->noticetype == 'feature')
+                                    <div class="featured-badge">Featured listing</div>
+                                @endif
+                                
+                                @if(isset($noticeImages[$notice->id]) && count($noticeImages[$notice->id]) > 0)
+                                    <img src="{{ asset($noticeImages[$notice->id][0]->img_path) }}" alt="{{ $notice->heading }}" class="notice-card-img">
+                                @else
+                                    <div class="notice-card-placeholder" style="background: linear-gradient(135deg, #a3d900 0%, #8ebd00 100%);">
+                                        <i class="fa fa-bullhorn"></i>
                                     </div>
-                                    <p class="text-muted mb-2" style="font-size: 14px;">{{ Str::limit($notice->content, 100) }}</p>
-                                    
-                                    @if(isset($noticeImages[$notice->id]))
-                                        <div class="notice_thum mb-2">
-                                            @foreach($noticeImages[$notice->id] as $img)
-                                                <img src="{{ asset($img->img_path) }}" alt="" style="width: 60px; height: 40px; object-fit: cover; margin-right: 5px; border-radius: 4px;">
-                                            @endforeach
-                                        </div>
+                                @endif
+                            </div>
+                            <div class="notice-card-body">
+                                <div class="notice-card-category">
+                                    @if($notice->category_name == 'Items for Sale or Wanted' && $notice->noticetype == 'standard')
+                                        FREE
+                                    @else
+                                        {{ strtoupper($notice->category_name) }}
                                     @endif
-
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <small class="text-muted"><i class="fa fa-map-marker mr-1"></i> {{ $notice->town_suburb ?? 'N/A' }}</small>
-                                        <small class="text-muted"><i class="fa fa-clock-o mr-1"></i> {{ \Carbon\Carbon::parse($notice->created_at)->diffForHumans() }}</small>
-                                        <small class="text-muted"><i class="fa fa-eye mr-1"></i> {{ $notice->views ?? 0 }} views</small>
+                                </div>
+                                <h4 class="notice-card-heading">{{ $notice->heading }}</h4>
+                                <p class="notice-card-desc">{{ Str::limit($notice->content, 120) }}</p>
+                                
+                                @if($notice->town_suburb)
+                                    <div class="notice-card-location">
+                                        <i class="fa fa-map-marker"></i> {{ $notice->town_suburb }}
                                     </div>
+                                @endif
+                            </div>
+                            <div class="notice-card-footer">
+                                <div class="notice-card-user">
+                                    <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice-card-user-logo">
+                                    <span>{{ $notice->user_name ?? 'Catchakiwi' }}</span>
+                                </div>
+                                <div class="notice-card-meta">
+                                    <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
+                                    <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn">
+                                        <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message" class="notice-card-chat-icon">
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="nb-v2-latest-item">No notices found matching your criteria.</div>
+                        <div class="alert alert-info" style="grid-column: 1 / -1; width: 100%;">No notices found matching your criteria.</div>
                     @endforelse
                 </div>
             </div>

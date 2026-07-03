@@ -43,7 +43,7 @@
                                         <option value="" {{ old('category_id', request()->query('category')) ? '' : 'selected' }}>Choose your Category</option>
                                         @if(!empty($category))
                                             @foreach($category as $cat)
-                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id', request()->query('category')) === (string) $cat->id ? 'selected' : '' }}>
+                                                <option value="{{ $cat->id }}" data-category-slug="{{ $cat->slug ?? '' }}" {{ (string) old('category_id', request()->query('category')) === (string) $cat->id || (string) old('category_id', request()->query('category')) === (string) $cat->slug ? 'selected' : '' }}>
                                                     {{ $cat->category }}
                                                 </option>
                                             @endforeach
