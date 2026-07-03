@@ -117,7 +117,7 @@
                                                     @if($topBusiness->homebased_business == "yes")
                                                         <span class="homebaed_sticker" style="width: 82%;">Homebased</span>
                                                     @endif
-                                                    @if(!empty($topBusiness->select_image) && file_exists(base_path($topBusiness->select_image)) && filesize(base_path($topBusiness->select_image)) > 0)
+                                                    @if(!empty($topBusiness->select_image) && file_exists(public_path(preg_replace('#^public[\\\/]#', '', $topBusiness->select_image))) && filesize(public_path(preg_replace('#^public[\\\/]#', '', $topBusiness->select_image))) > 0)
                                                         <img src="{{ asset(preg_replace('#^public[\\\/]#', '', $topBusiness->select_image)) }}" alt="">
                                                     @else
                                                         <!--<img src="{{ asset('public/assets/business/default_company.jpg') }}" alt="">-->

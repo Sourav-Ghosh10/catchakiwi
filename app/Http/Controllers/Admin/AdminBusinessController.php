@@ -115,8 +115,9 @@ class AdminBusinessController extends Controller
         // Handle image upload
         if ($request->hasFile('imageUpload')) {
             // Delete old image if exists
-            if ($business->select_image && file_exists(public_path($business->select_image))) {
-                unlink(public_path($business->select_image));
+            $oldImage = preg_replace('#^public[\\\/]#', '', $business->select_image);
+            if ($oldImage && file_exists(public_path($oldImage))) {
+                unlink(public_path($oldImage));
             }
             
             $image = $request->file('imageUpload');
