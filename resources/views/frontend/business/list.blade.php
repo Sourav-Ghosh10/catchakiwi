@@ -104,7 +104,7 @@
                                          @if($ltstbusiness->homebased_business =="yes") 
                                         <span class="homebaed_sticker">Homebased</span>
                                     @endif
-                                            @if(!empty($ltstbusiness->select_image))
+                                            @if(!empty($ltstbusiness->select_image) && file_exists(base_path($ltstbusiness->select_image)))
                                            		<img src="{{ asset(preg_replace('#^public[\\\/]#', '', $ltstbusiness->select_image)) }}" alt="">
                                            @else
                                            		<!--<img src="{{ asset('public/assets/business/default_company.jpg') }}" alt="">-->
