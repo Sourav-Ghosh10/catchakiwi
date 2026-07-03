@@ -170,7 +170,7 @@
                                              <tr>
                                                 <td align="center" valign="top" class="dash_pic">
                                                    @if($business->select_image)
-                                                      <img src="<?= asset($business->select_image) ?>" alt="" style="width:35%">
+                                                      <img src="<?= asset(preg_replace('#^public[\\\/]#', '', $business->select_image)) ?>" alt="" style="width:35%">
                                                    @else
                                                       <img src="{{ asset('assets/images/cam_img.png') }}" alt="">
                                                    @endif

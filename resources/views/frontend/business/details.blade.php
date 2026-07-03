@@ -223,7 +223,7 @@
                   <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12 bus_profilepic">
                         @if($business->select_image) 
-                            <img src="<?= asset($business->select_image) ?>" alt="">
+                            <img src="<?= asset(preg_replace('#^public[\\\/]#', '', $business->select_image)) ?>" alt="">
                          @else 
                             <!--<img src="{{ asset('assets/images/cam_img.png') }}" alt="">-->
                             <img src="https://ui-avatars.com/api/?name={{ urlencode(preg_replace('/[^A-Za-z0-9 ]/', '', $business->display_name)) }}&color=7F9CF5&background=EBF4FF" alt="">

@@ -130,7 +130,7 @@
         <!-- Company image -->
         <div class="company-image">
             @if($business->select_image) 
-                <img src="<?= asset($business->select_image) ?>" alt="">
+                <img src="<?= asset(preg_replace('#^public[\\\/]#', '', $business->select_image)) ?>" alt="">
              @else 
                 <img src="{{ asset('assets/images/cam_img.png') }}" alt="">
              @endif

@@ -164,7 +164,7 @@
     <div class="browse_img busdes"><h4>Company Logo Or Image </h4>
       <div class="delimgwrap">
         <button type="button" class="remove-bus-image" style="display: {{ (old('base64image') || ($business->select_image && $business->select_image != 'assets/images/busines-defaultlogo.png')) ? 'flex' : 'none' }};" title="Remove image">&times;</button>
-        <img class="cropimg bdrbox" src="{{ old('base64image') ? old('base64image') : asset($business->select_image) }}" alt="">
+        <img class="cropimg bdrbox" src="{{ old('base64image') ? old('base64image') : asset(preg_replace('#^public[\\\/]#', '', $business->select_image)) }}" alt="">
       </div>
       <div class="newupload">
        <label>Select your business Logo or Image </label>

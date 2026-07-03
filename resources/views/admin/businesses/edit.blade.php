@@ -329,7 +329,7 @@ select.form-control option {
                                         </div>
                                         <div class="col-md-4">
                                             @if($business->select_image)
-                                                <img class="cropimg img-fluid" src="{{ asset($business->select_image) }}" alt="Business Image" style="max-width: 200px; height: auto;">
+                                                <img class="cropimg img-fluid" src="{{ asset(preg_replace('#^public[\\\/]#', '', $business->select_image)) }}" alt="Business Image" style="max-width: 200px; height: auto;">
                                             @else
                                                 <img class="cropimg img-fluid" alt="No Image" style="max-width: 200px; height: 150px; background: #f8f9fa; border: 1px dashed #ddd;">
                                             @endif
