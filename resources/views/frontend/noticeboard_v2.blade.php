@@ -115,7 +115,7 @@
                 </div>
                 <div class="notice-grid">
                     @forelse($latestNotices as $notice)
-                        <div class="notice-card {{ $notice->noticetype == 'feature' ? 'featured-card' : '' }}">
+                        <div class="notice-card {{ $notice->noticetype == 'feature' ? 'featured-card' : '' }}" data-notice-id="{{ $notice->id }}" role="button" tabindex="0">
                             <div class="notice-card-image-wrapper">
                                 @if($notice->noticetype == 'feature')
                                     <div class="featured-badge">Featured listing</div>
@@ -163,6 +163,7 @@
                         <div class="alert alert-info" style="grid-column: 1 / -1; width: 100%;">No notices found matching your criteria.</div>
                     @endforelse
                 </div>
+                @include('frontend.partials.notice-details-modal', ['modalNotices' => $latestNotices, 'noticeImages' => $noticeImages])
             </div>
         </div>
     </div>
