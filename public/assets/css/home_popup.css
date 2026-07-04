@@ -261,7 +261,7 @@ h3 {
 }
 .slide_menu {
   position: relative;
-  z-index: 9;
+  z-index: 99;
   /*top: auto !important;*/
 }
 .add_getqutebutton{
