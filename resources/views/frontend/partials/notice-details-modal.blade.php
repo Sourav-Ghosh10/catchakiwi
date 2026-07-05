@@ -1,6 +1,25 @@
 <div class="notice-modal-templates" hidden>
+    @php
+        $noticeCategoryTypes = isset($categories)
+            ? collect($categories)->mapWithKeys(function ($catInfo) {
+                return [$catInfo->id => $catInfo->type];
+            })
+            : collect();
+        $noticeCategorySlugs = isset($categories)
+            ? collect($categories)->mapWithKeys(function ($catInfo) {
+                return [$catInfo->id => $catInfo->slug ?? Str::slug($catInfo->category)];
+            })
+            : collect();
+    @endphp
     @foreach($modalNotices as $notice)
+        @php
+            $noticeCategoryType = $noticeCategoryTypes[$notice->category_id] ?? null;
+            $noticeCategorySlug = $noticeCategorySlugs[$notice->category_id] ?? Str::slug($notice->category_name ?? '');
+            $noticeCardTypeClass = $noticeCategoryType ? 'notice-card-type-' . Str::slug($noticeCategoryType) : '';
+            $noticeCardCategoryClass = $noticeCategorySlug ? 'notice-card-category-' . Str::slug($noticeCategorySlug) : '';
+        @endphp
         <div id="notice-modal-template-{{ $notice->id }}">
+            <div class="notice-modal-shell {{ $noticeCardTypeClass }} {{ $noticeCardCategoryClass }}">
             <div class="notice-modal-gallery">
                 @if(isset($noticeImages[$notice->id]) && count($noticeImages[$notice->id]) > 0)
                     @foreach($noticeImages[$notice->id] as $image)
@@ -64,14 +83,6 @@
                             <strong>{{ $notice->budget }}</strong>
                         </div>
                     @endif
-                    <div>
-                        <span>Posted By</span>
-                        <strong>{{ $notice->user_name ?? 'Catchakiwi' }}</strong>
-                    </div>
-                    <div>
-                        <span>Views</span>
-                        <strong>{{ $notice->views ?? 0 }}</strong>
-                    </div>
                 </div>
 
                 @if(!empty($notice->message_text))
@@ -80,6 +91,20 @@
                         <p>{{ $notice->message_text }}</p>
                     </div>
                 @endif
+
+                <div class="notice-modal-footer">
+                    <div class="notice-card-user">
+                        <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice-card-user-logo">
+                        <span>{{ $notice->user_name ?? 'Catchakiwi' }}</span>
+                    </div>
+                    <div class="notice-card-meta">
+                        <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
+                        <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn">
+                            <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message" class="notice-card-chat-icon">
+                        </a>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     @endforeach

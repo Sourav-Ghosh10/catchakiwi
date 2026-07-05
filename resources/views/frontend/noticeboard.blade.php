@@ -39,7 +39,7 @@
                                             @foreach($chunk as $cat)
                                                 <li>
                                                     <a href="{{ route('notice-board', $cat->slug) }}"
-                                                        style="{{ (isset($activeCategory) && $activeCategory->id == $cat->id) ? 'font-weight:bold; color:#729b0f;' : '' }}">
+                                                        class="{{ (isset($activeCategory) && $activeCategory->id == $cat->id) ? 'active-refine-category' : '' }}">
                                                         {{ $cat->category }}
                                                         ({{ str_pad($cat->notices_count, 2, '0', STR_PAD_LEFT) }})
                                                     </a>
@@ -52,9 +52,23 @@
                         </div>
                     </div>
 
+                    @php
+                        $noticeCategoryTypes = collect($categories)->mapWithKeys(function ($catInfo) {
+                            return [$catInfo->id => $catInfo->type];
+                        });
+                        $noticeCategorySlugs = collect($categories)->mapWithKeys(function ($catInfo) {
+                            return [$catInfo->id => $catInfo->slug ?? Str::slug($catInfo->category)];
+                        });
+                    @endphp
                     <div class="notice-grid">
                         @forelse($notices as $notice)
-                            <div class="notice-card {{ $notice->noticetype == 'feature' ? 'featured-card' : '' }}" data-notice-id="{{ $notice->id }}" role="button" tabindex="0">
+                            @php
+                                $noticeCategoryType = $noticeCategoryTypes[$notice->category_id] ?? null;
+                                $noticeCategorySlug = $noticeCategorySlugs[$notice->category_id] ?? null;
+                                $noticeCardTypeClass = $noticeCategoryType ? 'notice-card-type-' . Str::slug($noticeCategoryType) : '';
+                                $noticeCardCategoryClass = $noticeCategorySlug ? 'notice-card-category-' . Str::slug($noticeCategorySlug) : '';
+                            @endphp
+                            <div class="notice-card {{ $notice->noticetype == 'feature' ? 'featured-card' : '' }} {{ $noticeCardTypeClass }} {{ $noticeCardCategoryClass }}" data-notice-id="{{ $notice->id }}" role="button" tabindex="0">
                                 <div class="notice-card-image-wrapper">
                                     @if($notice->noticetype == 'feature')
                                         <div class="featured-badge">Featured listing</div>
@@ -63,7 +77,7 @@
                                     @if(isset($noticeImages[$notice->id]) && count($noticeImages[$notice->id]) > 0)
                                         <img src="{{ asset($noticeImages[$notice->id][0]->img_path) }}" alt="{{ $notice->heading }}" class="notice-card-img">
                                     @else
-                                        <div class="notice-card-placeholder" style="background: linear-gradient(135deg, #a3d900 0%, #8ebd00 100%);">
+                                        <div class="notice-card-placeholder">
                                             <i class="fa fa-bullhorn"></i>
                                         </div>
                                     @endif
@@ -77,29 +91,15 @@
                                         @endif
                                     </div>
                                     <h4 class="notice-card-heading">{{ $notice->heading }}</h4>
-                                    <p class="notice-card-desc">{{ Str::limit($notice->content, 120) }}</p>
-                                    
                                     @if($notice->town_suburb)
                                         <div class="notice-card-location">
                                             <i class="fa fa-map-marker"></i> {{ $notice->town_suburb }}
                                         </div>
                                     @endif
                                 </div>
-                                <div class="notice-card-footer">
-                                    <div class="notice-card-user">
-                                        <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice-card-user-logo">
-                                        <span>{{ $notice->user_name ?? 'Catchakiwi' }}</span>
-                                    </div>
-                                    <div class="notice-card-meta">
-                                        <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
-                                        <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn">
-                                            <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message" class="notice-card-chat-icon">
-                                        </a>
-                                    </div>
-                                </div>
                             </div>
                         @empty
-                            <div class="alert alert-info" style="grid-column: 1 / -1; width: 100%;">No notices found.</div>
+                            <div class="alert alert-info notice-grid-empty">No notices found.</div>
                         @endforelse
                     </div>
                     @include('frontend.partials.notice-details-modal', ['modalNotices' => $notices, 'noticeImages' => $noticeImages])
