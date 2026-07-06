@@ -307,7 +307,8 @@ background: rgba(255, 245, 245, 0.5);}
   .footer_links{padding-top: 14px;}
  .notification_homebased{margin-left: 0;}
  .right_advertisesec img:first-child {
-  margin-left: -36px;
+  /* margin-left: -36px; */
+  width: 100%;
 }
  .full_footer{position:relative; bottom:0;}
   .bottom_advsec img{width:46%;}
