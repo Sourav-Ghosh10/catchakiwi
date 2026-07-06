@@ -4907,6 +4907,7 @@ button.remove-bus-image:hover {
   max-width: 535px;
   border: 1px solid #9bcd22;
   border-radius: 0;
+  line-height: 26px;
 }
 
 .notice_posefrm .service_location_dv .selectize-control.single .selectize-input,

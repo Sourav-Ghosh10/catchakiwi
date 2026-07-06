@@ -465,9 +465,12 @@ class UserController extends Controller
     public function Register()
     {
         $country = Country::where('status', '1')->get()->toArray();
+        $defaultCountry = Country::where('shortname', session('CountryCode', 'NZ'))->first()
+            ?: Country::where('shortname', 'NZ')->first();
+        $defaultCountryId = $defaultCountry->id ?? null;
         // print_r($country);
         // exit;
-        return view('auth.register', compact('country'));
+        return view('auth.register', compact('country', 'defaultCountryId'));
     }
     public function contactUs()
     {
@@ -651,6 +654,12 @@ class UserController extends Controller
         ]);
 
         $category_id = $request->input('category_id');
+        $selectedNoticeCategory = NoticeCategory::find($category_id);
+        $selectedNoticeCategoryName = strtolower($selectedNoticeCategory->category ?? '');
+        $selectedNoticeCategorySlug = $selectedNoticeCategory->slug ?? '';
+        $isItemsCategory = in_array($selectedNoticeCategorySlug, ['items-for-sale', 'items-for-sale-or-wanted'])
+            || in_array($selectedNoticeCategoryName, ['items for sale', 'items for sale or wanted']);
+        $noticeLookingFor = $isItemsCategory ? $request->input('item_type') : $request->input('looking_for');
         $noticetype = ($category_id == '2') ? 'standard' : $request->input('noticetype');
         $notice_title = $request->input('notice_title');
         $notice_body = $request->input('notice_body');
@@ -676,7 +685,7 @@ class UserController extends Controller
         $notice->heading = $notice_title;
         $notice->content = $notice_body;
         $notice->town_suburb = $request->input('town_suburb');
-        $notice->looking_for = $request->input('looking_for') ?: $request->input('item_type');
+        $notice->looking_for = $noticeLookingFor;
         $notice->job_location = $request->input('job_location');
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');
@@ -997,6 +1006,12 @@ class UserController extends Controller
         $notice = Notice::where('id', $id)->where('user_id', $user_id)->firstOrFail();
 
         $category_id = $request->input('category_id');
+        $selectedNoticeCategory = NoticeCategory::find($category_id);
+        $selectedNoticeCategoryName = strtolower($selectedNoticeCategory->category ?? '');
+        $selectedNoticeCategorySlug = $selectedNoticeCategory->slug ?? '';
+        $isItemsCategory = in_array($selectedNoticeCategorySlug, ['items-for-sale', 'items-for-sale-or-wanted'])
+            || in_array($selectedNoticeCategoryName, ['items for sale', 'items for sale or wanted']);
+        $noticeLookingFor = $isItemsCategory ? $request->input('item_type') : $request->input('looking_for');
         $noticetype = ($category_id == '2') ? 'standard' : $request->input('noticetype');
         $notice_title = $request->input('notice_title');
         $notice_body = $request->input('notice_body');
@@ -1017,7 +1032,7 @@ class UserController extends Controller
         $notice->heading = $notice_title;
         $notice->content = $notice_body;
         $notice->town_suburb = $request->input('town_suburb');
-        $notice->looking_for = $request->input('looking_for') ?: $request->input('item_type');
+        $notice->looking_for = $noticeLookingFor;
         $notice->job_location = $request->input('job_location');
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');

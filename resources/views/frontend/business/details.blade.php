@@ -68,18 +68,24 @@
     
     .rating-category {
         display: flex;
-        justify-content: space-between;
+        /* justify-content: space-between; */
         align-items: center;
     }
     
     .rating-category label {
-        font-size: 16px;
+        font-size: 14px;
+        min-width: 150px;
+        font-weight: 700;
     }
     
     .star-rating {
         direction: rtl;
     }
-    
+    #reviewform p {
+  font-size: 18px;
+  font-weight: 600;
+}
+    .star-rating label{min-width: auto !important;}
     .star-rating input {
         display: none;
     }
@@ -417,29 +423,29 @@
                                 <div class="star-rating">
                                     <input type="radio" id="initial-5" name="initial-impression" value="5"><label for="initial-5" title="5 stars">★</label>
                                     <input type="radio" id="initial-4" name="initial-impression" value="4"><label for="initial-4" title="4 stars">★</label>
-                                    <input type="radio" id="initial-3" name="initial-impression" value="3"><label for="initial-3" title="3 stars"></label>
+                                    <input type="radio" id="initial-3" name="initial-impression" value="3"><label for="initial-3" title="3 stars">★</label>
                                     <input type="radio" id="initial-2" name="initial-impression" value="2"><label for="initial-2" title="2 stars">★</label>
-                                    <input type="radio" id="initial-1" name="initial-impression" value="1"><label for="initial-1" title="1 star"></label>
+                                    <input type="radio" id="initial-1" name="initial-impression" value="1"><label for="initial-1" title="1 star">★</label>
                                 </div>
                             </div>
                             <div class="rating-category">
                                 <label>Cleanliness</label>
                                 <div class="star-rating">
-                                    <input type="radio" id="clean-5" name="cleanliness" value="5"><label for="clean-5" title="5 stars"></label>
+                                    <input type="radio" id="clean-5" name="cleanliness" value="5"><label for="clean-5" title="5 stars">★</label>
                                     <input type="radio" id="clean-4" name="cleanliness" value="4"><label for="clean-4" title="4 stars">★</label>
                                     <input type="radio" id="clean-3" name="cleanliness" value="3"><label for="clean-3" title="3 stars">★</label>
-                                    <input type="radio" id="clean-2" name="cleanliness" value="2"><label for="clean-2" title="2 stars"></label>
+                                    <input type="radio" id="clean-2" name="cleanliness" value="2"><label for="clean-2" title="2 stars">★</label>
                                     <input type="radio" id="clean-1" name="cleanliness" value="1"><label for="clean-1" title="1 star">★</label>
                                 </div>
                             </div>
                             <div class="rating-category">
                                 <label>Value</label>
                                 <div class="star-rating">
-                                    <input type="radio" id="value-5" name="value" value="5"><label for="value-5" title="5 stars"></label>
+                                    <input type="radio" id="value-5" name="value" value="5"><label for="value-5" title="5 stars">★</label>
                                     <input type="radio" id="value-4" name="value" value="4"><label for="value-4" title="4 stars">★</label>
                                     <input type="radio" id="value-3" name="value" value="3"><label for="value-3" title="3 stars">★</label>
                                     <input type="radio" id="value-2" name="value" value="2"><label for="value-2" title="2 stars">★</label>
-                                    <input type="radio" id="value-1" name="value" value="1"><label for="value-1" title="1 star"></label>
+                                    <input type="radio" id="value-1" name="value" value="1"><label for="value-1" title="1 star">★</label>
                                 </div>
                             </div>
                             <div class="rating-category">
@@ -447,7 +453,7 @@
                                 <div class="star-rating">
                                     <input type="radio" id="punctual-5" name="punctuality" value="5"><label for="punctual-5" title="5 stars">★</label>
                                     <input type="radio" id="punctual-4" name="punctuality" value="4"><label for="punctual-4" title="4 stars">★</label>
-                                    <input type="radio" id="punctual-3" name="punctuality" value="3"><label for="punctual-3" title="3 stars"></label>
+                                    <input type="radio" id="punctual-3" name="punctuality" value="3"><label for="punctual-3" title="3 stars">★</label>
                                     <input type="radio" id="punctual-2" name="punctuality" value="2"><label for="punctual-2" title="2 stars">★</label>
                                     <input type="radio" id="punctual-1" name="punctuality" value="1"><label for="punctual-1" title="1 star">★</label>
                                 </div>
@@ -457,9 +463,9 @@
                                 <div class="star-rating">
                                     <input type="radio" id="quality-5" name="quality" value="5"><label for="quality-5" title="5 stars">★</label>
                                     <input type="radio" id="quality-4" name="quality" value="4"><label for="quality-4" title="4 stars">★</label>
-                                    <input type="radio" id="quality-3" name="quality" value="3"><label for="quality-3" title="3 stars"></label>
-                                    <input type="radio" id="quality-2" name="quality" value="2"><label for="quality-2" title="2 stars"></label>
-                                    <input type="radio" id="quality-1" name="quality" value="1"><label for="quality-1" title="1 star"></label>
+                                    <input type="radio" id="quality-3" name="quality" value="3"><label for="quality-3" title="3 stars">★</label>
+                                    <input type="radio" id="quality-2" name="quality" value="2"><label for="quality-2" title="2 stars">★</label>
+                                    <input type="radio" id="quality-1" name="quality" value="1"><label for="quality-1" title="1 star">★</label>
                                 </div>
                             </div>
                             <div class="rating-category">
@@ -469,7 +475,7 @@
                                     <input type="radio" id="opinion-4" name="overall-opinion" value="4"><label for="opinion-4" title="4 stars">★</label>
                                     <input type="radio" id="opinion-3" name="overall-opinion" value="3"><label for="opinion-3" title="3 stars">★</label>
                                     <input type="radio" id="opinion-2" name="overall-opinion" value="2"><label for="opinion-2" title="2 stars">★</label>
-                                    <input type="radio" id="opinion-1" name="overall-opinion" value="1"><label for="opinion-1" title="1 star"></label>
+                                    <input type="radio" id="opinion-1" name="overall-opinion" value="1"><label for="opinion-1" title="1 star">★</label>
                                 </div>
                             </div>
                         </div>

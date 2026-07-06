@@ -32,10 +32,13 @@
                                    <div class="col-sm-12">
                                        <div class="glob">
                                            <select class="livesearch form-control" name="country" id="country" placeholder="Select Country" >
-                                              <option value="" disabled selected>Select Country</option>
+                                              @php
+                                                  $selectedCountryId = old('country', $defaultCountryId ?? null);
+                                              @endphp
+                                              <option value="" disabled {{ $selectedCountryId ? '' : 'selected' }}>Select Country</option>
                                               @if(!empty($country))
                                                 @foreach($country as $cnty)
-                                                    <option value="{{$cnty['id']}}" {{ old('country') == $cnty['id'] ? 'selected' : ((isset($suburb) && $suburb->country_name==$cnty['shortname']) ? 'selected' : '') }}>{{$cnty['name']}}</option>
+                                                    <option value="{{$cnty['id']}}" {{ (string) $selectedCountryId === (string) $cnty['id'] ? 'selected' : '' }}>{{$cnty['name']}}</option>
                                                 @endforeach
                                               @endif;
                                               </select>
