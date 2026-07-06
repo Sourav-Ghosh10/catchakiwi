@@ -2803,11 +2803,11 @@ ul.pagination li:last-child a:hover {
 }
 
 .notice_refineresults ul li {
-  background: url(../images/list_arrow.png) 0 5px no-repeat;
+  /* background: url(../images/list_arrow.png) 0 5px no-repeat; */
   color: #343434;
   font-size: 13px;
   font-weight: 400;
-  padding: 1px 18px;
+  padding: 1px 0;
   line-height: 20px;
 }
 
