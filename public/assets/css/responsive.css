@@ -189,7 +189,8 @@
   .after_logmenu {margin-left:0; margin-right:0px;}
 .right_advertisesec img{width: 33%;
   max-width: 100%;
-  flex-shrink: 0;}
+  /* flex-shrink: 0; */
+}
 .inlogo{max-width: 122px;}
 .inlogo img{vertical-align:top;}
 /*.top_bar.inner .mobtop_login{top:-23px;}*/

@@ -878,10 +878,11 @@ textarea {
   top: 0;
   right: 0;
   background-color: #fff;
-  /*overflow-x: hidden*/
-  ;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: 0.5s;
   padding-top: 30px;
+  padding-bottom: 24px;
   text-align: left;
 }
 
@@ -2743,9 +2744,8 @@ ul.pagination li:last-child a:hover {
 
 .sidenav ul {
   display: block;
-  max-height: 400px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  max-height: none;
+  overflow: visible;
 }
 
 .gw-sidebar span {
