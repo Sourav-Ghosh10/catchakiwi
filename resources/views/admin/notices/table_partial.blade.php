@@ -4,6 +4,7 @@
             <tr>
                 <th> # </th>
                 <th> User </th>
+                <th> Country </th>
                 <th> Category </th>
                 <th> Type </th>
                 <th> Heading </th>
@@ -20,6 +21,7 @@
                     <div style="font-weight: bold;">{{ $notice->user_name ?? 'N/A' }}</div>
                     <div style="font-size: 11px; color: #8f94a2;">{{ $notice->user_email ?? 'N/A' }}</div>
                 </td>
+                <td> {{ $notice->country_name ?? 'N/A' }} </td>
                 <td> {{ $notice->noticecategory->category ?? 'N/A' }} </td>
                 <td>
                     @if($notice->noticetype === 'feature')
@@ -64,7 +66,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="8" class="text-center">No notices found.</td>
+                <td colspan="9" class="text-center">No notices found.</td>
             </tr>
             @endforelse
         </tbody>

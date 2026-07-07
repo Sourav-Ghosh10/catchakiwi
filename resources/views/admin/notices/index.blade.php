@@ -73,6 +73,9 @@
                         <strong>User:</strong> {{ $notice->user_name ?? 'N/A' }} ({{ $notice->user_email ?? 'N/A' }})
                     </div>
                     <div class="col-md-6 mb-3">
+                        <strong>Country:</strong> {{ $notice->country_name ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <strong>Category:</strong> {{ $notice->noticecategory->category ?? 'N/A' }}
                     </div>
                     <div class="col-md-6 mb-3">

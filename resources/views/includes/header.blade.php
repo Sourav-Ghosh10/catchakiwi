@@ -11,6 +11,9 @@
   gtag('config', 'G-0SNMMMZR18');
 </script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<script>
+    var APP_URL = "{{ url('/') }}";
+</script>
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

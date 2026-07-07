@@ -1,4 +1,4 @@
-var base_url = "https://catchakiwi.com/";
+var base_url = typeof APP_URL !== 'undefined' ? (APP_URL.endsWith('/') ? APP_URL : APP_URL + '/') : "https://catchakiwi.com/";
 //registeraton page
 // $('#suburb_id').on('change', function(){
 // 		//alert(this.value);
@@ -69,6 +69,8 @@ $('.countryChange').change(function () {
             //window.location.href="";
             if (currentUrl.includes('/business')) {
                 window.location.href=base_url+countryId.toLowerCase()+"/business";
+            } else {
+                window.location.reload();
             }
         },
         error: function (xhr, status, error) {
