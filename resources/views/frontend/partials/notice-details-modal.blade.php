@@ -99,7 +99,7 @@
                     </div>
                     <div class="notice-card-meta">
                         <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
-                        <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn">
+                        <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn" title="Message user">
                             <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message" class="notice-card-chat-icon">
                         </a>
                     </div>

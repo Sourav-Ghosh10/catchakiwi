@@ -725,8 +725,9 @@
     position: relative;
     width: 100%;
     aspect-ratio: 6 / 4;
-    background-color: #f7fafc;
+    background-color: transparent;
     overflow: hidden;
+    padding-top: 22px;
 }
 
 .notice-card-img {
@@ -753,8 +754,8 @@
 
 .featured-badge {
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 6px;
+    left: 6px;
     background: #fff;
     color: #1a202c;
     padding: 6px 12px;
@@ -770,8 +771,8 @@
 
 .wanted-badge {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 6px;
+    right: 6px;
     background: #fff;
     color: #e3342f;
     padding: 6px 12px;
@@ -787,6 +788,7 @@
 
 .notice-card-body {
     padding: 20px;
+    padding-top: 10px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -797,7 +799,7 @@
     font-size: 11px;
     font-weight: 800;
     color: var(--notice-card-accent, #729b0f);
-    margin-bottom: 8px;
+    margin-bottom: 0px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -806,7 +808,7 @@
     font-size: 17px;
     font-weight: 700;
     color: #2d3748;
-    margin: 0 0 14px 0;
+    margin: 0 0 0 0;
     line-height: 1.4;
 }
 
@@ -876,19 +878,87 @@
 }
 
 .notice-card-chat-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: 2px solid #f7941d;
+    background-color: #fffaf0;
+    box-shadow: 0 4px 10px rgba(247, 148, 29, 0.15);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.notice-card-chat-btn:hover {
+    background-color: #f7941d;
+    border-color: #f7941d;
+    box-shadow: 0 6px 15px rgba(247, 148, 29, 0.3);
+    transform: translateY(-2px);
 }
 
 .notice-card-chat-icon {
-    width: 18px;
-    height: 18px;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
+    width: 24px;
+    height: 24px;
+    opacity: 1;
+    transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-.notice-card-chat-icon:hover {
+.notice-card-chat-btn:hover .notice-card-chat-icon {
+    filter: brightness(0) invert(1);
+    transform: scale(1.1);
+}
+
+/* Tooltip styles */
+.notice-card-chat-btn::after {
+    content: 'Message user';
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    left: auto;
+    transform: translateY(0);
+    background: #2d3748;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.notice-card-chat-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    right: 17px;
+    left: auto;
+    transform: translateY(5px);
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
+    border-color: #2d3748 transparent transparent transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    z-index: 10;
+}
+
+.notice-card-chat-btn:hover::after {
     opacity: 1;
+    visibility: visible;
+    transform: translateY(-8px);
+}
+
+.notice-card-chat-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-3px);
 }
 
 .notice-modal-footer {
