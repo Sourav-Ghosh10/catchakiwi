@@ -32,7 +32,7 @@ class NoticeController extends Controller
                 WHERE notice.category_id = notice_category.id 
                   AND notice.status = '1' 
                   AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "'
-                  AND COALESCE(co0.shortname, co1.shortname) = '" . $countryCode . "'
+                  AND notice.country = '" . $countryCode . "'
             ) as notices_count"))
             ->get();
 
@@ -65,9 +65,7 @@ class NoticeController extends Controller
             ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
             ->where('notice.status', '1')
             ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
-            ->where(function($q) use ($countryCode) {
-                $q->where(\Illuminate\Support\Facades\DB::raw('COALESCE(co0.shortname, co1.shortname)'), '=', $countryCode);
-            })
+            ->where('notice.country', $countryCode)
             ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 
@@ -119,7 +117,7 @@ class NoticeController extends Controller
                 WHERE notice.category_id = notice_category.id 
                   AND notice.status = '1' 
                   AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "'
-                  AND COALESCE(co0.shortname, co1.shortname) = '" . $countryCode . "'
+                  AND notice.country = '" . $countryCode . "'
             ) as notices_count"))
             ->get();
 
@@ -153,9 +151,7 @@ class NoticeController extends Controller
             ->select('notice.*', 'notice_category.category as category_name')
             ->where('notice.status', '1')
             ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
-            ->where(function($q) use ($countryCode) {
-                $q->where(\Illuminate\Support\Facades\DB::raw('COALESCE(co0.shortname, co1.shortname)'), '=', $countryCode);
-            })
+            ->where('notice.country', $countryCode)
             ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 
@@ -196,9 +192,7 @@ class NoticeController extends Controller
             ->where('notice.category_id', 1)
             ->where('notice.status', '1')
             ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
-            ->where(function($q) use ($countryCode) {
-                $q->where(\Illuminate\Support\Facades\DB::raw('COALESCE(co0.shortname, co1.shortname)'), '=', $countryCode);
-            })
+            ->where('notice.country', $countryCode)
             ->orderBy('notice.created_at', 'desc')
             ->first();
 
@@ -237,7 +231,7 @@ class NoticeController extends Controller
                 WHERE notice.category_id = notice_category.id 
                   AND notice.status = '1' 
                   AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "'
-                  AND COALESCE(co0.shortname, co1.shortname) = '" . $countryCode . "'
+                  AND notice.country = '" . $countryCode . "'
             ) as notices_count"))
             ->get();
 
@@ -271,9 +265,7 @@ class NoticeController extends Controller
             ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
             ->where('notice.status', '1')
             ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
-            ->where(function($q) use ($countryCode) {
-                $q->where(\Illuminate\Support\Facades\DB::raw('COALESCE(co0.shortname, co1.shortname)'), '=', $countryCode);
-            })
+            ->where('notice.country', $countryCode)
             ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 

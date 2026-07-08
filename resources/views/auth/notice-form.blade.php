@@ -81,27 +81,15 @@
                                             </span>
                                         </label>
                                         <div class="notice-options">
-                                            @if($activeStandardNotice)
-                                                <div class="radiogbutt" style="opacity: 0.6; cursor: not-allowed; display: flex; align-items: center; gap: 8px;" title="You already have an active 7-day notice.">
-                                                    <input name="noticetype" type="radio" value="standard" disabled>
-                                                    7 day Notice (Free) $0.00 (Locked - active notice expires {{ \Carbon\Carbon::parse($activeStandardNotice->notice_EXPIRE)->format('d M Y') }})
-                                                </div>
-                                                <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
-                                                    <input name="noticetype" type="radio" value="feature" checked>
-                                                    28 day Feature Notice ( $3.00)
-                                                    <img src="images/help_icon.png" alt="" class="help_icon">
-                                                </div>
-                                            @else
-                                                <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
-                                                    <input name="noticetype" type="radio" value="standard" {{ old('noticetype', isset($notice) ? $notice->noticetype : 'standard') === 'standard' ? 'checked' : '' }}>
-                                                    7 day Notice (Free) $0.00
-                                                </div>
-                                                <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
-                                                    <input name="noticetype" type="radio" value="feature" {{ old('noticetype', isset($notice) ? $notice->noticetype : '') === 'feature' ? 'checked' : '' }}>
-                                                    28 day Feature Notice ( $3.00)
-                                                    <img src="images/help_icon.png" alt="" class="help_icon">
-                                                </div>
-                                            @endif
+                                            <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
+                                                <input name="noticetype" type="radio" value="standard" {{ old('noticetype', isset($notice) ? $notice->noticetype : 'standard') === 'standard' ? 'checked' : '' }}>
+                                                7 day Notice (Free) $0.00
+                                            </div>
+                                            <div class="radiogbutt" style="display: flex; align-items: center; gap: 8px;">
+                                                <input name="noticetype" type="radio" value="feature" {{ old('noticetype', isset($notice) ? $notice->noticetype : '') === 'feature' ? 'checked' : '' }}>
+                                                28 day Feature Notice ( $3.00)
+                                                <img src="images/help_icon.png" alt="" class="help_icon">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -112,6 +100,7 @@
                                             <div id="title_counter" class="notice-character-counter">{{ isset($notice) ? strlen($notice->heading) : 0 }} / 35 characters</div>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="header_country" id="header_country" value="{{ session('CountryCode') ?? 'NZ' }}">
 
                                     <!-- Get a Quote Fields -->
                                     <div id="get_a_quote_fields" style="display:none;">
@@ -714,6 +703,8 @@
                             $(document).ready(function() {
                                 // Listen for changes in the header country dropdown
                                 $('.countryChange').on('change', function() {
+                                    var countryShortName = $(this).val();
+                                    $('#header_country').val(countryShortName);
                                     updateQuoteTowns();
                                     updateServiceDealTowns();
                                 });
@@ -728,35 +719,16 @@
                             });
 
                              function checkSubmissionValidity() {
-                                 var hasActiveStandard = {{ $activeStandardNotice ? 'true' : 'false' }};
-                                 if (!hasActiveStandard) return;
-                                 
-                                 var categorySelect = document.getElementById('category_id');
-                                 var categoryId = categorySelect.value;
-                                 var noticetypeOption = document.querySelector('input[name="noticetype"]:checked');
-                                 var noticetype = noticetypeOption ? noticetypeOption.value : 'standard';
-                                 var activeWarning = document.getElementById('active_standard_warning');
                                  var submitBtn = document.querySelector('input[name="submit"]');
+                                 var activeWarning = document.getElementById('active_standard_warning');
 
-                                 if (categoryId == '2' || (categoryId !== '' && noticetype === 'standard')) {
-                                     activeWarning.style.display = 'block';
-                                     if (categoryId == '2') {
-                                         activeWarning.querySelector('span').innerHTML = '<strong>Get a Quote</strong> requests are 7-Day Notices. You cannot submit one while you have an active 7-Day Notice.';
-                                     } else {
-                                         activeWarning.querySelector('span').innerHTML = 'You cannot submit a <strong>7-Day Notice</strong> while you have an active 7-Day Notice. Please select 28-Day Featured Notice.';
-                                     }
-                                     if (submitBtn) {
-                                         submitBtn.disabled = true;
-                                         submitBtn.style.opacity = 0.5;
-                                         submitBtn.style.cursor = 'not-allowed';
-                                     }
-                                 } else {
+                                 if (submitBtn) {
+                                     submitBtn.disabled = false;
+                                     submitBtn.style.opacity = 1;
+                                     submitBtn.style.cursor = 'pointer';
+                                 }
+                                 if (activeWarning) {
                                      activeWarning.style.display = 'none';
-                                     if (submitBtn) {
-                                         submitBtn.disabled = false;
-                                         submitBtn.style.opacity = 1;
-                                         submitBtn.style.cursor = 'pointer';
-                                     }
                                  }
                              }
 

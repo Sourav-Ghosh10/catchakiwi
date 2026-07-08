@@ -485,18 +485,22 @@ class UserController extends Controller
         // Logic to fetch cities based on $countryId
         $array = [];
         if ($countryId == "13" || $countryId == "44" || $countryId == "101" || $countryId == "230" || $countryId == "231") {
-            $cities = State::with('cities')->where('country_id', $countryId)->get()->toArray();
+            $cities = State::with(['cities', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
+                $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
-                    $array[] = ["value" => $city['id'], "text" => $city['name'] . ", " . $state['name']];
+                    $locationText = $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
+                    $array[] = ["value" => $city['id'], "text" => $locationText];
                 }
             }
         } elseif ($countryId == "157") {
-            $cities = State::with('cities.towns')->where('country_id', $countryId)->get()->toArray();
+            $cities = State::with(['cities.towns', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
+                $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
                     foreach ($city['towns'] as $town) {
-                        $array[] = ["value" => $town['id'], "text" => $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name']];
+                        $locationText = $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
+                        $array[] = ["value" => $town['id'], "text" => $locationText];
                     }
                 }
             }
@@ -514,18 +518,25 @@ class UserController extends Controller
         // Logic to fetch cities based on $countryId
         $array = [];
         if ($countryId == "13" || $countryId == "44" || $countryId == "101" || $countryId == "230" || $countryId == "231") {
-            $cities = State::with('cities')->where('country_id', $countryId)->get()->toArray();
+            $cities = State::with(['cities', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
+                $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
-                    $array[] = ["value" => $city['name'] . ", " . $state['name'], "text" => $city['name'] . ", " . $state['name'], "selected" => ($city['name'] . ", " . $state['name']) == $selected];
+                    $locationStr = $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
+                    // We also need to support matching old selected values that might not have the country name appended
+                    $isSelected = ($locationStr == $selected) || (($city['name'] . ", " . $state['name']) == $selected);
+                    $array[] = ["value" => $locationStr, "text" => $locationStr, "selected" => $isSelected];
                 }
             }
         } elseif ($countryId == "157") {
-            $cities = State::with('cities.towns')->where('country_id', $countryId)->get()->toArray();
+            $cities = State::with(['cities.towns', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
+                $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
                     foreach ($city['towns'] as $town) {
-                        $array[] = ["value" => $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name'], "text" => $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name'], "selected" => ($town['suburb_name'] . ", " . $city['name'] . ", " . $state['name']) == $selected];
+                        $locationStr = $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
+                        $isSelected = ($locationStr == $selected) || (($town['suburb_name'] . ", " . $city['name'] . ", " . $state['name']) == $selected);
+                        $array[] = ["value" => $locationStr, "text" => $locationStr, "selected" => $isSelected];
                     }
                 }
             }
@@ -628,14 +639,21 @@ class UserController extends Controller
 
         $user_id = Auth::user()->id ?? null;
         $activeStandardNotice = null;
+        $activeQuoteNotice = null;
         if ($user_id) {
             $activeStandardNotice = Notice::where('user_id', $user_id)
                 ->where('noticetype', 'standard')
+                ->where('category_id', '!=', '2')
+                ->where('notice_EXPIRE', '>', Carbon::now())
+                ->first();
+            
+            $activeQuoteNotice = Notice::where('user_id', $user_id)
+                ->where('category_id', '2')
                 ->where('notice_EXPIRE', '>', Carbon::now())
                 ->first();
         }
 
-        return view('auth.notice-form', compact('category', 'grouped', 'sideData', 'country', 'activeStandardNotice'));
+        return view('auth.notice-form', compact('category', 'grouped', 'sideData', 'country', 'activeStandardNotice', 'activeQuoteNotice'));
     }
     public function NoticePost(Request $request)
     {
@@ -668,16 +686,6 @@ class UserController extends Controller
 
         $user_id = Auth::user()->id ?? null;
 
-        if ($noticetype === 'standard') {
-            $activeStandardNotice = Notice::where('user_id', $user_id)
-                ->where('noticetype', 'standard')
-                ->where('notice_EXPIRE', '>', Carbon::now())
-                ->first();
-            if ($activeStandardNotice) {
-                return redirect()->back()->withInput()->with('error', 'You already have an active 7-Day Notice. You can only submit another one after it expires on ' . Carbon::parse($activeStandardNotice->notice_EXPIRE)->format('d M Y, h:i A') . '.');
-            }
-        }
-
         $notice = new Notice();
         $notice->user_id = $user_id;
         $notice->category_id = $category_id;
@@ -690,26 +698,16 @@ class UserController extends Controller
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');
         $notice->message_text = $request->input('message_text');
+        $notice->country = $request->input('header_country') ?? session('CountryCode', 'NZ');
         $notice->created_at = Carbon::now();
 
         if ($noticetype === 'standard') {
-            $standardNoticesCount = Notice::where('user_id', $user_id)
-                ->where('noticetype', 'standard')
-                ->count();
-            if ($standardNoticesCount < 2) {
-                // Initial notice (0) & first unlock (1) are automatically approved
-                $notice->status = '1';
-                $notice->notice_EXPIRE = Carbon::now()->addDays(7);
-                $notice->expire_at = Carbon::now()->addDays(7);
-            } else {
-                // Second unlock onwards (>= 2) requires admin approval
-                $notice->status = '0';
-                $notice->notice_EXPIRE = Carbon::now()->addDays(7);
-                $notice->expire_at = Carbon::now()->addDays(7);
-            }
+            $notice->status = '1'; // Approved by default
+            $notice->notice_EXPIRE = Carbon::now()->addDays(7);
+            $notice->expire_at = Carbon::now()->addDays(7);
         } else {
-            // Featured notices require admin approval
-            $notice->status = '0';
+            // Featured notices
+            $notice->status = '1'; // Approved by default
             $notice->notice_EXPIRE = Carbon::now()->addDays(28);
             $notice->expire_at = Carbon::now()->addDays(28);
         }
@@ -979,11 +977,18 @@ class UserController extends Controller
 
         $activeStandardNotice = Notice::where('user_id', $user_id)
             ->where('noticetype', 'standard')
+            ->where('category_id', '!=', '2')
+            ->where('notice_EXPIRE', '>', Carbon::now())
+            ->where('id', '!=', $id)
+            ->first();
+            
+        $activeQuoteNotice = Notice::where('user_id', $user_id)
+            ->where('category_id', '2')
             ->where('notice_EXPIRE', '>', Carbon::now())
             ->where('id', '!=', $id)
             ->first();
 
-        return view('auth.notice-form', compact('notice', 'noticeImages', 'category', 'grouped', 'sideData', 'country', 'activeStandardNotice'));
+        return view('auth.notice-form', compact('notice', 'noticeImages', 'category', 'grouped', 'sideData', 'country', 'activeStandardNotice', 'activeQuoteNotice'));
     }
 
     public function NoticeUpdate(Request $request, $id)
@@ -1017,13 +1022,16 @@ class UserController extends Controller
         $notice_body = $request->input('notice_body');
 
         if ($noticetype === 'standard') {
-            $activeStandardNotice = Notice::where('user_id', $user_id)
-                ->where('noticetype', 'standard')
-                ->where('notice_EXPIRE', '>', Carbon::now())
-                ->where('id', '!=', $id)
-                ->first();
-            if ($activeStandardNotice) {
-                return redirect()->back()->withInput()->with('error', 'You already have another active 7-Day Notice.');
+            if ($category_id != '2') {
+                $activeStandardNotice = Notice::where('user_id', $user_id)
+                    ->where('noticetype', 'standard')
+                    ->where('category_id', '!=', '2')
+                    ->where('notice_EXPIRE', '>', Carbon::now())
+                    ->where('id', '!=', $id)
+                    ->first();
+                if ($activeStandardNotice) {
+                    return redirect()->back()->withInput()->with('error', 'You already have another active 7-Day Notice.');
+                }
             }
         }
 
