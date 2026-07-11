@@ -159,6 +159,11 @@
                         <button type="submit" class="btn btn-warning">Revoke / Reject</button>
                     </form>
                 @endif
+                <form action="{{ route('admin.notices.destroy', $notice->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this notice?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>

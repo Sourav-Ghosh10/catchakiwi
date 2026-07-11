@@ -53,4 +53,24 @@ class NoticeController extends Controller
 
         return redirect()->back()->with('success', 'Notice status updated to pending/rejected.');
     }
+
+    public function destroy($id)
+    {
+        $notice = Notice::findOrFail($id);
+        
+        // Delete associated images if any
+        if ($notice->images) {
+            foreach ($notice->images as $img) {
+                // Delete physical file if exists
+                if (file_exists(public_path($img->img_path))) {
+                    @unlink(public_path($img->img_path));
+                }
+                $img->delete();
+            }
+        }
+        
+        $notice->delete();
+
+        return redirect()->back()->with('success', 'Notice deleted successfully.');
+    }
 }

@@ -128,6 +128,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('notices', [\App\Http\Controllers\Admin\NoticeController::class, 'index'])->name('notices.index');
     Route::post('notices/{id}/approve', [\App\Http\Controllers\Admin\NoticeController::class, 'approve'])->name('notices.approve');
     Route::post('notices/{id}/reject', [\App\Http\Controllers\Admin\NoticeController::class, 'reject'])->name('notices.reject');
+    Route::delete('notices/{id}', [\App\Http\Controllers\Admin\NoticeController::class, 'destroy'])->name('notices.destroy');
 });
 /*
 ---------------------------------------------------------------------
@@ -140,6 +141,7 @@ Route::get('/notice-board/{category?}', [NoticeController::class, 'noticeBoard']
 Route::get('/notices/search', [NoticeController::class, 'searchNotices'])->name('notices.search');
 Route::get('/notices', [NoticeController::class, 'noticeBoardV2'])->name('notices');
 Route::get('/notice/view/{id}', [NoticeController::class, 'incrementView'])->name('notice.view');
+Route::get('/cron/delete-inactive-notices', [NoticeController::class, 'deleteInactiveNotices'])->name('cron.delete-inactive-notices');
 
 Route::get('/get-a-quote', [BusinessController::class, 'getaQuote'])->name('get-a-quote');
 Route::get('/{country}/business', [BusinessController::class, 'list']);
@@ -163,6 +165,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notice/edit/{id}', [UserController::class, 'NoticeEdit'])->name('notice.edit');
     Route::put('/notice/update/{id}', [UserController::class, 'NoticeUpdate'])->name('notice.update');
     Route::delete('/notice/delete/{id}', [UserController::class, 'NoticeDelete'])->name('notice.delete');
+    Route::post('/notice/reactivate/{id}', [UserController::class, 'NoticeReactivate'])->name('notice.reactivate');
 
     Route::post('/store/profilebanner', [UserController::class, 'StoreProfileBanner'])->name('store.profilebanner');
     Route::post('/store/profilepic', [UserController::class, 'StoreProfilePic'])->name('store.profilepic');

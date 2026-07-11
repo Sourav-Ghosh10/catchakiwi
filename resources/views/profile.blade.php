@@ -326,6 +326,11 @@
                                                               @if($ntc->status == '1')
                                                                   @if($ntc->expire_at && \Carbon\Carbon::parse($ntc->expire_at)->isPast())
                                                                       <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Expired</span>
+                                                                      <form action="{{ route('notice.reactivate', $ntc->id) }}" method="POST" style="margin-top:5px;">
+                                                                          @csrf
+                                                                          <button type="submit" class="btn btn-sm btn-success" style="padding: 2px 5px; font-size: 11px; margin-bottom:3px;">Reactivate</button>
+                                                                      </form>
+                                                                      <div style="font-size: 10px; color: #dc3545; line-height: 1.1; max-width: 150px; margin: 0 auto;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
                                                                   @else
                                                                       <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
                                                                           <i class="fa fa-check"></i> Active
@@ -335,6 +340,11 @@
                                                                   <span class="badge badge-warning" style="background-color: #ffc107; color: #212529; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">Pending Approval</span>
                                                               @else
                                                                   <span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Inactive</span>
+                                                                  <form action="{{ route('notice.reactivate', $ntc->id) }}" method="POST" style="margin-top:5px;">
+                                                                      @csrf
+                                                                      <button type="submit" class="btn btn-sm btn-success" style="padding: 2px 5px; font-size: 11px; margin-bottom:3px;">Reactivate</button>
+                                                                  </form>
+                                                                  <div style="font-size: 10px; color: #dc3545; line-height: 1.1; max-width: 150px; margin: 0 auto;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
                                                               @endif
                                                           </td>
                                                           <td align="left" valign="top"><img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $ntc->views ?? 0 }}</td>
@@ -1098,8 +1108,15 @@ const csrfToken       = document.querySelector('meta[name="csrf-token"]').conten
    1. BUILD CHAT LIST (once)
    -------------------------------------------------------------- */
 function fetchChatList() {
-    fetch('/chat/list', {
-        headers: { 'Accept':'application/json', 'X-Request-With':'XMLHttpRequest' }
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatUserId = urlParams.get('chat_user_id');
+    let fetchUrl = '/chat/list';
+    if (chatUserId) {
+        fetchUrl += '?chat_user_id=' + chatUserId;
+    }
+
+    fetch(fetchUrl, {
+        headers: { 'Accept':'application/json', 'X-Requested-With':'XMLHttpRequest' }
     })
     .then(r => r.json())
     .then(users => {
@@ -1135,7 +1152,30 @@ function fetchChatList() {
         });
 
         attachChatItemEvents();                 // <-- once
-        // **DO NOT auto-open any chat**  right side stays blank
+
+        let selectedChat = null;
+        if (chatUserId) {
+            const chatItem = chatList.querySelector(`.chat-item[data-id="${chatUserId}"]`);
+            if (chatItem) {
+                selectedChat = chatItem.querySelector('.chat-header-item');
+            }
+            // clean up the URL
+            const newUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+
+        // If no specific chat is selected, default to the first one in the list
+        if (!selectedChat) {
+            selectedChat = chatList.querySelector('.chat-item .chat-header-item');
+        }
+
+        if (selectedChat) {
+            selectedChat.click();
+        } else {
+            // No chats available, hide the chat box to prevent confusion
+            const chatBox = document.getElementById('chatBox');
+            if (chatBox) chatBox.style.display = 'none';
+        }
     })
     .catch(console.error);
 }

@@ -300,4 +300,25 @@ class NoticeController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function deleteInactiveNotices()
+    {
+        $oneMonthAgo = \Carbon\Carbon::now()->subMonth();
+        
+        $noticesToDelete = \Illuminate\Support\Facades\DB::table('notice')
+            ->where(function($query) use ($oneMonthAgo) {
+                $query->where('expire_at', '<', $oneMonthAgo)
+                      ->orWhere('notice_EXPIRE', '<', $oneMonthAgo);
+            })
+            ->get();
+            
+        $count = $noticesToDelete->count();
+        
+        foreach ($noticesToDelete as $notice) {
+            \Illuminate\Support\Facades\DB::table('notice_image')->where('notice_id', $notice->id)->delete();
+            \Illuminate\Support\Facades\DB::table('notice')->where('id', $notice->id)->delete();
+        }
+        
+        return response()->json(['success' => true, 'message' => "Deleted $count inactive notices."]);
+    }
 }

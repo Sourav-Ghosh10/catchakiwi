@@ -1121,4 +1121,22 @@ class UserController extends Controller
 
         return redirect()->route('profile')->with('success', 'Notice deleted successfully.');
     }
+
+    public function NoticeReactivate(Request $request, $id)
+    {
+        $user_id = Auth::user()->id;
+        $notice = Notice::where('id', $id)->where('user_id', $user_id)->firstOrFail();
+
+        $notice->status = '1';
+        if ($notice->noticetype === 'standard') {
+            $notice->notice_EXPIRE = Carbon::now()->addDays(7);
+            $notice->expire_at = Carbon::now()->addDays(7);
+        } else {
+            $notice->notice_EXPIRE = Carbon::now()->addDays(28);
+            $notice->expire_at = Carbon::now()->addDays(28);
+        }
+        $notice->save();
+
+        return redirect()->back()->with('success', 'Notice reactivated successfully!');
+    }
 }

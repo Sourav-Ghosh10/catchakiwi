@@ -15,17 +15,31 @@ class ChatController extends Controller
     }
 
     // Get chat list (users with whom the authenticated user has chatted)
-    public function getChatList()
+    public function getChatList(Request $request)
     {
         $user = Auth::user();
-        $chatUsers = User::whereIn('id', function ($query) use ($user) {
-            $query->select('sender_id')
-                ->from('messages')
-                ->where('receiver_id', $user->id)
-                ->union(
-                    \DB::table('messages')->select('receiver_id')->where('sender_id', $user->id)
-                );
-        })->get();
+        
+        // Find users with whom the authenticated user has chatted
+        $chatUsersIds = \DB::table('messages')
+            ->where('receiver_id', $user->id)
+            ->select('sender_id as uid')
+            ->union(
+                \DB::table('messages')
+                ->where('sender_id', $user->id)
+                ->select('receiver_id as uid')
+            )->pluck('uid')->toArray();
+        
+        $chatUsersIds = collect($chatUsersIds);
+        
+        // If chat_user_id is provided and filled, ensure it's in the list
+        if ($request->filled('chat_user_id')) {
+            $chatUserId = $request->chat_user_id;
+            if (!$chatUsersIds->contains($chatUserId) && $chatUserId != $user->id) {
+                $chatUsersIds->push($chatUserId);
+            }
+        }
+
+        $chatUsers = User::whereIn('id', $chatUsersIds)->get();
 
         $chatList = $chatUsers->map(function ($chatUser) use ($user) {
             $lastMessage = Message::where(function ($q) use ($user, $chatUser) {
@@ -40,14 +54,21 @@ class ChatController extends Controller
                 ->count();
 
             return [
-                'id'              => $chatUser->id,
-                'name'            => $chatUser->name,
-                'image'           => $chatUser->profile_image,
-                'last_message'    => $lastMessage?->message ?? '',
-                'last_message_time'=> $lastMessage?->created_at->format('h:i A, M d') ?? '',
-                'unread_count'    => $unreadCount,               // <-- NEW
+                'id' => $chatUser->id,
+                'name' => $chatUser->name,
+                'image' => $chatUser->profile_image,
+                'last_message' => $lastMessage?->message ?? '',
+                'last_message_time' => $lastMessage ? $lastMessage->created_at->format('h:i A, M d') : '',
+                'unread_count' => $unreadCount,
             ];
         });
+
+        if ($request->filled('chat_user_id')) {
+            $chatUserId = $request->chat_user_id;
+            $chatList = $chatList->sortByDesc(function ($item) use ($chatUserId) {
+                return $item['id'] == $chatUserId ? 1 : 0;
+            })->values();
+        }
 
         return response()->json($chatList);
     }
@@ -62,7 +83,7 @@ class ChatController extends Controller
         })->orWhere(function ($q) use ($user, $receiverId) {
             $q->where('sender_id', $receiverId)->where('receiver_id', $user->id);
         })->orderBy('created_at', 'asc')
-          ->get();
+            ->get();
 
         // ---- MARK INCOMING MESSAGES AS SEEN ----
         $incoming = $messages->where('receiver_id', $user->id)->where('is_seen', 'false');
@@ -73,12 +94,12 @@ class ChatController extends Controller
 
         return response()->json($messages->map(function ($m) use ($user) {
             return [
-                'id'     => $m->id,
+                'id' => $m->id,
                 'sender' => $m->sender->name,
-                'text'   => $m->message,
-                'type'   => $m->sender_id == $user->id ? 'me' : 'other',
-                'time'   => $m->created_at->format('h:i A, M d'),
-                'seen'   => $m->is_seen,               // <-- NEW
+                'text' => $m->message,
+                'type' => $m->sender_id == $user->id ? 'me' : 'other',
+                'time' => $m->created_at->format('h:i A, M d'),
+                'seen' => $m->is_seen,               // <-- NEW
             ];
         }));
     }
@@ -95,7 +116,7 @@ class ChatController extends Controller
             'sender_id' => Auth::id(),
             'receiver_id' => $request->receiver_id,
             'message' => $request->message,
-          	//'is_seen' => 'false'
+            //'is_seen' => 'false'
         ]);
 
         return response()->json([
@@ -105,7 +126,7 @@ class ChatController extends Controller
             'time' => $message->created_at->format('h:i A, M d')
         ]);
     }
-  	public function unreadCounts()
+    public function unreadCounts()
     {
         $user = Auth::user();
 
@@ -134,9 +155,9 @@ class ChatController extends Controller
         $user = Auth::user();
 
         Message::where('sender_id', $receiverId)
-                ->where('receiver_id', $user->id)
-                ->where('is_seen', 'false')
-                ->update(['is_seen' => 'true']);
+            ->where('receiver_id', $user->id)
+            ->where('is_seen', 'false')
+            ->update(['is_seen' => 'true']);
 
         return response()->json(['ok' => true]);
     }
