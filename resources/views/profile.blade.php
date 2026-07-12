@@ -232,10 +232,8 @@
                                                    valign="top">Status</th>
                                                 <th align="left"
                                                    valign="top">Views</th>
-                                                <th align="left"
-                                                   valign="top">&nbsp;</th>
-                                                <th align="left"
-                                                   valign="top">&nbsp;</th>
+                                                <th align="center"
+                                                   valign="top">Action</th>
                                              </tr>
                                              @if(!empty($businessList))
                                                  @foreach($businessList as
@@ -271,19 +269,17 @@
                                                                                            valign="top"><img
                                                                                               src="{{ asset('assets/images/view_icon.png') }}"
                                                                                               alt> {{$business->view_count}}</td>
-                                                                                        <td align="left" valign="top"><a
-                                                                                              href="{{ route('business.list.edit', $business->id) }}"
-                                                                                              class="edit">Edit <img
-                                                                                                 src="{{ asset('assets/images/edit_icon.png') }}"
-                                                                                                 alt></a></td>
-                                                                                        <td align="left" valign="top">
-                                                                                            <form action="{{ route('business.list.delete', $business->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this business? This action cannot be undone.');">
-                                                                                                @csrf
-                                                                                                @method('DELETE')
-                                                                                                <button type="submit" class="delete" style="background:none; border:none; padding:0; cursor:pointer;">
-                                                                                                    <img src="{{ asset('assets/images/delete_icon.png') }}" alt>
-                                                                                                </button>
-                                                                                            </form>
+                                                                                        <td align="center" valign="middle">
+                                                                                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; height: 100%;">
+                                                                                                <a href="{{ route('business.list.edit', $business->id) }}" class="edit" style="margin: 0; display: inline-flex; align-items: center; justify-content: center; width: 62px; height: 28px;">Edit <img src="{{ asset('assets/images/edit_icon.png') }}" alt="Edit" style="margin-left: 5px;"></a>
+                                                                                                <form action="{{ route('business.list.delete', $business->id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this business? This action cannot be undone.');">
+                                                                                                    @csrf
+                                                                                                    @method('DELETE')
+                                                                                                    <button type="submit" class="delete" style="background:none; border:none; padding:0; margin:0; cursor:pointer; display: inline-flex; align-items: center; justify-content: center; height: 28px;">
+                                                                                                        <img src="{{ asset('assets/images/delete_icon.png') }}" alt="Delete">
+                                                                                                    </button>
+                                                                                                </form>
+                                                                                            </div>
                                                                                         </td>
                                                                                      </tr>
                                                  @endforeach
@@ -312,10 +308,8 @@
                                                    valign="top">Views</th>
                                                 <th align="left"
                                                    valign="top">Expires</th>
-                                                <th align="left"
-                                                   valign="top">&nbsp;</th>
-                                                <th align="left"
-                                                   valign="top">&nbsp;</th>
+                                                <th align="center"
+                                                   valign="top">Action</th>
                                              </tr>
                                               @if(!empty($notice))
                                                   @foreach($notice as $ntc)
@@ -349,19 +343,17 @@
                                                           </td>
                                                           <td align="left" valign="top"><img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $ntc->views ?? 0 }}</td>
                                                           <td align="left" valign="top">{{ $ntc->expire_at ? \Carbon\Carbon::parse($ntc->expire_at)->format('d M Y') : 'N/A' }}</td>
-                                                          <td align="left" valign="top"><a
-                                                                href="{{ route('notice.edit', $ntc->id) }}"
-                                                                class="edit">Edit <img
-                                                                   src="{{ asset('assets/images/edit_icon.png') }}"
-                                                                   alt="Edit"></a></td>
-                                                          <td align="left" valign="top">
-                                                              <form action="{{ route('notice.delete', $ntc->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this notice?');">
-                                                                  @csrf
-                                                                  @method('DELETE')
-                                                                  <button type="submit" class="delete" style="background:none; border:none; padding:0; cursor:pointer;">
-                                                                      <img src="{{ asset('assets/images/delete_icon.png') }}" alt="Delete">
-                                                                  </button>
-                                                              </form>
+                                                          <td align="center" valign="middle">
+                                                              <div style="display: flex; justify-content: center; align-items: center; gap: 10px; height: 100%;">
+                                                                  <a href="{{ route('notice.edit', $ntc->id) }}" class="edit" style="margin: 0; display: inline-flex; align-items: center; justify-content: center; width: 62px; height: 28px;">Edit <img src="{{ asset('assets/images/edit_icon.png') }}" alt="Edit" style="margin-left: 5px;"></a>
+                                                                  <form action="{{ route('notice.delete', $ntc->id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this notice?');">
+                                                                      @csrf
+                                                                      @method('DELETE')
+                                                                      <button type="submit" class="delete" style="background:none; border:none; padding:0; margin:0; cursor:pointer; display: inline-flex; align-items: center; justify-content: center; height: 28px;">
+                                                                          <img src="{{ asset('assets/images/delete_icon.png') }}" alt="Delete">
+                                                                      </button>
+                                                                  </form>
+                                                              </div>
                                                           </td>
                                                       </tr>
                                                   @endforeach
@@ -391,10 +383,8 @@
                                                    valign="top">Status</th>
                                                 <th align="left"
                                                    valign="top">Views</th>
-                                                <th align="left"
-                                                   valign="top">&nbsp;</th>
-                                                <th align="left"
-                                                   valign="top">&nbsp;</th>
+                                                <th align="center"
+                                                   valign="top">Action</th>
                                              </tr>
                                              @if(!empty($articles))
                                                  @foreach($articles as $article)
@@ -413,17 +403,17 @@
                                                         <td align="left" valign="top">
                                                            <img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $article->views }}
                                                         </td>
-                                                        <td align="left" valign="top">
-                                                           <a href="{{ route('article.user-edit', $article->id) }}" class="edit">
-                                                              Edit <img src="{{ asset('assets/images/edit_icon.png') }}" alt="">
-                                                           </a>
-                                                        </td>
-                                                        <td align="left" valign="top">
-                                                            <form action="{{ route('article.user-delete', $article->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this article? This action cannot be undone.');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                                            </form>
+                                                        <td align="center" valign="middle">
+                                                            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; height: 100%;">
+                                                               <a href="{{ route('article.user-edit', $article->id) }}" class="edit" style="margin: 0; display: inline-flex; align-items: center; justify-content: center; width: 62px; height: 28px;">
+                                                                  Edit <img src="{{ asset('assets/images/edit_icon.png') }}" alt="Edit" style="margin-left: 5px;">
+                                                               </a>
+                                                                <form action="{{ route('article.user-delete', $article->id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this article? This action cannot be undone.');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" style="margin: 0; height: 28px; display: inline-flex; align-items: center; justify-content: center; padding: 0 10px;">Delete</button>
+                                                                </form>
+                                                            </div>
                                                         </td>
                                                      </tr>
                                                  @endforeach
