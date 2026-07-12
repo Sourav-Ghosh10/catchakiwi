@@ -1021,19 +1021,7 @@ class UserController extends Controller
         $notice_title = $request->input('notice_title');
         $notice_body = $request->input('notice_body');
 
-        if ($noticetype === 'standard') {
-            if ($category_id != '2') {
-                $activeStandardNotice = Notice::where('user_id', $user_id)
-                    ->where('noticetype', 'standard')
-                    ->where('category_id', '!=', '2')
-                    ->where('notice_EXPIRE', '>', Carbon::now())
-                    ->where('id', '!=', $id)
-                    ->first();
-                if ($activeStandardNotice) {
-                    return redirect()->back()->withInput()->with('error', 'You already have another active 7-Day Notice.');
-                }
-            }
-        }
+
 
         $notice->category_id = $category_id;
         $notice->noticetype = $noticetype;
@@ -1047,17 +1035,9 @@ class UserController extends Controller
         $notice->message_text = $request->input('message_text');
         
         if ($noticetype === 'standard') {
-            $standardNoticesCount = Notice::where('user_id', $user_id)
-                ->where('noticetype', 'standard')
-                ->where('id', '!=', $id)
-                ->count();
-            if ($standardNoticesCount < 2) {
-                $notice->status = '1';
-            } else {
-                $notice->status = '0';
-            }
+            $notice->status = '1';
         } else {
-            $notice->status = '0';
+            $notice->status = '1';
         }
 
         $notice->save();
