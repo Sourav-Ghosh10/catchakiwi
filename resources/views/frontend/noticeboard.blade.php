@@ -160,6 +160,3 @@
 </script>
 
 @include('includes/footer')
-</script>
-
-@include('includes/footer')
