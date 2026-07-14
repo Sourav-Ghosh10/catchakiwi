@@ -26,7 +26,11 @@
                             </h2>
                             <div class="left_notice_actions">
                                 <!-- <a href="#" class="getquote_button">Get a Quote</a> -->
-                                <a href="{{ route('notice-post', ['category' => $activeCategory ? $activeCategory->slug : '']) }}" class="postfree_button">Post a Free Notice</a>
+                                @if(Auth::user())
+                                    <a href="{{ route('notice-post', ['category' => $activeCategory ? $activeCategory->slug : 1]) }}" class="postfree_button">Post a Free Notice</a>
+                                @else
+                                    <a href="{{ URL::to('/login?redirect=' . urlencode('notice-post?category=' . ($activeCategory ? $activeCategory->slug : 1))) }}" class="postfree_button">Post a Free Notice</a>
+                                @endif
                             </div>
                         </div>
                         <div class="notice_refineresults">

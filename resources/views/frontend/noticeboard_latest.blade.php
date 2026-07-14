@@ -35,7 +35,11 @@
                         <a href="{{ route('notices') }}" class="notice-search-back-btn btn btn-outline-secondary btn-sm">
                             <i class="fa fa-arrow-left mr-1"></i> Back to Noticeboard
                         </a>
-                        <a href="{{ route('notice-post', ['category' => $categoryId ?? '']) }}" class="nb-v2-post-btn notice-search-post-btn" style="padding: 10px 20px;">Post a Free Notice ></a>
+                        @if(Auth::user())
+                            <a href="{{ route('notice-post', ['category' => $categoryId ?? 1]) }}" class="nb-v2-post-btn notice-search-post-btn" style="padding: 10px 20px;">Post a Free Notice ></a>
+                        @else
+                            <a href="{{ URL::to('/login?redirect=' . urlencode('notice-post?category=' . ($categoryId ?? 1))) }}" class="nb-v2-post-btn notice-search-post-btn" style="padding: 10px 20px;">Post a Free Notice ></a>
+                        @endif
                     </div>
                     
                     <div class="notice-search-results-header d-flex justify-content-between align-items-center mb-4">

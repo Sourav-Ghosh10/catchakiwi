@@ -48,7 +48,11 @@
 
             <!-- Post Button -->
             <div class="text-right mb-4">
-                <a href="{{ route('notice-post', ['category' => $categoryId]) }}" class="nb-v2-post-btn">Post a Free Notice ></a>
+                @if(Auth::user())
+                    <a href="{{ route('notice-post', ['category' => $categoryId ?? 1]) }}" class="nb-v2-post-btn">Post a Free Notice ></a>
+                @else
+                    <a href="{{ URL::to('/login?redirect=' . urlencode('notice-post?category=' . ($categoryId ?? 1))) }}" class="nb-v2-post-btn">Post a Free Notice ></a>
+                @endif
             </div>
 
             <!-- Categories Grid -->
