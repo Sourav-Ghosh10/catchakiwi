@@ -138,6 +138,7 @@ FRONTEND CONTROLLER BEGIN
 Route::post('/login', [CustomAuthenticatedSessionController::class, 'store']);
 
 Route::get('/notice-board/{category?}', [NoticeController::class, 'noticeBoard'])->name('notice-board');
+Route::get('/notices/latest', [NoticeController::class, 'latestPosts'])->name('notices.latest');
 Route::get('/notices/search', [NoticeController::class, 'searchNotices'])->name('notices.search');
 Route::get('/notices', [NoticeController::class, 'noticeBoardV2'])->name('notices');
 Route::get('/notice/view/{id}', [NoticeController::class, 'incrementView'])->name('notice.view');

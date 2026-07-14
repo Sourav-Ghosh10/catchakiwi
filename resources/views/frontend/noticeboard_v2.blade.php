@@ -118,7 +118,7 @@
                     @if($search || $categoryId)
                         <a href="{{ route('notices') }}" class="nb-v2-view-more">View All Posts</a>
                     @else
-                        <a href="#" class="nb-v2-view-more">View More Posts</a>
+                        <a href="{{ route('notices.latest') }}" class="nb-v2-view-more">View More Posts</a>
                     @endif
                 </div>
                 <div class="notice-grid">

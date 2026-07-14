@@ -301,6 +301,83 @@ class NoticeController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function latestPosts(Request $request)
+    {
+        $countryCode = session('CountryCode', 'NZ');
+        $ads = \App\Models\Ads::where('country', $countryCode)->get();
+        $grouped = collect($ads)->groupBy('type');
+        $sideData = $grouped->get('side', []);
+
+        $search = $request->input('search');
+        $location = $request->input('location');
+        $categoryId = $request->input('category');
+
+        $categories = \Illuminate\Support\Facades\DB::table('notice_category')->get();
+
+        $latestNoticesQuery = \Illuminate\Support\Facades\DB::table('notice')
+            ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
+            ->leftJoin('users', 'users.id', '=', 'notice.user_id')
+            ->leftJoin('cities as c0', function($join) {
+                $join->on('c0.id', '=', 'users.suburb_id')
+                     ->where('users.country_status', '=', '0');
+            })
+            ->leftJoin('towns as t1', function($join) {
+                $join->on('t1.id', '=', 'users.suburb_id')
+                     ->where('users.country_status', '=', '1');
+            })
+            ->leftJoin('cities as c1', 'c1.id', '=', 't1.city_id')
+            ->leftJoin('states as s0', 's0.id', '=', 'c0.state_id')
+            ->leftJoin('states as s1', 's1.id', '=', 'c1.state_id')
+            ->leftJoin('countries as co0', 'co0.id', '=', 's0.country_id')
+            ->leftJoin('countries as co1', 'co1.id', '=', 's1.country_id')
+            ->select('notice.*', 'notice_category.category as category_name')
+            ->where('notice.status', '1')
+            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->where('notice.country', $countryCode)
+            ->orderBy('notice.created_at', 'desc');
+
+        if ($search) {
+            $latestNoticesQuery->where(function($q) use ($search) {
+                $q->where('notice.heading', 'like', "%{$search}%")
+                  ->orWhere('notice.content', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($categoryId) {
+            $latestNoticesQuery->where('notice.category_id', $categoryId);
+        }
+
+        if ($location) {
+            $latestNoticesQuery->where(function($q) use ($location) {
+                $q->where('c0.name', 'like', "%{$location}%")
+                  ->orWhere('t1.suburb_name', 'like', "%{$location}%")
+                  ->orWhere('c1.name', 'like', "%{$location}%")
+                  ->orWhere('notice.town_suburb', 'like', "%{$location}%");
+            });
+        }
+
+        $notices = $latestNoticesQuery->paginate(12);
+
+        $noticeIds = collect($notices->items())->pluck('id');
+        $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
+            ->whereIn('notice_id', $noticeIds)
+            ->get()
+            ->groupBy('notice_id');
+
+        $noticeCategoryTypes = collect($categories)->mapWithKeys(function ($catInfo) {
+            return [$catInfo->id => $catInfo->type ?? null];
+        });
+        $noticeCategorySlugs = collect($categories)->mapWithKeys(function ($catInfo) {
+            return [$catInfo->id => $catInfo->slug ?? \Illuminate\Support\Str::slug($catInfo->category)];
+        });
+
+        if ($request->ajax()) {
+            return view('frontend.partials.notice-grid-items', compact('notices', 'noticeImages', 'noticeCategoryTypes', 'noticeCategorySlugs'))->render();
+        }
+
+        return view('frontend.noticeboard_latest', compact('sideData', 'categories', 'notices', 'noticeImages', 'search', 'location', 'categoryId', 'noticeCategoryTypes', 'noticeCategorySlugs'));
+    }
+
     public function deleteInactiveNotices()
     {
         $oneMonthAgo = \Carbon\Carbon::now()->subMonth();
