@@ -54,14 +54,21 @@
                     @if($notice->status === '0')
                         <form action="{{ route('admin.notices.approve', $notice->id) }}" method="POST" style="display:inline-block;">
                             @csrf
-                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            <button type="submit" class="btn btn-success btn-sm">Make Active</button>
                         </form>
                     @else
                         <form action="{{ route('admin.notices.reject', $notice->id) }}" method="POST" style="display:inline-block;">
                             @csrf
-                            <button type="submit" class="btn btn-warning btn-sm">Reject</button>
+                            <button type="submit" class="btn btn-warning btn-sm">Make Inactive</button>
                         </form>
                     @endif
+                    @if($notice->noticetype !== 'feature')
+                        <form action="{{ route('admin.notices.upgrade', $notice->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Upgrade to featured notice for free?');">Upgrade</button>
+                        </form>
+                    @endif
+                    <a href="{{ route('admin.notices.edit', $notice->id) }}" class="btn btn-secondary btn-sm">Edit</a>
                     <form action="{{ route('admin.notices.destroy', $notice->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this notice?');">
                         @csrf
                         @method('DELETE')

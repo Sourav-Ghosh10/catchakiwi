@@ -128,6 +128,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('notices', [\App\Http\Controllers\Admin\NoticeController::class, 'index'])->name('notices.index');
     Route::post('notices/{id}/approve', [\App\Http\Controllers\Admin\NoticeController::class, 'approve'])->name('notices.approve');
     Route::post('notices/{id}/reject', [\App\Http\Controllers\Admin\NoticeController::class, 'reject'])->name('notices.reject');
+    Route::post('notices/{id}/upgrade', [\App\Http\Controllers\Admin\NoticeController::class, 'upgrade'])->name('notices.upgrade');
+    Route::get('notices/{id}/edit', [\App\Http\Controllers\Admin\NoticeController::class, 'edit'])->name('notices.edit');
+    Route::put('notices/{id}/update', [\App\Http\Controllers\Admin\NoticeController::class, 'update'])->name('notices.update');
     Route::delete('notices/{id}', [\App\Http\Controllers\Admin\NoticeController::class, 'destroy'])->name('notices.destroy');
 });
 /*
