@@ -86,6 +86,7 @@ class NoticeController extends Controller
         $noticeIds = $notices->pluck('id');
         $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
+            ->orderBy('id', 'asc')
             ->get()
             ->groupBy('notice_id');
 
@@ -200,6 +201,7 @@ class NoticeController extends Controller
         $noticeIds = $latestNotices->pluck('id');
         $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
+            ->orderBy('id', 'asc')
             ->get()
             ->groupBy('notice_id');
 
@@ -286,6 +288,7 @@ class NoticeController extends Controller
         $noticeIds = $notices->pluck('id');
         $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
+            ->orderBy('id', 'asc')
             ->get()
             ->groupBy('notice_id');
 
@@ -361,6 +364,7 @@ class NoticeController extends Controller
         $noticeIds = collect($notices->items())->pluck('id');
         $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
+            ->orderBy('id', 'asc')
             ->get()
             ->groupBy('notice_id');
 

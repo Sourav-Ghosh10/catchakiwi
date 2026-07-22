@@ -92,7 +92,7 @@ class NoticeController extends Controller
         $country = \App\Models\Country::where('status', '1')->get()->toArray();
         
         // Retrieve images associated with the notice
-        $noticeImages = \App\Models\NoticeImg::where('notice_id', $id)->get();
+        $noticeImages = \App\Models\NoticeImg::where('notice_id', $id)->orderBy('id', 'asc')->get();
         
         return view('admin.notices.edit', compact('notice', 'category', 'country', 'noticeImages'));
     }

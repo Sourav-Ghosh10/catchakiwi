@@ -955,7 +955,7 @@ class UserController extends Controller
     {
         $user_id = Auth::user()->id;
         $notice = Notice::where('id', $id)->where('user_id', $user_id)->firstOrFail();
-        $noticeImages = NoticeImg::where('notice_id', $id)->get();
+        $noticeImages = NoticeImg::where('notice_id', $id)->orderBy('id', 'asc')->get();
         
         $category = NoticeCategory::where('is_active', 1)->get();
         $countryCode = session('CountryCode');
