@@ -264,5 +264,9 @@ Route::get('/start-websockets', function() {
     exec("nohup php $artisan websockets:serve > /dev/null 2>&1 &");
     return "WebSocket server started in the background!";
 });
+Route::get('/run-composer', function() {
+    exec("composer install 2>&1", $output);
+    return implode("<br>", $output);
+});
 
 //===================================================================================================================
