@@ -265,9 +265,7 @@ Route::get('/start-websockets', function() {
     return "WebSocket server started in the background!";
 });
 Route::get('/run-composer', function() {
-    putenv('COMPOSER_HOME=/tmp');
-    putenv('HOME=/tmp');
-    exec("composer install 2>&1", $output);
+    exec("COMPOSER_HOME=/tmp HOME=/tmp composer install 2>&1", $output);
     return implode("<br>", $output);
 });
 
