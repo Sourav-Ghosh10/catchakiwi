@@ -258,4 +258,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/notification/read', [UserController::class, 'markAsRead'])->name('notification.read');
 });
 
+Route::get('/start-websockets', function() {
+    $artisan = base_path('artisan');
+    // Using nohup to run it in the background so it doesn't hang the browser
+    exec("nohup php $artisan websockets:serve > /dev/null 2>&1 &");
+    return "WebSocket server started in the background!";
+});
+
 //===================================================================================================================
