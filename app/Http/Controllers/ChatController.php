@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Events\MessageSent;
+use App\Events\MessageEdited;
 
 class ChatController extends Controller
 {
@@ -92,16 +94,33 @@ class ChatController extends Controller
         }
         // -----------------------------------------
 
-        return response()->json($messages->map(function ($m) use ($user) {
-            return [
+        $mappedMessages = [];
+        $hasReply = false;
+        
+        // Process in reverse to easily find if a message was replied to
+        for ($i = count($messages) - 1; $i >= 0; $i--) {
+            $m = $messages[$i];
+            
+            if ($m->sender_id != $user->id) {
+                $hasReply = true;
+            }
+
+            $mappedMessages[] = [
                 'id' => $m->id,
                 'sender' => $m->sender->name,
                 'text' => $m->message,
                 'type' => $m->sender_id == $user->id ? 'me' : 'other',
                 'time' => $m->created_at->format('h:i A, M d'),
-                'seen' => $m->is_seen,               // <-- NEW
+                'seen' => $m->is_seen,
+                'is_edited' => $m->is_edited ?? 0,
+                'can_edit' => ($m->sender_id == $user->id && !$hasReply)
             ];
-        }));
+        }
+
+        // Reverse back to chronological order
+        $mappedMessages = array_reverse($mappedMessages);
+
+        return response()->json($mappedMessages);
     }
 
     // Send a message
@@ -119,12 +138,63 @@ class ChatController extends Controller
             //'is_seen' => 'false'
         ]);
 
-        return response()->json([
+        $responseData = [
+            'id' => $message->id,
+            'sender_id' => Auth::user()->id,
             'sender' => Auth::user()->name,
             'text' => $message->message,
-            'type' => 'me',
-            'time' => $message->created_at->format('h:i A, M d')
+            'type' => 'other', // From receiver's perspective
+            'time' => $message->created_at->format('h:i A, M d'),
+            'seen' => $message->is_seen,
+            'is_edited' => 0,
+            'can_edit' => true
+        ];
+
+        broadcast(new MessageSent($message, $responseData))->toOthers();
+
+        $responseData['type'] = 'me';
+        return response()->json($responseData);
+    }
+    
+    // Edit a message
+    public function editMessage(Request $request, $id)
+    {
+        $request->validate([
+            'message' => 'required|string|max:1000'
         ]);
+
+        $message = Message::findOrFail($id);
+        
+        // Ensure the sender is the authenticated user
+        if ($message->sender_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Check if replied to
+        $hasReply = Message::where('sender_id', $message->receiver_id)
+            ->where('receiver_id', $message->sender_id)
+            ->where('created_at', '>', $message->created_at)
+            ->exists();
+
+        if ($hasReply) {
+            return response()->json(['error' => 'Message has been replied to and cannot be edited'], 403);
+        }
+
+        $message->update([
+            'message' => $request->message,
+            'is_edited' => 1
+        ]);
+
+        $responseData = [
+            'id' => $message->id,
+            'text' => $message->message,
+            'time' => $message->created_at->format('h:i A, M d'),
+            'is_edited' => 1
+        ];
+
+        broadcast(new MessageEdited($message, $responseData))->toOthers();
+
+        return response()->json(['success' => true, 'message' => $responseData]);
     }
     public function unreadCounts()
     {

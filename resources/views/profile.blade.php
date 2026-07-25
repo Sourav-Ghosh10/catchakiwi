@@ -790,6 +790,7 @@
          </div>
       </div>
    </div>
+   <script src="{{ asset('js/app.js') }}"></script>
    <script>
 document.addEventListener("DOMContentLoaded", function () {
   const images = document.querySelectorAll(".ad-image");
@@ -1216,9 +1217,6 @@ function openChat(id, name, img) {
     // load messages
     fetchMessages(id);
 
-    // start polling (every 5 s)
-    pollingInterval = setInterval(() => fetchMessages(id), 5000);
-
     // ---- MARK ALL INCOMING MESSAGES AS SEEN ----
     markSeen(id);
 
@@ -1234,12 +1232,20 @@ function renderMessage(msg, container) {
     div.className = 'msg ' + msg.type;
 
     if (msg.type === 'other') {
-        div.innerHTML = `<div class="sender">${msg.sender}</div>${msg.text}<span class="msg-time">${msg.time}</span>`;
+        div.innerHTML = `<div class="sender">${msg.sender}</div><div style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span>`;
+        if (msg.is_edited) div.innerHTML += ` <small>(edited)</small>`;
     } else {
         const icon = msg.seen
             ? '<span class="seen-icon">Seen</span>'
             : '<span class="seen-icon">Sent</span>';
-        div.innerHTML = `${msg.text}<span class="msg-time">${msg.time}</span>${icon}`;
+        div.innerHTML = `<div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div>`;
+        if (msg.is_edited) div.innerHTML += ` <small>(edited)</small>`;
+        div.innerHTML += `<span class="msg-time">${msg.time}</span>${icon}`;
+        
+        // Add Edit button for own messages
+        if (msg.can_edit !== false) {
+            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn">Edit</button>`;
+        }
     }
     container.appendChild(div);
 }
@@ -1330,9 +1336,16 @@ function sendMessage(receiverId, text, mobileContainer = null) {
     })
     .then(r => r.json())
     .then(msg => {
+        if (!msg || !msg.text) {
+            console.error("Failed to send message:", msg);
+            return;
+        }
         const div = document.createElement('div');
         div.className = 'msg me';
-        div.innerHTML = `${msg.text}<span class="msg-time">${msg.time}</span><span class="seen-icon">Sent</span>`;
+        div.innerHTML = `<div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span><span class="seen-icon">Sent</span>`;
+        if (msg.can_edit !== false) {
+            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn">Edit</button>`;
+        }
 
         if (window.innerWidth > 768) {
             desktopMessages.appendChild(div);
@@ -1393,10 +1406,87 @@ sendBtn.addEventListener('click', () => {
 });
 
 /* --------------------------------------------------------------
-   10. INITIALISE
+   10. INITIALISE & ECHO SOCKETS
    -------------------------------------------------------------- */
 fetchChatList();                     // builds list only
-setInterval(refreshBadges, 15000);
+
+// Listen for incoming messages and edits via WebSockets
+if (typeof Echo !== 'undefined') {
+    const authId = {{ auth()->id() ?? 'null' }};
+    if (authId) {
+        Echo.private(`chat.${authId}`)
+            .listen('MessageSent', (e) => {
+                const msg = e.message;
+                // If this is the currently open chat, append it
+                if (currentChatId == msg.sender_id) {
+                    renderMessage(msg, desktopMessages);
+                    desktopMessages.scrollTop = desktopMessages.scrollHeight;
+                    // Auto mark seen since the chat is open
+                    markSeen(msg.sender_id);
+                }
+                refreshBadges();
+            })
+            .listen('MessageEdited', (e) => {
+                const msg = e.message;
+                const msgTextDiv = document.getElementById(`msg-text-${msg.id}`);
+                if (msgTextDiv) {
+                    msgTextDiv.innerHTML = msg.text + ' <small>(edited)</small>';
+                }
+            });
+    }
+} else {
+    // Fallback to polling if WebSockets fail
+    setInterval(refreshBadges, 15000);
+}
+
+// Global polling for badges is good to keep just in case, or we rely on websockets entirely. 
+// We will rely on websockets for realtime, but keep a slow fallback just in case.
+setInterval(refreshBadges, 30000);
+
+/* --------------------------------------------------------------
+   11. EDIT MESSAGE LOGIC
+   -------------------------------------------------------------- */
+let editingMessageId = null;
+
+function startEdit(id) {
+    const msgText = document.getElementById(`msg-text-${id}`).innerText.replace('(edited)','').trim();
+    msgInput.value = msgText;
+    msgInput.focus();
+    editingMessageId = id;
+    sendBtn.innerText = 'Update';
+}
+
+function updateMessage(id, text) {
+    fetch(`/chat/edit-message/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({ message: text })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.error) {
+            alert(res.error);
+        } else {
+            const msgTextDiv = document.getElementById(`msg-text-${id}`);
+            if (msgTextDiv) {
+                msgTextDiv.innerHTML = res.message.text + ' <small>(edited)</small>';
+            }
+        }
+        cancelEdit();
+    })
+    .catch(console.error);
+}
+
+function cancelEdit() {
+    editingMessageId = null;
+    msgInput.value = '';
+    sendBtn.innerText = 'Send';
+}
 
 /* --- Auto-resize & Enter-to-send for Desktop Chat --- */
 if (msgInput) {
