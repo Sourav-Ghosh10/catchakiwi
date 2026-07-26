@@ -265,6 +265,14 @@ Route::get('/start-websockets', function() {
     exec("nohup php $artisan websockets:serve > /dev/null 2>&1 &");
     return "WebSocket server started in the background!";
 });
+
+Route::get('/check-websockets', function() {
+    exec("ps aux | grep 'websockets:serve' | grep -v grep", $output);
+    if (empty($output)) {
+        return "🔴 WebSocket server is NOT running!";
+    }
+    return "🟢 WebSocket server IS RUNNING!<br><br>" . implode("<br>", $output);
+});
 Route::get('/run-composer', function() {
     exec("COMPOSER_HOME=/tmp HOME=/tmp composer install 2>&1", $output);
     return implode("<br>", $output);
