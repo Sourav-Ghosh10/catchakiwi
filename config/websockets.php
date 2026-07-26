@@ -105,10 +105,6 @@ return [
         'perform_dns_lookup' => false,
     ],
 
-    /*
-     * Define the optional SSL context for your WebSocket connections.
-     * You can see all available options at: http://php.net/manual/en/context.ssl.php
-     */
     'ssl' => [
         /*
          * Path to local certificate file on filesystem. It must be a PEM encoded file which
@@ -116,18 +112,20 @@ return [
          * certificate chain of issuers. The private key also may be contained
          * in a separate file specified by local_pk.
          */
-        'local_cert' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT', null),
+        'local_cert' => file_exists('/etc/letsencrypt/live/catchakiwi.com/fullchain.pem') ? '/etc/letsencrypt/live/catchakiwi.com/fullchain.pem' : env('LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT', null),
 
         /*
          * Path to local private key file on filesystem in case of separate files for
          * certificate (local_cert) and private key.
          */
-        'local_pk' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_PK', null),
+        'local_pk' => file_exists('/etc/letsencrypt/live/catchakiwi.com/privkey.pem') ? '/etc/letsencrypt/live/catchakiwi.com/privkey.pem' : env('LARAVEL_WEBSOCKETS_SSL_LOCAL_PK', null),
 
         /*
          * Passphrase for your local_cert file.
          */
         'passphrase' => env('LARAVEL_WEBSOCKETS_SSL_PASSPHRASE', null),
+        
+        'verify_peer' => false,
     ],
 
     /*
