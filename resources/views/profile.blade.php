@@ -1243,8 +1243,10 @@ function renderMessage(msg, container) {
         if (msg.is_edited) div.innerHTML += ` <small>(edited)</small>`;
         div.innerHTML += `<span class="msg-time">${msg.time}</span>${icon}`;
         
+        const isSeen = (msg.seen === 'true' || msg.seen === true || msg.seen == 1);
+        
         // Add Edit button for own messages
-        if (msg.can_edit !== false) {
+        if (msg.can_edit !== false && !isSeen) {
             div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn">Edit</button>`;
         }
     }
@@ -1428,6 +1430,9 @@ if (typeof Echo !== 'undefined') {
                     desktopMessages.scrollTop = desktopMessages.scrollHeight;
                     // Auto mark seen since the chat is open
                     markSeen(msg.sender_id);
+
+                    // A reply was received, so old messages can no longer be edited!
+                    document.querySelectorAll('.edit-msg-btn').forEach(btn => btn.remove());
                 }
                 refreshBadges();
             })
@@ -1439,7 +1444,7 @@ if (typeof Echo !== 'undefined') {
                 }
             })
             .listen('UserTyping', (e) => {
-                if (currentChatId == e.senderId) {
+                if (currentChatId == e.sender_id) {
                     const indicator = document.getElementById('typingIndicator');
                     if (indicator) {
                         indicator.style.display = 'block';
@@ -1448,6 +1453,18 @@ if (typeof Echo !== 'undefined') {
                             indicator.style.display = 'none';
                         }, 2000);
                     }
+                }
+            })
+            .listen('MessageSeen', (e) => {
+                if (currentChatId == e.seenBy) {
+                    document.querySelectorAll('.seen-icon').forEach(icon => {
+                        if (icon.innerText === 'Sent') {
+                            icon.innerText = 'Seen';
+                        }
+                    });
+                    document.querySelectorAll('.edit-msg-btn').forEach(btn => {
+                        btn.remove();
+                    });
                 }
             });
     }

@@ -181,6 +181,10 @@ class ChatController extends Controller
             return response()->json(['error' => 'Message has been replied to and cannot be edited'], 403);
         }
 
+        if ($message->is_seen === 'true' || $message->is_seen === true || (string)$message->is_seen === '1') {
+            return response()->json(['error' => 'Message has been read and cannot be edited'], 403);
+        }
+
         $message->update([
             'message' => $request->message,
             'is_edited' => 1
@@ -233,10 +237,14 @@ class ChatController extends Controller
     {
         $user = Auth::user();
 
-        Message::where('sender_id', $receiverId)
+        $updated = Message::where('sender_id', $receiverId)
             ->where('receiver_id', $user->id)
             ->where('is_seen', 'false')
             ->update(['is_seen' => 'true']);
+
+        if ($updated > 0) {
+            broadcast(new \App\Events\MessageSeen($receiverId, $user->id))->toOthers();
+        }
 
         return response()->json(['ok' => true]);
     }
