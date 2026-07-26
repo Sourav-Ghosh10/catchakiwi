@@ -4987,7 +4987,7 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__.default({
   cluster: "mt1",
   wsHost: window.location.hostname,
   wsPort: 6001,
-  wssPort: 443,
+  wssPort: 6001,
   forceTLS: window.location.protocol === 'https:',
   disableStats: true,
   enabledTransports: ['ws', 'wss']

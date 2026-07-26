@@ -295,6 +295,24 @@ Route::get('/kill-websockets', function() {
     return "All stuck WebSocket processes have been KILLED! 💥<br><br>Now please visit <b>/start-websockets</b> to start a fresh one.";
 });
 
+Route::get('/find-ssl', function() {
+    $paths = [
+        '/home/catchakiwi.com/ssl/catchakiwi.com.crt',
+        '/home/catchakiwi.com/ssl/catchakiwi.com.key',
+        '/etc/letsencrypt/live/catchakiwi.com/fullchain.pem',
+        '/etc/letsencrypt/live/catchakiwi.com/privkey.pem'
+    ];
+    $found = [];
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            $found[] = $path . " (READABLE)";
+        } else {
+            $found[] = $path . " (NOT FOUND/NO PERMISSION)";
+        }
+    }
+    return implode("<br>", $found);
+});
+
 Route::get('/check-websockets', function() {
     exec("ps aux | grep 'websockets:serve' | grep -v grep", $output);
     if (empty($output)) {
