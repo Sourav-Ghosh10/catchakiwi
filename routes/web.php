@@ -261,7 +261,9 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/start-websockets', function() {
     $artisan = base_path('artisan');
-    $php = PHP_BINARY; // Gets the exact path to the PHP version running this script
+    
+    // PHP_BINARY is empty on CyberPanel, so we use 'php' or '/usr/bin/env php'
+    $php = 'php';
     
     $logFile = storage_path('logs/websockets.log');
     
