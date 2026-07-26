@@ -289,6 +289,12 @@ Route::get('/start-websockets', function() {
     return "WebSocket server START command sent using $php!<br><br>Check <a href='/check-websockets-log'>/check-websockets-log</a> to see if it crashed.";
 });
 
+Route::get('/kill-websockets', function() {
+    exec("pkill -f 'websockets:serve'", $output);
+    exec("fuser -k 6001/tcp 2>/dev/null", $output2); // Force kill anything on port 6001
+    return "All stuck WebSocket processes have been KILLED! 💥<br><br>Now please visit <b>/start-websockets</b> to start a fresh one.";
+});
+
 Route::get('/check-websockets', function() {
     exec("ps aux | grep 'websockets:serve' | grep -v grep", $output);
     if (empty($output)) {
