@@ -1247,7 +1247,7 @@ function renderMessage(msg, container) {
         
         // Add Edit button for own messages
         if (msg.can_edit !== false && !isSeen) {
-            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn">Edit</button>`;
+            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn" title="Edit"><img src="/assets/images/edit_icon.png" alt="Edit"></button>`;
         }
     }
     container.appendChild(div);
@@ -1347,7 +1347,7 @@ function sendMessage(receiverId, text, mobileContainer = null) {
         div.className = 'msg me';
         div.innerHTML = `<div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span><span class="seen-icon">Sent</span>`;
         if (msg.can_edit !== false) {
-            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn">Edit</button>`;
+            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn" title="Edit"><img src="/assets/images/edit_icon.png" alt="Edit"></button>`;
         }
 
         if (window.innerWidth > 768) {
