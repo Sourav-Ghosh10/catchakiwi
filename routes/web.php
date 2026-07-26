@@ -262,8 +262,22 @@ Route::middleware('auth')->group(function () {
 Route::get('/start-websockets', function() {
     $artisan = base_path('artisan');
     
-    // PHP_BINARY is empty on CyberPanel, so we use 'php' or '/usr/bin/env php'
+    // Find the correct CyberPanel PHP 8.2+ path
+    $phpPaths = [
+        '/usr/local/lsws/lsphp84/bin/php',
+        '/usr/local/lsws/lsphp83/bin/php',
+        '/usr/local/lsws/lsphp82/bin/php',
+        '/opt/cpanel/ea-php83/root/usr/bin/php',
+        '/opt/cpanel/ea-php82/root/usr/bin/php',
+        'php'
+    ];
     $php = 'php';
+    foreach ($phpPaths as $path) {
+        if (@file_exists($path)) {
+            $php = $path;
+            break;
+        }
+    }
     
     $logFile = storage_path('logs/websockets.log');
     
