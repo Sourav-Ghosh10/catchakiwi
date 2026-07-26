@@ -263,12 +263,14 @@ Route::get('/start-websockets', function() {
     $artisan = base_path('artisan');
     $php = PHP_BINARY; // Gets the exact path to the PHP version running this script
     
+    $logFile = storage_path('logs/websockets.log');
+    
     // Log the attempt to help with debugging
-    \Log::info("Attempting to start WebSockets using: nohup $php $artisan websockets:serve > /dev/null 2>&1 &");
+    \Log::info("Attempting to start WebSockets using: nohup $php $artisan websockets:serve > $logFile 2>&1 &");
     
-    exec("nohup $php $artisan websockets:serve > /dev/null 2>&1 &");
+    exec("nohup $php $artisan websockets:serve > $logFile 2>&1 &");
     
-    return "WebSocket server START command sent using $php!<br><br>Now please visit <b>/check-websockets</b> to confirm it is actually running.";
+    return "WebSocket server START command sent using $php!<br><br>Check <a href='/check-websockets-log'>/check-websockets-log</a> to see if it crashed.";
 });
 
 Route::get('/check-websockets', function() {
@@ -277,6 +279,14 @@ Route::get('/check-websockets', function() {
         return "🔴 WebSocket server is NOT running!";
     }
     return "🟢 WebSocket server IS RUNNING!<br><br>" . implode("<br>", $output);
+});
+
+Route::get('/check-websockets-log', function() {
+    $logFile = storage_path('logs/websockets.log');
+    if (!file_exists($logFile)) {
+        return "No log file found. Please visit /start-websockets first.";
+    }
+    return "<pre>" . file_get_contents($logFile) . "</pre>";
 });
 Route::get('/run-composer', function() {
     exec("COMPOSER_HOME=/tmp HOME=/tmp composer install 2>&1", $output);
