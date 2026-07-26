@@ -305,8 +305,27 @@ Route::get('/check-websockets-log', function() {
     return "<pre>" . file_get_contents($logFile) . "</pre>";
 });
 Route::get('/run-composer', function() {
-    exec("COMPOSER_HOME=/tmp HOME=/tmp composer install 2>&1", $output);
-    return implode("<br>", $output);
+    $phpPaths = [
+        '/usr/local/lsws/lsphp84/bin/php',
+        '/usr/local/lsws/lsphp83/bin/php',
+        '/usr/local/lsws/lsphp82/bin/php',
+        '/opt/cpanel/ea-php83/root/usr/bin/php',
+        '/opt/cpanel/ea-php82/root/usr/bin/php',
+        'php'
+    ];
+    $php = 'php';
+    foreach ($phpPaths as $path) {
+        if (@file_exists($path)) {
+            $php = $path;
+            break;
+        }
+    }
+    
+    $composer = exec('which composer');
+    if (!$composer) $composer = 'composer';
+    
+    exec("COMPOSER_HOME=/tmp HOME=/tmp $php $composer install --no-dev --optimize-autoloader 2>&1", $output);
+    return "Running composer with: $php $composer<br><br>" . implode("<br>", $output);
 });
 
 //===================================================================================================================
