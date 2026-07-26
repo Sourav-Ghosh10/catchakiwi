@@ -261,9 +261,14 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/start-websockets', function() {
     $artisan = base_path('artisan');
-    // Using nohup to run it in the background so it doesn't hang the browser
-    exec("nohup php $artisan websockets:serve > /dev/null 2>&1 &");
-    return "WebSocket server started in the background!";
+    $php = PHP_BINARY; // Gets the exact path to the PHP version running this script
+    
+    // Log the attempt to help with debugging
+    \Log::info("Attempting to start WebSockets using: nohup $php $artisan websockets:serve > /dev/null 2>&1 &");
+    
+    exec("nohup $php $artisan websockets:serve > /dev/null 2>&1 &");
+    
+    return "WebSocket server START command sent using $php!<br><br>Now please visit <b>/check-websockets</b> to confirm it is actually running.";
 });
 
 Route::get('/check-websockets', function() {
