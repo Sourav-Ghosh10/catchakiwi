@@ -20,3 +20,8 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('chat.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('chat.typing.{id}', function ($user, $id) {
+    // Allow anyone to subscribe to typing channels to send whispers
+    return true;
+});

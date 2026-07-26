@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Events\MessageSent;
 use App\Events\MessageEdited;
+use App\Events\UserTyping;
 
 class ChatController extends Controller
 {
@@ -196,6 +197,14 @@ class ChatController extends Controller
 
         return response()->json(['success' => true, 'message' => $responseData]);
     }
+    
+    public function typing(Request $request)
+    {
+        $request->validate(['receiver_id' => 'required|integer']);
+        broadcast(new UserTyping($request->receiver_id, Auth::id()))->toOthers();
+        return response()->json(['success' => true]);
+    }
+    
     public function unreadCounts()
     {
         $user = Auth::user();

@@ -465,6 +465,7 @@
                                        </div>
                                        <div class="messages"
                                           id="desktopMessages"></div>
+                                       <div id="typingIndicator" style="display: none; padding: 5px 15px; font-style: italic; color: #888; font-size: 0.9em;">typing...</div>
                                        <div class="input-box">
                                           <textarea id="msgInput"
                                              placeholder="Type a message..." rows="1"></textarea>
@@ -1232,7 +1233,7 @@ function renderMessage(msg, container) {
     div.className = 'msg ' + msg.type;
 
     if (msg.type === 'other') {
-        div.innerHTML = `<div class="sender">${msg.sender}</div><div style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span>`;
+        div.innerHTML = `<div class="sender">${msg.sender}</div><div id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span>`;
         if (msg.is_edited) div.innerHTML += ` <small>(edited)</small>`;
     } else {
         const icon = msg.seen
@@ -1398,8 +1399,12 @@ function refreshBadges() {
 sendBtn.addEventListener('click', () => {
     const active = document.querySelector('.chat-item.active');
     if (active) {
-        const id = active.dataset.id;
-        sendMessage(id, msgInput.value);
+        if (editingMessageId) {
+            updateMessage(editingMessageId, msgInput.value);
+        } else {
+            const id = active.dataset.id;
+            sendMessage(id, msgInput.value);
+        }
         msgInput.value = '';
         msgInput.style.height = 'auto';
     }
@@ -1432,7 +1437,40 @@ if (typeof Echo !== 'undefined') {
                 if (msgTextDiv) {
                     msgTextDiv.innerHTML = msg.text + ' <small>(edited)</small>';
                 }
+            })
+            .listen('UserTyping', (e) => {
+                if (currentChatId == e.senderId) {
+                    const indicator = document.getElementById('typingIndicator');
+                    if (indicator) {
+                        indicator.style.display = 'block';
+                        clearTimeout(window.typingTimeout);
+                        window.typingTimeout = setTimeout(() => {
+                            indicator.style.display = 'none';
+                        }, 2000);
+                    }
+                }
             });
+    }
+    
+    // Send typing event to server
+    const msgInput = document.getElementById('msgInput');
+    let typingDebounceTimer;
+    if (msgInput) {
+        msgInput.addEventListener('input', () => {
+            if (currentChatId) {
+                clearTimeout(typingDebounceTimer);
+                typingDebounceTimer = setTimeout(() => {
+                    fetch('/chat/typing', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({ receiver_id: currentChatId })
+                    });
+                }, 500);
+            }
+        });
     }
 } else {
     // Fallback to polling if WebSockets fail
@@ -1504,10 +1542,31 @@ if (msgInput) {
 }
 
 /* --- Auto-resize logic for mobile textarea (delegation) --- */
+let mobileTypingDebounceTimer;
 document.addEventListener('input', function(e) {
     if (e.target.name === 'message' && e.target.tagName === 'TEXTAREA') {
         e.target.style.height = 'auto';
         e.target.style.height = (e.target.scrollHeight) + 'px';
+        
+        // Add typing whisper for mobile input
+        const form = e.target.closest('form');
+        if (form && typeof Echo !== 'undefined') {
+            const receiverInput = form.querySelector('input[name="receiver_id"]');
+            const authId = {{ auth()->id() ?? 'null' }};
+            if (receiverInput && receiverInput.value && authId) {
+                clearTimeout(mobileTypingDebounceTimer);
+                mobileTypingDebounceTimer = setTimeout(() => {
+                    fetch('/chat/typing', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({ receiver_id: receiverInput.value })
+                    });
+                }, 500);
+            }
+        }
     }
 });
 

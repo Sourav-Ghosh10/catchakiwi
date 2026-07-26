@@ -249,6 +249,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/list', [ChatController::class, 'getChatList'])->name('chat.list');
     Route::get('/chat/messages/{receiverId}', [ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/typing', [ChatController::class, 'typing'])->name('chat.typing');
     Route::put('/chat/edit-message/{id}', [ChatController::class, 'editMessage'])->name('chat.edit');
     Route::get('/chat/unread', [ChatController::class, 'unreadCounts']);
   	Route::post('/chat/mark-seen/{receiverId}', [ChatController::class, 'markSeen']);
