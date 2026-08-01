@@ -438,14 +438,15 @@
                               @endif
                            </div>
                            <div class="setting_tabbasic">
-
                               <div class="newmsgchatbox">
                                  <!-- Chat design -->
                                  <div class="chat-container">
                                     <!-- Chat List -->
                                     <div class="chat-list" id="chatList">
                                        <div class="title-bar">
-                                          📩 Messages
+                                          <span class="title-icon"><i class="fa fa-bars"></i></span>
+                                          <span>Messages</span>
+                                          <span class="title-icon"><i class="fa fa-edit"></i></span>
                                        </div>
                                        <div class="search-bar">
                                            <input type="text" id="searchInput"
@@ -454,28 +455,40 @@
                                        <!-- Chat items generated dynamically -->
                                     </div>
 
-                                    <!-- Chat Box (Desktop) -->
+                                    <!-- Chat Box -->
                                     <div class="chat-box" id="chatBox">
                                        <div class="chat-header">
+                                          <button id="mobileBackBtn" class="mobile-back-btn" type="button" aria-label="Back">
+                                             <i class="fa fa-arrow-left"></i>
+                                          </button>
                                           <img id="chatImg"
-                                             src="{{ asset('assets/images/andray_pic.png') }}"
-                                             alt="Andray">
+                                             src="{{ asset('assets/images/profile_pic.png') }}"
+                                             alt="User">
                                           <span class="user"
-                                             id="chatName">Andray</span>
+                                             id="chatName">Chat</span>
                                        </div>
                                        <div class="messages"
                                           id="desktopMessages"></div>
                                        <div id="typingIndicator" style="display: none; padding: 5px 15px; font-style: italic; color: #888; font-size: 0.9em;">typing...</div>
-                                       <div class="input-box">
-                                          <textarea id="msgInput"
-                                             placeholder="Type a message..." rows="1"></textarea>
-                                          <button id="sendBtn">Send</button>
-                                       </div>
+                                       <div class="input-box" style="position: relative;">
+                                           <div id="emojiPickerPopup" class="emoji-picker-popup" style="display: none;">
+                                              <div class="emoji-picker-header">
+                                                  <span>Choose Emoji</span>
+                                                  <span id="closeEmojiPicker" class="close-emoji-btn">&times;</span>
+                                              </div>
+                                              <div class="emoji-picker-grid" id="emojiGrid"></div>
+                                           </div>
+                                           <button id="emojiBtn" type="button" class="emoji-btn" title="Insert Emoji" aria-label="Toggle Emojis">
+                                              <i class="fa fa-smile-o"></i>
+                                           </button>
+                                           <textarea id="msgInput"
+                                              placeholder="Type a message..." rows="1"></textarea>
+                                           <button id="sendBtn" type="button"><i class="fa fa-paper-plane"></i></button>
+                                        </div>
                                     </div>
                                  </div>
                                  <!-- Chat design end-->
                               </div>
-
                            </div>
 
                            <div class="setting_tabbasic">
@@ -865,7 +878,7 @@ document.addEventListener("DOMContentLoaded", function () {
 //                         </div>
 //                     </div>
 //                     <div class="time">
-//                         ${u.last_message_time.split(',')[0]}
+//                         ${u.last_message_time}
 //                         ${u.unread_count ? `<span class="unread-badge">${u.unread_count}</span>` : ''}
 //                     </div>
 //                 </div>
@@ -1119,7 +1132,7 @@ function fetchChatList() {
 
         users.forEach(u => {
             const item = document.createElement('div');
-            item.className = 'chat-item';
+            item.className = 'chat-item' + (u.unread_count ? ' unread' : '');
             item.dataset.id   = u.id;
             item.dataset.name = u.name;
             item.dataset.img  = u.image;
@@ -1134,7 +1147,7 @@ function fetchChatList() {
                         </div>
                     </div>
                     <div class="time">
-                        ${u.last_message_time.split(',')[0]}
+                        ${u.last_message_time}
                         ${u.unread_count ? `<span class="unread-badge">${u.unread_count}</span>` : ''}
                     </div>
                 </div>
@@ -1151,22 +1164,17 @@ function fetchChatList() {
             if (chatItem) {
                 selectedChat = chatItem.querySelector('.chat-header-item');
             }
-            // clean up the URL
             const newUrl = window.location.pathname + window.location.hash;
             window.history.replaceState({}, document.title, newUrl);
         }
 
-        // If no specific chat is selected, default to the first one in the list
-        if (!selectedChat) {
-            selectedChat = chatList.querySelector('.chat-item .chat-header-item');
-        }
-
-        if (selectedChat) {
+        if (chatUserId && selectedChat) {
             selectedChat.click();
+        } else if (window.innerWidth > 768) {
+            selectedChat = chatList.querySelector('.chat-item .chat-header-item');
+            if (selectedChat) selectedChat.click();
         } else {
-            // No chats available, hide the chat box to prevent confusion
-            const chatBox = document.getElementById('chatBox');
-            if (chatBox) chatBox.style.display = 'none';
+            showMobileConversationList();
         }
     })
     .catch(console.error);
@@ -1183,32 +1191,55 @@ function attachChatItemEvents() {
             const name = item.dataset.name;
             const img  = item.dataset.img;
 
-            if (window.innerWidth > 768) {
-                // remove active from all
-                chatList.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
+            chatList.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
 
-                openChat(id, name, img);          // <-- ONLY HERE we load messages
-            } else {
-                // mobile accordion
-                chatList.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('show'));
-                const content = item.querySelector('.accordion-content');
-                loadChatMobile(content, id);
-                content.classList.add('show');
+            openChat(id, name, img);
+
+            if (window.innerWidth <= 768) {
+                showMobileChatScreen();
             }
         });
     });
 }
 
+function showMobileChatScreen() {
+    const container = document.querySelector('.chat-container');
+    if (container) container.classList.add('mobile-chat-open');
+}
+
+function showMobileConversationList() {
+    const container = document.querySelector('.chat-container');
+    if (container) container.classList.remove('mobile-chat-open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const backBtn = document.getElementById('mobileBackBtn');
+    if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showMobileConversationList();
+        });
+    }
+});
+
 /* --------------------------------------------------------------
-   3. OPEN CHAT (desktop)  load messages + mark seen
+   3. OPEN CHAT  load messages + mark seen
    -------------------------------------------------------------- */
 function openChat(id, name, img) {
-    if (currentChatId === id) return;          // already open
     currentChatId = id;
 
     // stop any previous polling
     if (pollingInterval) clearInterval(pollingInterval);
+
+    // Immediately remove unread state from active chat item
+    const activeItem = chatList.querySelector(`.chat-item[data-id="${id}"]`);
+    if (activeItem) {
+        activeItem.classList.remove('unread');
+        const badge = activeItem.querySelector('.unread-badge');
+        if (badge) badge.remove();
+    }
 
     // ---- blank right side first ----
     desktopMessages.innerHTML = '';
@@ -1231,24 +1262,33 @@ function openChat(id, name, img) {
 function renderMessage(msg, container) {
     const div = document.createElement('div');
     div.className = 'msg ' + msg.type;
+    const editedHtml = msg.is_edited ? ' <small class="edited-tag">(edited)</small>' : '';
 
     if (msg.type === 'other') {
-        div.innerHTML = `<div class="sender">${msg.sender}</div><div id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span>`;
-        if (msg.is_edited) div.innerHTML += ` <small>(edited)</small>`;
+        div.innerHTML = `
+            <div class="sender">${msg.sender}</div>
+            <div id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}${editedHtml}</div>
+            <div class="msg-meta">
+                <span class="msg-time">${msg.time}</span>
+            </div>`;
     } else {
-        const icon = msg.seen
-            ? '<span class="seen-icon">Seen</span>'
-            : '<span class="seen-icon">Sent</span>';
-        div.innerHTML = `<div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div>`;
-        if (msg.is_edited) div.innerHTML += ` <small>(edited)</small>`;
-        div.innerHTML += `<span class="msg-time">${msg.time}</span>${icon}`;
-        
         const isSeen = (msg.seen === 'true' || msg.seen === true || msg.seen == 1);
+        const icon = isSeen
+            ? '<span class="seen-icon seen">Seen</span>'
+            : '<span class="seen-icon sent">Sent</span>';
         
-        // Add Edit button for own messages
+        let editBtnHtml = '';
         if (msg.can_edit !== false && !isSeen) {
-            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn" title="Edit"><img src="/assets/images/edit_icon.png" alt="Edit"></button>`;
+            editBtnHtml = `<button onclick="startEdit(${msg.id})" class="btn edit-msg-btn" title="Edit message"><i class="fa fa-pencil" style="margin-right:4px;"></i>Edit</button>`;
         }
+
+        div.innerHTML = `
+            <div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}${editedHtml}</div>
+            <div class="msg-meta">
+                <span class="msg-time">${msg.time}</span>
+                ${icon}
+                ${editBtnHtml}
+            </div>`;
     }
     container.appendChild(div);
 }
@@ -1345,18 +1385,27 @@ function sendMessage(receiverId, text, mobileContainer = null) {
         }
         const div = document.createElement('div');
         div.className = 'msg me';
-        div.innerHTML = `<div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div><span class="msg-time">${msg.time}</span><span class="seen-icon">Sent</span>`;
-        if (msg.can_edit !== false) {
-            div.innerHTML += `<button onclick="startEdit(${msg.id})" class="btn btn-sm btn-link edit-msg-btn" title="Edit"><img src="/assets/images/edit_icon.png" alt="Edit"></button>`;
-        }
+        const editBtnHtml = msg.can_edit !== false 
+            ? `<button onclick="startEdit(${msg.id})" class="btn edit-msg-btn" title="Edit message"><i class="fa fa-pencil" style="margin-right:4px;"></i>Edit</button>` 
+            : '';
 
-        if (window.innerWidth > 768) {
+        div.innerHTML = `
+            <div class="msg-text" id="msg-text-${msg.id}" style="word-break: break-word;">${msg.text}</div>
+            <div class="msg-meta">
+                <span class="msg-time">${msg.time}</span>
+                <span class="seen-icon sent">Sent</span>
+                ${editBtnHtml}
+            </div>`;
+
+        if (desktopMessages) {
             desktopMessages.appendChild(div);
             desktopMessages.scrollTop = desktopMessages.scrollHeight;
         } else if (mobileContainer) {
             const wrap = mobileContainer.querySelector('.messages');
-            wrap.appendChild(div);
-            wrap.scrollTop = wrap.scrollHeight;
+            if (wrap) {
+                wrap.appendChild(div);
+                wrap.scrollTop = wrap.scrollHeight;
+            }
         }
 
         refreshBadges();
@@ -1379,6 +1428,7 @@ function refreshBadges() {
             const cnt   = counts[uid] ?? 0;
 
             if (cnt) {
+                item.classList.add('unread');
                 if (!badge) {
                     const timeDiv = item.querySelector('.time');
                     const span = document.createElement('span');
@@ -1388,8 +1438,9 @@ function refreshBadges() {
                 } else {
                     badge.textContent = cnt;
                 }
-            } else if (badge) {
-                badge.remove();
+            } else {
+                item.classList.remove('unread');
+                if (badge) badge.remove();
             }
         });
     });
@@ -1400,20 +1451,99 @@ function refreshBadges() {
    -------------------------------------------------------------- */
 sendBtn.addEventListener('click', () => {
     const active = document.querySelector('.chat-item.active');
-    if (active) {
+    const targetId = active ? active.dataset.id : currentChatId;
+    if (targetId) {
+        const text = msgInput.value.trim();
+        if (!text) return;
+
         if (editingMessageId) {
-            updateMessage(editingMessageId, msgInput.value);
+            updateMessage(editingMessageId, text);
         } else {
-            const id = active.dataset.id;
-            sendMessage(id, msgInput.value);
+            sendMessage(targetId, text);
         }
         msgInput.value = '';
         msgInput.style.height = 'auto';
+
+        const popup = document.getElementById('emojiPickerPopup');
+        if (popup) popup.style.display = 'none';
     }
 });
 
 /* --------------------------------------------------------------
-   10. INITIALISE & ECHO SOCKETS
+   10. EMOJI PICKER POPUP
+   -------------------------------------------------------------- */
+const emojiCategories = [
+  { name: 'Smileys & People', emojis: ['😊', '😂', '😃', '😄', '😍', '🥰', '😎', '😜', '😇', '🤔', '😅', '🥳', '😭', '🤯', '😬', '🙃', '😏', '😌', '😴', '🙄'] },
+  { name: 'Gestures & Reactions', emojis: ['👍', '👎', '👏', '🙏', '🙌', '🤝', '💪', '👌', '✌️', '🤞', '👋', '🔥', '💯', '✨', '🎉', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '💔', '❣️'] },
+  { name: 'Objects & Symbols', emojis: ['⭐', '🌟', '💥', '🚀', '🎯', '💡', '🔔', '📌', '🎉', '🎁', '🏆', '⚽', '💬', '📢', '✅', '❌', '❓', '❗'] }
+];
+
+function initEmojiPicker() {
+    const emojiBtn = document.getElementById('emojiBtn');
+    const popup = document.getElementById('emojiPickerPopup');
+    const closeBtn = document.getElementById('closeEmojiPicker');
+    const grid = document.getElementById('emojiGrid');
+    const input = document.getElementById('msgInput');
+
+    if (!emojiBtn || !popup || !grid || !input) return;
+
+    grid.innerHTML = '';
+    emojiCategories.forEach(cat => {
+        const catTitle = document.createElement('div');
+        catTitle.className = 'emoji-category-title';
+        catTitle.textContent = cat.name;
+        grid.appendChild(catTitle);
+
+        const list = document.createElement('div');
+        list.className = 'emoji-list';
+
+        cat.emojis.forEach(emo => {
+            const item = document.createElement('span');
+            item.className = 'emoji-item';
+            item.textContent = emo;
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const start = input.selectionStart || input.value.length;
+                const end = input.selectionEnd || input.value.length;
+                const text = input.value;
+                input.value = text.substring(0, start) + emo + text.substring(end);
+                
+                input.selectionStart = input.selectionEnd = start + emo.length;
+                input.focus();
+            });
+            list.appendChild(item);
+        });
+
+        grid.appendChild(list);
+    });
+
+    emojiBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        popup.style.display = (popup.style.display === 'none' || !popup.style.display) ? 'flex' : 'none';
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            popup.style.display = 'none';
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!popup.contains(e.target) && e.target !== emojiBtn && !emojiBtn.contains(e.target)) {
+            popup.style.display = 'none';
+        }
+    });
+}
+
+initEmojiPicker();
+
+/* --------------------------------------------------------------
+   11. INITIALISE & ECHO SOCKETS
    -------------------------------------------------------------- */
 fetchChatList();                     // builds list only
 
