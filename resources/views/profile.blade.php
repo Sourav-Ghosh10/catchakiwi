@@ -481,7 +481,7 @@
                                            <textarea id="msgInput"
                                               placeholder="Type a message..." rows="1"></textarea>
                                            <button id="sendBtn" type="button"><i class="fa fa-paper-plane"></i></button>
-                                           <button id="cancelEditBtn" type="button" onclick="cancelEdit()" title="Cancel edit" style="display:none; width:34px; height:34px; border-radius:50%; background:#e53e3e; color:#fff; border:none; font-size:16px; cursor:pointer; flex-shrink:0; margin-left:4px;">&#x2715;</button>
+                                           <button id="cancelEditBtn" type="button" onclick="cancelEdit()" title="Cancel edit" style="display:none; width:34px; height:34px; border-radius:50%; background:#e53e3e; color:#fff; border:none; font-size:16px; cursor:pointer; flex-shrink:0; margin-left:4px; align-items:center; justify-content:center; padding:0;">&#x2715;</button>
                                         </div>
                                         <div class="messages"
                                            id="desktopMessages"></div>
