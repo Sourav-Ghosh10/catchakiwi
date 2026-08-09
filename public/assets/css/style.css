@@ -2599,6 +2599,18 @@ ul.pagination li:last-child a:hover {
   margin: 0 auto;
 }
 
+/* Bio inline read more/less link */
+.bio-read-link {
+  color: #9bcd22;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.bio-read-link:hover {
+  text-decoration: underline;
+}
+
 .profiletab_namdetls {
   border: 1px solid #dfdfdf;
   border-bottom: 0;

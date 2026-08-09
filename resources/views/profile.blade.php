@@ -133,7 +133,9 @@
          <div class="profile_heading">
             <h1>Dashboard</h1>
             <!--<h2>About Me</h2>-->
-            <p class="profile_para">{{$profile->aboutus}}</p>
+            <div class="bio-wrapper">
+               <p class="profile_para" id="bioPara" data-full="{{ e($profile->aboutus) }}"></p>
+            </div>
          </div>
          <div class="full_midpan">
             <div class="row">
@@ -479,6 +481,7 @@
                                            <textarea id="msgInput"
                                               placeholder="Type a message..." rows="1"></textarea>
                                            <button id="sendBtn" type="button"><i class="fa fa-paper-plane"></i></button>
+                                           <button id="cancelEditBtn" type="button" onclick="cancelEdit()" title="Cancel edit" style="display:none; width:34px; height:34px; border-radius:50%; background:#e53e3e; color:#fff; border:none; font-size:16px; cursor:pointer; flex-shrink:0; margin-left:4px;">&#x2715;</button>
                                         </div>
                                         <div class="messages"
                                            id="desktopMessages"></div>
@@ -1407,13 +1410,53 @@ function sendMessage(receiverId, text, mobileContainer = null) {
             }
         }
 
+        // Move this conversation to the top of the list
+        bumpChatItemToTop(currentChatId, msg.text, msg.time);
         refreshBadges();
     })
     .catch(console.error);
 }
 
 /* --------------------------------------------------------------
-   8. REFRESH UNREAD BADGES
+   8. BUMP CHAT ITEM TO TOP
+   -------------------------------------------------------------- */
+function bumpChatItemToTop(userId, previewText, timeText) {
+    const item = chatList.querySelector(`.chat-item[data-id="${userId}"]`);
+    if (!item) return;
+
+    // Update last message preview
+    const previewEl = item.querySelector('.last-msg');
+    if (previewEl && previewText !== undefined) {
+        previewEl.textContent = previewText;
+    }
+
+    // Update time — the .time div has a raw text node first, then optionally a badge span
+    const timeEl = item.querySelector('.time');
+    if (timeEl && timeText) {
+        // Find and update the text node directly
+        for (let node of timeEl.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.textContent = timeText + ' ';
+                break;
+            }
+        }
+        // If no text node found, prepend one
+        if (![...timeEl.childNodes].some(n => n.nodeType === Node.TEXT_NODE)) {
+            timeEl.insertBefore(document.createTextNode(timeText + ' '), timeEl.firstChild);
+        }
+    }
+
+    // Move to just after the search bar (top of list)
+    const searchBar = chatList.querySelector('.search-bar');
+    if (searchBar) {
+        chatList.insertBefore(item, searchBar.nextSibling);
+    } else {
+        chatList.prepend(item);
+    }
+}
+
+/* --------------------------------------------------------------
+   9. REFRESH UNREAD BADGES
    -------------------------------------------------------------- */
 function refreshBadges() {
     fetch('/chat/unread', {
@@ -1566,6 +1609,8 @@ if (typeof Echo !== 'undefined') {
                     // A reply was received, so old messages can no longer be edited!
                     document.querySelectorAll('.edit-msg-btn').forEach(btn => btn.remove());
                 }
+                // Move this conversation to the top of the list
+                bumpChatItemToTop(msg.sender_id, msg.text, msg.time);
                 refreshBadges();
             })
             .listen('MessageEdited', (e) => {
@@ -1640,7 +1685,11 @@ function startEdit(id) {
     msgInput.value = msgText;
     msgInput.focus();
     editingMessageId = id;
-    sendBtn.innerText = 'Update';
+    // Tint send button orange for edit mode
+    sendBtn.style.background = '#f78e07';
+    // Show the cancel ✕ button
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    if (cancelBtn) cancelBtn.style.display = 'flex';
 }
 
 function updateMessage(id, text) {
@@ -1672,7 +1721,11 @@ function updateMessage(id, text) {
 function cancelEdit() {
     editingMessageId = null;
     msgInput.value = '';
-    sendBtn.innerText = 'Send';
+    // Restore send button to green
+    sendBtn.style.background = '';
+    // Hide the cancel ✕ button
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    if (cancelBtn) cancelBtn.style.display = 'none';
 }
 
 /* --- Auto-resize & Enter-to-send for Desktop Chat --- */
@@ -2376,6 +2429,46 @@ function clearSearch() {
     });
 </script>
    <!-- body start end-->
+
+   <script>
+   (function() {
+       const para = document.getElementById('bioPara');
+       if (!para) return;
+
+       // Decode HTML entities safely using a temp element
+       const tmp = document.createElement('textarea');
+       tmp.innerHTML = para.getAttribute('data-full') || '';
+       const fullText = tmp.value;
+
+       const LIMIT = 120;
+
+       function readMoreLink() {
+           return '... <a href="#" class="bio-read-link" onclick="bioExpand(); return false;">Read more</a>';
+       }
+       function readLessLink() {
+           return ' <a href="#" class="bio-read-link" onclick="bioCollapse(); return false;">Read less</a>';
+       }
+
+       function render() {
+           if (fullText.length <= LIMIT) {
+               para.textContent = fullText;
+               return;
+           }
+           let cut = fullText.lastIndexOf(' ', LIMIT);
+           if (cut === -1) cut = LIMIT;
+           para.innerHTML = fullText.slice(0, cut) + ' ' + readMoreLink();
+       }
+
+       window.bioExpand = function() {
+           para.innerHTML = fullText + readLessLink();
+       };
+       window.bioCollapse = function() {
+           render();
+       };
+
+       render();
+   })();
+   </script>
 
    @include('includes/footer-js')
    @include('includes/footer')

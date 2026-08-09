@@ -62,9 +62,13 @@ class ChatController extends Controller
                 'image' => $chatUser->profile_image,
                 'last_message' => $lastMessage?->message ?? '',
                 'last_message_time' => $lastMessage ? $lastMessage->created_at->format('h:i A, M d') : '',
+                'last_message_at' => $lastMessage ? $lastMessage->created_at->timestamp : 0,
                 'unread_count' => $unreadCount,
             ];
         });
+
+        // Always sort by most recent message first
+        $chatList = $chatList->sortByDesc('last_message_at')->values();
 
         if ($request->filled('chat_user_id')) {
             $chatUserId = $request->chat_user_id;
