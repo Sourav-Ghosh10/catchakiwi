@@ -444,9 +444,7 @@
                                     <!-- Chat List -->
                                     <div class="chat-list" id="chatList">
                                        <div class="title-bar">
-                                          <span class="title-icon"><i class="fa fa-bars"></i></span>
                                           <span>Messages</span>
-                                          <span class="title-icon"><i class="fa fa-edit"></i></span>
                                        </div>
                                        <div class="search-bar">
                                            <input type="text" id="searchInput"
@@ -467,9 +465,6 @@
                                           <span class="user"
                                              id="chatName">Chat</span>
                                        </div>
-                                       <div class="messages"
-                                          id="desktopMessages"></div>
-                                       <div id="typingIndicator" style="display: none; padding: 5px 15px; font-style: italic; color: #888; font-size: 0.9em;">typing...</div>
                                        <div class="input-box" style="position: relative;">
                                            <div id="emojiPickerPopup" class="emoji-picker-popup" style="display: none;">
                                               <div class="emoji-picker-header">
@@ -485,6 +480,9 @@
                                               placeholder="Type a message..." rows="1"></textarea>
                                            <button id="sendBtn" type="button"><i class="fa fa-paper-plane"></i></button>
                                         </div>
+                                        <div class="messages"
+                                           id="desktopMessages"></div>
+                                        <div id="typingIndicator" style="display: none; padding: 5px 15px; font-style: italic; color: #888; font-size: 0.9em;">typing...</div>
                                     </div>
                                  </div>
                                  <!-- Chat design end-->
@@ -1301,7 +1299,7 @@ function fetchMessages(id) {
     .then(msgs => {
         desktopMessages.innerHTML = '';
         msgs.forEach(m => renderMessage(m, desktopMessages));
-        desktopMessages.scrollTop = desktopMessages.scrollHeight;
+        desktopMessages.scrollTop = 0;
     })
     .catch(console.error);
 }
@@ -1399,12 +1397,12 @@ function sendMessage(receiverId, text, mobileContainer = null) {
 
         if (desktopMessages) {
             desktopMessages.appendChild(div);
-            desktopMessages.scrollTop = desktopMessages.scrollHeight;
+            desktopMessages.scrollTop = 0;
         } else if (mobileContainer) {
             const wrap = mobileContainer.querySelector('.messages');
             if (wrap) {
                 wrap.appendChild(div);
-                wrap.scrollTop = wrap.scrollHeight;
+                wrap.scrollTop = 0;
             }
         }
 
@@ -1557,7 +1555,7 @@ if (typeof Echo !== 'undefined') {
                 // If this is the currently open chat, append it
                 if (currentChatId == msg.sender_id) {
                     renderMessage(msg, desktopMessages);
-                    desktopMessages.scrollTop = desktopMessages.scrollHeight;
+                    desktopMessages.scrollTop = 0;
                     // Auto mark seen since the chat is open
                     markSeen(msg.sender_id);
 
