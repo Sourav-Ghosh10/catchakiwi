@@ -2,46 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Auth;
-use App\Models\User;
-use App\Models\Suburb;
-
-use App\Models\Country;
-use App\Models\State;
-use App\Models\City;
-use App\Models\Towns;
 use App\Models\Ads;
-use App\Models\NoticeCategory;
-use App\Models\Notice;
-//use App\Models\Business;
-use App\Models\NoticeImg;
-use App\Models\Category;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use App\Services\ZohoMailService;
+use App\Models\Article;
 use App\Models\Business;
+use App\Models\Category;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Notice;
+use App\Models\NoticeCategory;
+use App\Models\NoticeImg;
+use App\Models\State;
+use App\Models\Suburb;
+// use App\Models\Business;
+use App\Models\Towns;
+use App\Models\User;
+use App\Services\ZohoMailService;
+use Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Article;
+
 class UserController extends Controller
 {
     //
     public function Home()
     {
         $category = Category::where('parent_id', 0)->orderBy('title', 'asc')->get();
-        //$catearray = [];
-        if (!empty($category)) {
+        // $catearray = [];
+        if (! empty($category)) {
             foreach ($category as $key => $cate) {
                 $subcategory = Category::where('parent_id', $cate->id)->get();
                 $category[$key]->subcat = $subcategory;
 
             }
         }
-        //dd($category);
+        // dd($category);
         $country_id = Country::where('shortname', session('CountryCode'))->first();
-        //dd($country_id);
-        if (session('CountryCode') == "NZ") {
+        // dd($country_id);
+        if (session('CountryCode') == 'NZ') {
             // $city = City::whereHas('state.country.cities.towns', function($query) {
             //     $query->where('shortname', session('CountryCode'));
             // })->with('state.country')->get();
@@ -50,9 +49,9 @@ class UserController extends Controller
                     $query->orderBy('name', 'asc')->with([
                         'towns' => function ($query) {
                             $query->orderBy('suburb_name', 'asc');
-                        }
+                        },
                     ]);
-                }
+                },
             ])->where('country_id', $country_id->id)->orderBy('name', 'asc')->get()->toArray();
         } else {
             // $city = City::whereHas('state.country.cities', function($query) {
@@ -61,29 +60,31 @@ class UserController extends Controller
             $states = State::with([
                 'cities' => function ($query) {
                     $query->orderBy('name', 'asc');
-                }
+                },
             ])->where('country_id', $country_id->id ?? 0)->orderBy('name', 'asc')->get()->toArray();
         }
-        //dd($states);
+
+        // dd($states);
         return view('frontend/home', compact('category', 'states'));
     }
+
     public function search(Request $request, $country = null)
     {
         $category = Category::where('parent_id', 0)->orderBy('title', 'asc')->get();
-        //$catearray = [];
-        if (!empty($category)) {
+        // $catearray = [];
+        if (! empty($category)) {
             foreach ($category as $key => $cate) {
                 $subcategory = Category::where('parent_id', $cate->id)->get();
                 $category[$key]->subcat = $subcategory;
 
             }
         }
-        //dd($category);
+        // dd($category);
         $countryCode = $country ? strtoupper($country) : session('CountryCode');
         $country_id_obj = Country::where('shortname', $countryCode)->first();
         $country_id = $country_id_obj ? $country_id_obj->id : 0;
-        //dd($country_id);
-        if ($countryCode == "NZ") {
+        // dd($country_id);
+        if ($countryCode == 'NZ') {
             // $city = City::whereHas('state.country.cities.towns', function($query) {
             //     $query->where('shortname', session('CountryCode'));
             // })->with('state.country')->get();
@@ -99,21 +100,21 @@ class UserController extends Controller
         $categories = Category::withCount([
             'parent_businesses' => function ($q) use ($country_id) {
                 $q->where('country', $country_id)->where('status', '1');
-            }
+            },
         ])
             ->with([
                 'subcategories' => function ($query) use ($country_id) {
                     $query->withCount([
                         'businesses' => function ($q) use ($country_id) {
                             $q->where('country', $country_id)->where('status', '1');
-                        }
+                        },
                     ]);
-                }
+                },
             ])
             ->where('parent_id', 0)
             ->orderBy('title', 'ASC')
             ->get();
-        //dd($categories);
+        // dd($categories);
         $ads = Ads::where('country', $countryCode)->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = [];
@@ -123,20 +124,20 @@ class UserController extends Controller
         $user_id = Auth::user()->id ?? null;
         if ($user_id) {
             $profile = User::find($user_id);
-            if ($profile->country_status == "0") {
-                $suburb = City::select("countries.id", "cities.name as city_name", "states.name as state_name", "countries.name as country_name", "countries.shortname")
-                    ->join('states', 'states.id', '=', "cities.state_id")
-                    ->join('countries', "countries.id", "=", "states.country_id")
+            if ($profile->country_status == '0') {
+                $suburb = City::select('countries.id', 'cities.name as city_name', 'states.name as state_name', 'countries.name as country_name', 'countries.shortname')
+                    ->join('states', 'states.id', '=', 'cities.state_id')
+                    ->join('countries', 'countries.id', '=', 'states.country_id')
                     ->where('cities.id', $profile->suburb_id)->first();
             } else {
-                $suburb = Towns::select("countries.id", "towns.suburb_name", "cities.name as city_name", "states.name as state_name", "countries.name as country_name", "countries.shortname")
+                $suburb = Towns::select('countries.id', 'towns.suburb_name', 'cities.name as city_name', 'states.name as state_name', 'countries.name as country_name', 'countries.shortname')
                     ->join('cities', 'cities.id', '=', 'towns.city_id')
-                    ->join('states', 'states.id', '=', "cities.state_id")
-                    ->join('countries', "countries.id", "=", "states.country_id")
+                    ->join('states', 'states.id', '=', 'cities.state_id')
+                    ->join('countries', 'countries.id', '=', 'states.country_id')
                     ->where('towns.id', $profile->suburb_id)->first();
             }
             $country_id = $suburb->id ?? 0;
-            $country_name = strtolower($suburb->shortname ?? "");
+            $country_name = strtolower($suburb->shortname ?? '');
         } else {
             $country_obj = Country::where('shortname', $countryCode)->first();
             $country_id = $country_obj->id ?? 0;
@@ -156,11 +157,11 @@ class UserController extends Controller
             ->leftJoin('business_review', 'business_review.business_id', '=', 'business.id')
             ->leftJoin('categories as cat1', 'cat1.id', '=', 'business.primary_category')
             ->leftJoin('categories as cat2', 'cat2.id', '=', 'business.secondary_category')
-            ->where('business.status', "1")
+            ->where('business.status', '1')
             ->where('business.country', $country_id);
 
         if ($service) {
-            $services = explode(",", $service);
+            $services = explode(',', $service);
             if (count($services) > 1) {
                 // This is a formal selection (subcat_url,cat_url)
                 $query->where(function ($q) use ($services) {
@@ -170,10 +171,10 @@ class UserController extends Controller
             } else {
                 // This is a raw keyword search from typing
                 $query->where(function ($q) use ($service) {
-                    $q->where('business.display_name', 'LIKE', '%' . $service . '%')
-                        ->orWhere('business.business_description', 'LIKE', '%' . $service . '%')
-                        ->orWhere('cat1.title', 'LIKE', '%' . $service . '%')
-                        ->orWhere('cat2.title', 'LIKE', '%' . $service . '%');
+                    $q->where('business.display_name', 'LIKE', '%'.$service.'%')
+                        ->orWhere('business.business_description', 'LIKE', '%'.$service.'%')
+                        ->orWhere('cat1.title', 'LIKE', '%'.$service.'%')
+                        ->orWhere('cat2.title', 'LIKE', '%'.$service.'%');
                 });
             }
         }
@@ -187,11 +188,11 @@ class UserController extends Controller
             $searchTerms = explode(' ', $searchQuery);
             foreach ($searchTerms as $term) {
                 $query->where(function ($subQuery) use ($term) {
-                    $subQuery->where('business.display_name', 'LIKE', '%' . $term . '%')
-                        ->orWhere('business.business_description', 'LIKE', '%' . $term . '%')
-                        ->orWhere('business.region', 'LIKE', '%' . $term . '%')
-                        ->orWhere('cat1.title', 'LIKE', '%' . $term . '%')
-                        ->orWhere('cat2.title', 'LIKE', '%' . $term . '%');
+                    $subQuery->where('business.display_name', 'LIKE', '%'.$term.'%')
+                        ->orWhere('business.business_description', 'LIKE', '%'.$term.'%')
+                        ->orWhere('business.region', 'LIKE', '%'.$term.'%')
+                        ->orWhere('cat1.title', 'LIKE', '%'.$term.'%')
+                        ->orWhere('cat2.title', 'LIKE', '%'.$term.'%');
                 });
             }
         } else {
@@ -205,7 +206,7 @@ class UserController extends Controller
                     $subcatUrl = $serviceParts[0];
                     $found = false;
                     foreach ($category as $cat) {
-                        if (!empty($cat->subcat)) {
+                        if (! empty($cat->subcat)) {
                             foreach ($cat->subcat as $sub) {
                                 if ($sub->title_url == $subcatUrl) {
                                     $terms[] = $sub->title;
@@ -214,10 +215,11 @@ class UserController extends Controller
                                 }
                             }
                         }
-                        if ($found)
+                        if ($found) {
                             break;
+                        }
                     }
-                    if (!$found) {
+                    if (! $found) {
                         $terms[] = ucwords(str_replace('-', ' ', $subcatUrl));
                     }
                 }
@@ -266,15 +268,17 @@ class UserController extends Controller
             'cat1.title',
             'cat1.title_url',
             'cat2.title',
-            'cat2.title_url'
+            'cat2.title_url',
         ])
             ->orderBy('average_rating', 'desc');
 
         // Execute the query and get results
         $topratedBusiness = $query->get();
-        //dd($topratedBusiness);
+
+        // dd($topratedBusiness);
         return view('frontend/business/list', compact('categories', 'sideData', 'topratedBusiness', 'country_name', 'category', 'states', 'searchQuery'));
     }
+
     public function profile(Request $request)
     {
         $user_id = Auth::user()->id ?? null;
@@ -290,31 +294,31 @@ class UserController extends Controller
             )
                 ->join('categories as cat1', 'cat1.id', '=', 'business.primary_category')
                 ->join('categories as cat2', 'cat2.id', '=', 'business.secondary_category')
-                ->join('countries', 'countries.id', '=', 'business.country')->where("user_id", $user_id)->get();
-            //echo $profile->suburb->id;
-            //echo "<pre>";
-            //print_r($profile);exit;
-            //dd($businessList);
-            //$suburb = Suburb::find($profile->suburb->id);
-            if ($profile->country_status == "0") {
-                $suburb = City::select("cities.name as city_name", "states.name as state_name", "countries.name as country_name")
-                    ->join('states', 'states.id', '=', "cities.state_id")
-                    ->join('countries', "countries.id", "=", "states.country_id")
+                ->join('countries', 'countries.id', '=', 'business.country')->where('user_id', $user_id)->get();
+            // echo $profile->suburb->id;
+            // echo "<pre>";
+            // print_r($profile);exit;
+            // dd($businessList);
+            // $suburb = Suburb::find($profile->suburb->id);
+            if ($profile->country_status == '0') {
+                $suburb = City::select('cities.name as city_name', 'states.name as state_name', 'countries.name as country_name')
+                    ->join('states', 'states.id', '=', 'cities.state_id')
+                    ->join('countries', 'countries.id', '=', 'states.country_id')
                     ->where('cities.id', $profile->suburb_id)->first();
-                //$suburb = City::with('state.country')->find($profile->suburb_id);
+                // $suburb = City::with('state.country')->find($profile->suburb_id);
             } else {
-                $suburb = Towns::select("towns.suburb_name", "cities.name as city_name", "states.name as state_name", "countries.name as country_name")
+                $suburb = Towns::select('towns.suburb_name', 'cities.name as city_name', 'states.name as state_name', 'countries.name as country_name')
                     ->join('cities', 'cities.id', '=', 'towns.city_id')
-                    ->join('states', 'states.id', '=', "cities.state_id")
-                    ->join('countries', "countries.id", "=", "states.country_id")
+                    ->join('states', 'states.id', '=', 'cities.state_id')
+                    ->join('countries', 'countries.id', '=', 'states.country_id')
                     ->where('towns.id', $profile->suburb_id)->first();
-                //Towns::with('cities.state.country')->find($profile->suburb_id);
+                // Towns::with('cities.state.country')->find($profile->suburb_id);
             }
             $ads = Ads::where('country', session('CountryCode'))->get();
             $grouped = collect($ads)->groupBy('type');
-            //dd($suburb);
-            //echo $state = $suburb->state->name;
-            //echo $country = $suburb->state->country->name;
+            // dd($suburb);
+            // echo $state = $suburb->state->name;
+            // echo $country = $suburb->state->country->name;
             if ($grouped->has('side')) {
                 $sideData = $grouped->get('side');
             }
@@ -325,13 +329,15 @@ class UserController extends Controller
             $notice = Notice::where('user_id', $user_id)->get();
             $country = Country::where('status', '1')->get()->toArray();
             $articles = Article::with('category')->where('user_id', $user_id)->latest()->get();
-            //echo "<pre>";
-            //print_r($suburb);exit;
+
+            // echo "<pre>";
+            // print_r($suburb);exit;
             return view('profile', compact('profile', 'suburb', 'sideData', 'notice', 'businessList', 'country', 'articles'));
         } else {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+
             return redirect('/');
         }
     }
@@ -349,8 +355,8 @@ class UserController extends Controller
 
             // Ensure directory exists
             $dirPath = 'assets/profile/banners';
-            $fullDirPath = 'public/' . $dirPath;
-            if (!file_exists(base_path($fullDirPath))) {
+            $fullDirPath = 'public/'.$dirPath;
+            if (! file_exists(base_path($fullDirPath))) {
                 mkdir(base_path($fullDirPath), 0777, true);
             }
 
@@ -359,9 +365,9 @@ class UserController extends Controller
                 $img_ext = strtolower($profile_banner->getClientOriginalExtension());
             }
 
-            $fileName = uniqid() . rand(1111, 1111111111) . '.' . $img_ext;
-            $dbPath = $dirPath . '/' . $fileName;
-            $diskPath = 'public/' . $dbPath;
+            $fileName = uniqid().rand(1111, 1111111111).'.'.$img_ext;
+            $dbPath = $dirPath.'/'.$fileName;
+            $diskPath = 'public/'.$dbPath;
 
             file_put_contents(base_path($diskPath), $binaryImageData, LOCK_EX | FILE_BINARY);
             $last_img = $dbPath;
@@ -370,17 +376,18 @@ class UserController extends Controller
         if ($last_img) {
             User::find($id)->update([
                 'profile_banner' => $last_img,
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
             ]);
+
             return redirect()->back()->with('success', 'Profile banner updated successfully');
         }
 
         return redirect()->back()->with('error', 'No image data received');
     }
 
-    //public function StoreProfilePic(Request $request) {
+    // public function StoreProfilePic(Request $request) {
     //	$id = Auth::user()->id;
-    //dd($id);
+    // dd($id);
 
     //	$profile_pic = $request->file('imageUpload');
     //	if($profile_pic) {
@@ -393,7 +400,6 @@ class UserController extends Controller
 
     //		$profile_pic->move($up_location, $img_name);
 
-
     //	}
 
     //	User::find($id)->update([
@@ -402,7 +408,7 @@ class UserController extends Controller
     //	]);
 
     //	return Redirect()->back();
-    //}
+    // }
     public function StoreProfilePic(Request $request)
     {
         $id = Auth::user()->id;
@@ -418,7 +424,7 @@ class UserController extends Controller
                 $type = strtolower($type[1]); // jpg, png, gif, etc.
 
                 // Validate image type
-                if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
+                if (! in_array($type, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
                     return redirect()->back()->with('error', 'Invalid image type');
                 }
 
@@ -432,15 +438,15 @@ class UserController extends Controller
                 // Generate unique filename
                 $name_gen = hexdec(uniqid());
                 $img_ext = ($type === 'jpg') ? 'jpeg' : $type;
-                $img_name = $name_gen . '.' . $img_ext;
+                $img_name = $name_gen.'.'.$img_ext;
 
                 $dirPath = 'assets/profile/pict';
-                $dbPath = $dirPath . '/' . $img_name;
-                $diskPath = 'public/' . $dbPath;
+                $dbPath = $dirPath.'/'.$img_name;
+                $diskPath = 'public/'.$dbPath;
 
                 // Create directory if it doesn't exist
-                if (!file_exists(base_path('public/' . $dirPath))) {
-                    mkdir(base_path('public/' . $dirPath), 0777, true);
+                if (! file_exists(base_path('public/'.$dirPath))) {
+                    mkdir(base_path('public/'.$dirPath), 0777, true);
                 }
 
                 // Save the image file
@@ -448,7 +454,7 @@ class UserController extends Controller
                     // Update user record
                     User::find($id)->update([
                         'image' => $dbPath,
-                        'updated_at' => Carbon::now()
+                        'updated_at' => Carbon::now(),
                     ]);
 
                     return redirect()->back()->with('success', 'Profile picture updated successfully');
@@ -462,134 +468,147 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'No image data received');
         }
     }
+
     public function Register()
     {
         $country = Country::where('status', '1')->get()->toArray();
         $defaultCountry = Country::where('shortname', session('CountryCode', 'NZ'))->first()
             ?: Country::where('shortname', 'NZ')->first();
         $defaultCountryId = $defaultCountry->id ?? null;
+
         // print_r($country);
         // exit;
         return view('auth.register', compact('country', 'defaultCountryId'));
     }
+
     public function contactUs()
     {
         $country = Country::where('status', '1')->get()->toArray();
+
         // print_r($country);
         // exit;
         return view('frontend/contact-us', compact('country'));
     }
+
     public function GetCityState(Request $request)
     {
         $countryId = $request->input('country_id');
         // Logic to fetch cities based on $countryId
         $array = [];
-        if ($countryId == "13" || $countryId == "44" || $countryId == "101" || $countryId == "230" || $countryId == "231") {
+        if ($countryId == '13' || $countryId == '44' || $countryId == '101' || $countryId == '230' || $countryId == '231') {
             $cities = State::with(['cities', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
                 $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
-                    $locationText = $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
-                    $array[] = ["value" => $city['id'], "text" => $locationText];
+                    $locationText = $city['name'].', '.$state['name'].($countryName ? ', '.$countryName : '');
+                    $array[] = ['value' => $city['id'], 'text' => $locationText];
                 }
             }
-        } elseif ($countryId == "157") {
+        } elseif ($countryId == '157') {
             $cities = State::with(['cities.towns', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
                 $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
                     foreach ($city['towns'] as $town) {
-                        $locationText = $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
-                        $array[] = ["value" => $town['id'], "text" => $locationText];
+                        $locationText = $town['suburb_name'].', '.$city['name'].', '.$state['name'].($countryName ? ', '.$countryName : '');
+                        $array[] = ['value' => $town['id'], 'text' => $locationText];
                     }
                 }
             }
         }
-        //print_r($cities);
+        // print_r($cities);
         usort($array, function ($a, $b) {
             return strcmp($a['text'], $b['text']);
         });
+
         return json_encode($array);
     }
+
     public function GetCityStatesameVal(Request $request)
     {
         $countryId = $request->input('country_id');
         $selected = $request->input('selected');
         // Logic to fetch cities based on $countryId
         $array = [];
-        if ($countryId == "13" || $countryId == "44" || $countryId == "101" || $countryId == "230" || $countryId == "231") {
+        if ($countryId == '13' || $countryId == '44' || $countryId == '101' || $countryId == '230' || $countryId == '231') {
             $cities = State::with(['cities', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
                 $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
-                    $locationStr = $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
+                    $locationStr = $city['name'].', '.$state['name'].($countryName ? ', '.$countryName : '');
                     // We also need to support matching old selected values that might not have the country name appended
-                    $isSelected = ($locationStr == $selected) || (($city['name'] . ", " . $state['name']) == $selected);
-                    $array[] = ["value" => $locationStr, "text" => $locationStr, "selected" => $isSelected];
+                    $isSelected = ($locationStr == $selected) || (($city['name'].', '.$state['name']) == $selected);
+                    $array[] = ['value' => $locationStr, 'text' => $locationStr, 'selected' => $isSelected];
                 }
             }
-        } elseif ($countryId == "157") {
+        } elseif ($countryId == '157') {
             $cities = State::with(['cities.towns', 'country'])->where('country_id', $countryId)->get()->toArray();
             foreach ($cities as $state) {
                 $countryName = isset($state['country']['name']) ? $state['country']['name'] : '';
                 foreach ($state['cities'] as $city) {
                     foreach ($city['towns'] as $town) {
-                        $locationStr = $town['suburb_name'] . ", " . $city['name'] . ", " . $state['name'] . ($countryName ? ", " . $countryName : "");
-                        $isSelected = ($locationStr == $selected) || (($town['suburb_name'] . ", " . $city['name'] . ", " . $state['name']) == $selected);
-                        $array[] = ["value" => $locationStr, "text" => $locationStr, "selected" => $isSelected];
+                        $locationStr = $town['suburb_name'].', '.$city['name'].', '.$state['name'].($countryName ? ', '.$countryName : '');
+                        $isSelected = ($locationStr == $selected) || (($town['suburb_name'].', '.$city['name'].', '.$state['name']) == $selected);
+                        $array[] = ['value' => $locationStr, 'text' => $locationStr, 'selected' => $isSelected];
                     }
                 }
             }
         }
-        //print_r($cities);
+        // print_r($cities);
         usort($array, function ($a, $b) {
             return strcmp($a['text'], $b['text']);
         });
+
         return json_encode($array);
     }
+
     public function getCitystateForSelectsize(Request $request)
     {
         $countryId = $request->input('country_id');
         $cities = State::with('cities')->where('country_id', $countryId)->get()->toArray();
-        //print_r($cities);
+        // print_r($cities);
         $array = [];
         foreach ($cities as $state) {
             foreach ($state['cities'] as $city) {
-                $array[] = ["value" => $city['id'], "text" => $city['name'] . ", " . $state['name']];
+                $array[] = ['value' => $city['id'], 'text' => $city['name'].', '.$state['name']];
             }
         }
         usort($array, function ($a, $b) {
             return strcmp($a['text'], $b['text']);
         });
+
         return json_encode($array);
     }
+
     public function getStateForSelectsize(Request $request)
     {
         $request_for = $request->input('request_for');
-        if ($request_for == "state") {
+        if ($request_for == 'state') {
             $countryId = $request->input('country_id');
             $cities = State::where('country_id', $countryId)->get()->toArray();
             $array = [];
-            //dd($cities);
+            // dd($cities);
             foreach ($cities as $state) {
-                $array[] = ["value" => $state['id'], "text" => $state['name']];
+                $array[] = ['value' => $state['id'], 'text' => $state['name']];
             }
             usort($array, function ($a, $b) {
                 return strcmp($a['text'], $b['text']);
             });
-        } elseif ($request_for == "city") {
+        } elseif ($request_for == 'city') {
             $stateId = $request->input('state_id');
             $cities = City::where('state_id', $stateId)->get()->toArray();
             $array = [];
             foreach ($cities as $city) {
-                $array[] = ["value" => $city['id'], "text" => $city['name']];
+                $array[] = ['value' => $city['id'], 'text' => $city['name']];
             }
             usort($array, function ($a, $b) {
                 return strcmp($a['text'], $b['text']);
             });
         }
+
         return json_encode($array);
     }
+
     public function Logout(Request $request)
     {
         Auth::logout();
@@ -600,22 +619,27 @@ class UserController extends Controller
 
         return redirect('/');
     }
+
     public function changeCountry(Request $request)
     {
         $countryId = $request->input('country_id');
         session(['CountryCode' => $countryId]);
+
         return true;
     }
+
     public function StoreAboutusr(Request $request)
     {
         $id = Auth::user()->id;
         $aboutus = $request->input('aboutus');
         User::find($id)->update([
             'aboutus' => $aboutus,
-            'updated_at' => Carbon::now()
+            'updated_at' => Carbon::now(),
         ]);
+
         return Redirect()->back();
     }
+
     public function Notice()
     {
         $category = NoticeCategory::where('is_active', 1)->get();
@@ -646,7 +670,7 @@ class UserController extends Controller
                 ->where('category_id', '!=', '2')
                 ->where('notice_EXPIRE', '>', Carbon::now())
                 ->first();
-            
+
             $activeQuoteNotice = Notice::where('user_id', $user_id)
                 ->where('category_id', '2')
                 ->where('notice_EXPIRE', '>', Carbon::now())
@@ -655,6 +679,7 @@ class UserController extends Controller
 
         return view('auth.notice-form', compact('category', 'grouped', 'sideData', 'country', 'activeStandardNotice', 'activeQuoteNotice'));
     }
+
     public function NoticePost(Request $request)
     {
         $validatedData = $request->validate([
@@ -686,7 +711,7 @@ class UserController extends Controller
 
         $user_id = Auth::user()->id ?? null;
 
-        $notice = new Notice();
+        $notice = new Notice;
         $notice->user_id = $user_id;
         $notice->category_id = $category_id;
         $notice->noticetype = $noticetype;
@@ -723,17 +748,17 @@ class UserController extends Controller
 
                     $dirPath = 'assets/notice';
                     $physicalDir = public_path($dirPath);
-                    if (!file_exists($physicalDir)) {
+                    if (! file_exists($physicalDir)) {
                         mkdir($physicalDir, 0777, true);
                     }
 
-                    $fileName = uniqid() . rand(1111, 1111111111) . '.jpg';
-                    $physicalPath = $physicalDir . '/' . $fileName;
+                    $fileName = uniqid().rand(1111, 1111111111).'.jpg';
+                    $physicalPath = $physicalDir.'/'.$fileName;
                     file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
 
-                    $noticeImgObj = new NoticeImg();
+                    $noticeImgObj = new NoticeImg;
                     $noticeImgObj->notice_id = $notice->id;
-                    $noticeImgObj->img_path = $dirPath . '/' . $fileName;
+                    $noticeImgObj->img_path = $dirPath.'/'.$fileName;
                     $noticeImgObj->created_at = Carbon::now();
                     $noticeImgObj->save();
                 }
@@ -744,41 +769,42 @@ class UserController extends Controller
         if ($notice->status === '0') {
             $successMessage = 'Notice submitted successfully! Since approval is required, it will be published after admin review.';
         }
+
         return redirect()->route('notice-post')->with('success', $successMessage);
     }
+
     public function contactUsSub(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email',
             'country' => 'required',
-            'message' => 'required'
+            'message' => 'required',
         ]);
 
         $suburb = City::with('state.country')->find($request->post('suburb_id'));
         $htmlBody = ZohoMailService::renderView('email', [
-            'name'     => $request->post('name'),
-            'email'    => $request->post('email'),
+            'name' => $request->post('name'),
+            'email' => $request->post('email'),
             'phone_no' => $request->post('phone_no') ?? '',
-            'country'  => ($request->post('country') == 'others')
+            'country' => ($request->post('country') == 'others')
                             ? $request->post('otherscoun')
-                            : $suburb->name . ',' . $suburb->state->name . ',' . $suburb->state->country->name,
-            'msg'      => $request->post('message'),
-            'ip'       => $request->ip(),
+                            : $suburb->name.','.$suburb->state->name.','.$suburb->state->country->name,
+            'msg' => $request->post('message'),
+            'ip' => $request->ip(),
         ]);
 
-        (new ZohoMailService())->send(
+        (new ZohoMailService)->send(
             'catchakiwi@hotmail.co.nz',
             'Your Website Contact Form',
             $htmlBody,
             ['souravghoshmgu1@gmail.com']
         );
 
-
-
         return redirect()->route('contact-us')->with('success', 'Contact Us email sent successfully!');
 
     }
+
     public function test()
     {
         $st = 5000; // Start state id
@@ -796,7 +822,7 @@ class UserController extends Controller
                 // Update city id and state_id, then increment $ct
                 City::where('id', $city['id'])->update([
                     'id' => $ct,
-                    'state_id' => $st
+                    'state_id' => $st,
                 ]);
 
                 // Update towns with the new city_id
@@ -808,6 +834,7 @@ class UserController extends Controller
             $st++; // Increment state id
         }
     }
+
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
@@ -820,7 +847,7 @@ class UserController extends Controller
             'lastname' => 'sometimes|required|string',
             'fname_visibility' => 'sometimes',
             'lname_visibility' => 'sometimes',
-            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'email' => 'sometimes|required|email|unique:users,email,'.$user->id,
             'dob' => 'sometimes|required',
             'dob_visibility' => 'sometimes',
             'city_visibility' => 'sometimes',
@@ -852,13 +879,14 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully.',
-            'user' => $user->only(['id', 'name', 'email', 'suburb_id', 'country_status', 'profile_photo_path'])
+            'user' => $user->only(['id', 'name', 'email', 'suburb_id', 'country_status', 'profile_photo_path']),
         ]);
     }
+
     public function requestEmailChange(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:users,email'
+            'email' => 'required|email|unique:users,email',
         ]);
 
         $user = Auth::user();
@@ -869,20 +897,20 @@ class UserController extends Controller
         $user->save();
 
         // === ZOHO MAIL NOTIFICATION TO ADMIN ===
-        $htmlContent = "New Email Change Request\n\n<br><br>" .
-            "User Details:\n<br>" .
-            "----------------\n<br>" .
-            "User ID      : {$user->id}\n<br>" .
-            "Name         : {$user->name}\n<br>" .
-            "Current Email: {$user->email}\n<br>" .
-            "Requested Email: {$user->temp_email}\n<br>" .
-            "Requested At : " . now()->format('d M Y, h:i A') . "\n\n<br>" .
-            "Please review and approve/reject in the admin panel.";
+        $htmlContent = "New Email Change Request\n\n<br><br>".
+            "User Details:\n<br>".
+            "----------------\n<br>".
+            "User ID      : {$user->id}\n<br>".
+            "Name         : {$user->name}\n<br>".
+            "Current Email: {$user->email}\n<br>".
+            "Requested Email: {$user->temp_email}\n<br>".
+            'Requested At : '.now()->format('d M Y, h:i A')."\n\n<br>".
+            'Please review and approve/reject in the admin panel.';
 
         $toEmail = 'souravghoshmgu1@gmail.com';
         $subject = "Email Change Request - User: {$user->name} (ID: {$user->id})";
 
-        $sent = (new ZohoMailService())->send($toEmail, $subject, $htmlContent);
+        $sent = (new ZohoMailService)->send($toEmail, $subject, $htmlContent);
 
         if ($sent) {
             return response()->json(['success' => true, 'message' => 'Email change request sent successfully']);
@@ -891,27 +919,25 @@ class UserController extends Controller
         return response()->json(['success' => false, 'message' => 'Failed to send notification email'], 500);
     }
 
-
-
     public function requestPasswordChange(Request $request)
     {
         $request->validate([
-            'password' => 'required|min:8'
+            'password' => 'required|min:8',
         ]);
 
         $otp = rand(100000, 999999);
         Auth::user()->update([
             'password_otp' => $otp,
             'password_otp_expires_at' => now()->addMinutes(10),
-            'pending_password' => Hash::make($request->password)
+            'pending_password' => Hash::make($request->password),
         ]);
 
-        $content = "Password Change OTP\n\n" .
-            "Your 6-digit OTP: {$otp}\n\n" .
-            "Valid for 10 minutes.\n\n" .
-            "Catch A Kiwi Team";
+        $content = "Password Change OTP\n\n".
+            "Your 6-digit OTP: {$otp}\n\n".
+            "Valid for 10 minutes.\n\n".
+            'Catch A Kiwi Team';
 
-        (new ZohoMailService())->send(
+        (new ZohoMailService)->send(
             Auth::user()->email,
             'Password Change OTP',
             $content
@@ -946,17 +972,18 @@ class UserController extends Controller
         auth()->user()->receivedNotifications()
             ->updateExistingPivot($request->notification_id, [
                 'read' => true,
-                'read_at' => now()
+                'read_at' => now(),
             ]);
 
         return response()->json(['success' => true]);
     }
+
     public function NoticeEdit($id)
     {
         $user_id = Auth::user()->id;
         $notice = Notice::where('id', $id)->where('user_id', $user_id)->firstOrFail();
         $noticeImages = NoticeImg::where('notice_id', $id)->orderBy('id', 'asc')->get();
-        
+
         $category = NoticeCategory::where('is_active', 1)->get();
         $countryCode = session('CountryCode');
 
@@ -981,7 +1008,7 @@ class UserController extends Controller
             ->where('notice_EXPIRE', '>', Carbon::now())
             ->where('id', '!=', $id)
             ->first();
-            
+
         $activeQuoteNotice = Notice::where('user_id', $user_id)
             ->where('category_id', '2')
             ->where('notice_EXPIRE', '>', Carbon::now())
@@ -1021,8 +1048,6 @@ class UserController extends Controller
         $notice_title = $request->input('notice_title');
         $notice_body = $request->input('notice_body');
 
-
-
         $notice->category_id = $category_id;
         $notice->noticetype = $noticetype;
         $notice->heading = $notice_title;
@@ -1033,7 +1058,7 @@ class UserController extends Controller
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');
         $notice->message_text = $request->input('message_text');
-        
+
         if ($noticetype === 'standard') {
             $notice->status = '1';
         } else {
@@ -1054,21 +1079,21 @@ class UserController extends Controller
 
                         $dirPath = 'assets/notice';
                         $physicalDir = public_path($dirPath);
-                        if (!file_exists($physicalDir)) {
+                        if (! file_exists($physicalDir)) {
                             mkdir($physicalDir, 0777, true);
                         }
 
-                        $fileName = uniqid() . rand(1111, 1111111111) . '.jpg';
-                        $physicalPath = $physicalDir . '/' . $fileName;
+                        $fileName = uniqid().rand(1111, 1111111111).'.jpg';
+                        $physicalPath = $physicalDir.'/'.$fileName;
                         file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
 
-                        $noticeImgObj = new NoticeImg();
+                        $noticeImgObj = new NoticeImg;
                         $noticeImgObj->notice_id = $notice->id;
-                        $noticeImgObj->img_path = $dirPath . '/' . $fileName;
+                        $noticeImgObj->img_path = $dirPath.'/'.$fileName;
                         $noticeImgObj->created_at = Carbon::now();
                         $noticeImgObj->save();
                     } elseif (strpos($imgData, 'assets/notice/') === 0) {
-                        $noticeImgObj = new NoticeImg();
+                        $noticeImgObj = new NoticeImg;
                         $noticeImgObj->notice_id = $notice->id;
                         $noticeImgObj->img_path = $imgData;
                         $noticeImgObj->created_at = Carbon::now();
@@ -1082,6 +1107,7 @@ class UserController extends Controller
         if ($notice->status === '0') {
             $successMessage = 'Notice updated successfully! It will be published after admin review.';
         }
+
         return redirect()->route('profile')->with('success', $successMessage);
     }
 
@@ -1090,7 +1116,7 @@ class UserController extends Controller
         $user_id = Auth::user()->id;
         $notice = Notice::where('id', $id)->where('user_id', $user_id)->first();
 
-        if (!$notice) {
+        if (! $notice) {
             return redirect()->route('profile')->with('error', 'Notice not found or you do not have permission to delete it.');
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,9 +11,7 @@ class Ads extends Model
 
     protected $fillable = ['ads_image', 'country', 'type', 'link', 'updated_at']; // Fillable columns
 
-    //protected $timestamps = false; 
+    // protected $timestamps = false;
 
-    //protected $primaryKey = 'id';
+    // protected $primaryKey = 'id';
 }
-
-?>

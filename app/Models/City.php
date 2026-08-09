@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
-    protected $fillable = ["name", "state_id","lat","longitude","zoom_level"];
+    protected $fillable = ['name', 'state_id', 'lat', 'longitude', 'zoom_level'];
 
     public function state()
     {

@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Ads;
-
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\ArticleComment;
-use Illuminate\Support\Str;
 use Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -20,19 +19,20 @@ class ArticleController extends Controller
         if ($request->has('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('content', 'like', '%' . $searchTerm . '%');
+                $q->where('title', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('content', 'like', '%'.$searchTerm.'%');
             });
         }
 
         $articles = $query->latest()->paginate(10);
         $categories = ArticleCategory::all();
-        
+
         $ads = Ads::where('country', session('CountryCode'))->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = $grouped->get('side', []);
 
         $country_name = strtolower(session('CountryCode', 'NZ'));
+
         return view('frontend/artical/list', compact('articles', 'categories', 'sideData', 'country_name'));
     }
 
@@ -44,8 +44,8 @@ class ArticleController extends Controller
         if ($request->has('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('content', 'like', '%' . $searchTerm . '%');
+                $q->where('title', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('content', 'like', '%'.$searchTerm.'%');
             });
         }
 
@@ -55,12 +55,13 @@ class ArticleController extends Controller
             $articles = $query->latest()->paginate(10);
         }
         $categories = ArticleCategory::all();
-        
+
         $ads = Ads::where('country', session('CountryCode'))->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = $grouped->get('side', []);
 
         $country_name = strtolower(session('CountryCode', 'NZ'));
+
         return view('frontend/artical/list', compact('articles', 'categories', 'category', 'sideData', 'country_name'));
     }
 
@@ -68,7 +69,7 @@ class ArticleController extends Controller
     {
         $article = Article::with(['user', 'category', 'comments.user'])->where('slug', $slug)->firstOrFail();
         $categories = ArticleCategory::all();
-        
+
         // Track view
         $article->increment('views');
 
@@ -77,6 +78,7 @@ class ArticleController extends Controller
         $sideData = $grouped->get('side', []);
 
         $country_name = strtolower(session('CountryCode', 'NZ'));
+
         return view('frontend/artical/details', compact('article', 'categories', 'sideData', 'country_name'));
     }
 
@@ -88,6 +90,7 @@ class ArticleController extends Controller
         $sideData = $grouped->get('side', []);
 
         $country_name = strtolower(session('CountryCode', 'NZ'));
+
         return view('frontend/artical/add', compact('categories', 'sideData', 'country_name'));
     }
 
@@ -103,20 +106,20 @@ class ArticleController extends Controller
         $article = new Article($request->all());
         $article->user_id = Auth::id();
         $article->status = 'pending';
-        $article->slug = Str::slug($request->title) . '-' . uniqid();
+        $article->slug = Str::slug($request->title).'-'.uniqid();
 
         if ($request->hasFile('imageUpload') && $request->input('base64image')) {
             $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $request->input('base64image'));
             $binaryImageData = base64_decode($base64_data);
             $extension = $request->file('imageUpload')->getClientOriginalExtension();
-            $imageName = uniqid() . '-' . time() . '.' . $extension;
-            
+            $imageName = uniqid().'-'.time().'.'.$extension;
+
             // Ensure directory exists
-            if (!file_exists(public_path('images/articles'))) {
+            if (! file_exists(public_path('images/articles'))) {
                 mkdir(public_path('images/articles'), 0777, true);
             }
 
-            $filePath = 'images/articles/' . $imageName;
+            $filePath = 'images/articles/'.$imageName;
             file_put_contents(public_path($filePath), $binaryImageData);
             $article->image = $filePath;
         }
@@ -129,7 +132,7 @@ class ArticleController extends Controller
     public function postComment(Request $request, $article_id)
     {
         $request->validate(['content' => 'required']);
-        
+
         ArticleComment::create([
             'article_id' => $article_id,
             'user_id' => Auth::id(),
@@ -142,6 +145,7 @@ class ArticleController extends Controller
     public function myArticles()
     {
         $articles = Article::where('user_id', Auth::id())->latest()->get();
+
         return view('frontend/artical/my_articles', compact('articles'));
     }
 
@@ -149,6 +153,7 @@ class ArticleController extends Controller
     {
         $article = Article::where('user_id', Auth::id())->findOrFail($id);
         $categories = ArticleCategory::all();
+
         return view('frontend/artical/user_edit', compact('article', 'categories'));
     }
 
@@ -177,14 +182,14 @@ class ArticleController extends Controller
             $base64_data = preg_replace('#^data:image/\w+;base64,#i', '', $request->input('base64image'));
             $binaryImageData = base64_decode($base64_data);
             $extension = $request->file('imageUpload')->getClientOriginalExtension();
-            $imageName = uniqid() . '-' . time() . '.' . $extension;
+            $imageName = uniqid().'-'.time().'.'.$extension;
 
             // Ensure directory exists
-            if (!file_exists(public_path('images/articles'))) {
+            if (! file_exists(public_path('images/articles'))) {
                 mkdir(public_path('images/articles'), 0777, true);
             }
 
-            $filePath = 'images/articles/' . $imageName;
+            $filePath = 'images/articles/'.$imageName;
             file_put_contents(public_path($filePath), $binaryImageData);
             $article->image = $filePath;
         }
@@ -197,19 +202,18 @@ class ArticleController extends Controller
     public function userDelete($id)
     {
         $article = Article::where('user_id', Auth::id())->findOrFail($id);
-        
+
         // Delete the article image if it exists
         if ($article->image && file_exists(public_path($article->image))) {
             unlink(public_path($article->image));
         }
-        
+
         // Delete associated comments
         $article->comments()->delete();
-        
+
         // Delete the article
         $article->delete();
 
         return redirect('profile#parentHorizontalTab2')->with('success', 'Article deleted successfully.');
     }
 }
-

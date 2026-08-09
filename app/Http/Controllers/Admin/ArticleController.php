@@ -21,20 +21,18 @@ class ArticleController extends Controller
             $query->join('users', 'articles.user_id', '=', 'users.id')
                 ->select('articles.*')
                 ->orderBy('users.name', $sortOrder);
-        }
-        elseif ($sortBy == 'category') {
+        } elseif ($sortBy == 'category') {
             $query->join('article_categories', 'articles.category_id', '=', 'article_categories.id')
                 ->select('articles.*')
                 ->orderBy('article_categories.title', $sortOrder);
-        }
-        elseif (in_array($sortBy, ['title', 'status', 'views', 'published_at', 'created_at'])) {
+        } elseif (in_array($sortBy, ['title', 'status', 'views', 'published_at', 'created_at'])) {
             $query->orderBy($sortBy, $sortOrder);
-        }
-        else {
+        } else {
             $query->latest();
         }
 
         $articles = $query->get();
+
         return view('admin.articles.index', compact('articles', 'sortBy', 'sortOrder'));
     }
 
@@ -42,6 +40,7 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
         $categories = ArticleCategory::all();
+
         return view('admin.articles.edit', compact('article', 'categories'));
     }
 
@@ -57,7 +56,7 @@ class ArticleController extends Controller
 
         $article->update($request->all());
 
-        if ($request->status == 'published' && !$article->published_at) {
+        if ($request->status == 'published' && ! $article->published_at) {
             $article->update(['published_at' => now()]);
         }
 
@@ -69,11 +68,12 @@ class ArticleController extends Controller
         $article = Article::findOrFail($id);
         if (in_array($status, ['published', 'hidden', 'pending'])) {
             $updateData = ['status' => $status];
-            if ($status == 'published' && !$article->published_at) {
+            if ($status == 'published' && ! $article->published_at) {
                 $updateData['published_at'] = now();
             }
             $article->update($updateData);
         }
+
         return redirect()->back()->with('success', 'Status updated successfully');
     }
 }

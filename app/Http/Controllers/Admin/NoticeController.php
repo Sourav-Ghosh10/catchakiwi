@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
 use App\Models\Notice;
-use Illuminate\Http\Request;
+use App\Models\NoticeCategory;
+use App\Models\NoticeImg;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class NoticeController extends Controller
 {
@@ -16,8 +18,8 @@ class NoticeController extends Controller
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
             ->leftJoin('countries', 'countries.shortname', '=', 'notice.country')
             ->select(
-                'notice.*', 
-                'users.name as user_name', 
+                'notice.*',
+                'users.name as user_name',
                 'users.email as user_email',
                 'countries.name as country_name'
             )
@@ -31,7 +33,7 @@ class NoticeController extends Controller
     {
         $notice = Notice::findOrFail($id);
         $notice->status = '1';
-        
+
         if ($notice->noticetype === 'feature') {
             $notice->notice_EXPIRE = Carbon::now()->addDays(28);
             $notice->expire_at = Carbon::now()->addDays(28);
@@ -39,7 +41,7 @@ class NoticeController extends Controller
             $notice->notice_EXPIRE = Carbon::now()->addDays(7);
             $notice->expire_at = Carbon::now()->addDays(7);
         }
-        
+
         $notice->save();
 
         return redirect()->back()->with('success', 'Notice approved and published successfully.');
@@ -57,7 +59,7 @@ class NoticeController extends Controller
     public function destroy($id)
     {
         $notice = Notice::findOrFail($id);
-        
+
         // Delete associated images if any
         if ($notice->images) {
             foreach ($notice->images as $img) {
@@ -68,7 +70,7 @@ class NoticeController extends Controller
                 $img->delete();
             }
         }
-        
+
         $notice->delete();
 
         return redirect()->back()->with('success', 'Notice deleted successfully.');
@@ -88,12 +90,12 @@ class NoticeController extends Controller
     public function edit($id)
     {
         $notice = Notice::findOrFail($id);
-        $category = \App\Models\NoticeCategory::where('is_active', 1)->get();
-        $country = \App\Models\Country::where('status', '1')->get()->toArray();
-        
+        $category = NoticeCategory::where('is_active', 1)->get();
+        $country = Country::where('status', '1')->get()->toArray();
+
         // Retrieve images associated with the notice
-        $noticeImages = \App\Models\NoticeImg::where('notice_id', $id)->orderBy('id', 'asc')->get();
-        
+        $noticeImages = NoticeImg::where('notice_id', $id)->orderBy('id', 'asc')->get();
+
         return view('admin.notices.edit', compact('notice', 'category', 'country', 'noticeImages'));
     }
 
@@ -115,14 +117,14 @@ class NoticeController extends Controller
 
         $notice = Notice::findOrFail($id);
         $category_id = $request->input('category_id');
-        
-        $selectedNoticeCategory = \App\Models\NoticeCategory::find($category_id);
+
+        $selectedNoticeCategory = NoticeCategory::find($category_id);
         $selectedNoticeCategoryName = strtolower($selectedNoticeCategory->category ?? '');
         $selectedNoticeCategorySlug = $selectedNoticeCategory->slug ?? '';
         $isItemsCategory = in_array($selectedNoticeCategorySlug, ['items-for-sale', 'items-for-sale-or-wanted'])
             || in_array($selectedNoticeCategoryName, ['items for sale', 'items for sale or wanted']);
         $noticeLookingFor = $isItemsCategory ? $request->input('item_type') : $request->input('looking_for');
-        
+
         $notice->category_id = $category_id;
         $notice->noticetype = $request->input('noticetype');
         $notice->heading = $request->input('notice_title');
@@ -133,12 +135,12 @@ class NoticeController extends Controller
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');
         $notice->message_text = $request->input('message_text');
-        
+
         $notice->save();
 
         $noticeimgbase64 = $request->input('noticeimgbase64');
         if ($noticeimgbase64 && is_array($noticeimgbase64)) {
-            \App\Models\NoticeImg::where('notice_id', $id)->delete();
+            NoticeImg::where('notice_id', $id)->delete();
             $maxImages = $notice->noticetype === 'feature' ? 6 : 3;
             foreach (array_slice($noticeimgbase64, 0, $maxImages) as $imgData) {
                 if ($imgData) {
@@ -148,21 +150,21 @@ class NoticeController extends Controller
 
                         $dirPath = 'assets/notice';
                         $physicalDir = public_path($dirPath);
-                        if (!file_exists($physicalDir)) {
+                        if (! file_exists($physicalDir)) {
                             mkdir($physicalDir, 0777, true);
                         }
 
-                        $fileName = uniqid() . rand(1111, 1111111111) . '.jpg';
-                        $physicalPath = $physicalDir . '/' . $fileName;
+                        $fileName = uniqid().rand(1111, 1111111111).'.jpg';
+                        $physicalPath = $physicalDir.'/'.$fileName;
                         file_put_contents($physicalPath, $binaryImageData, LOCK_EX | FILE_BINARY);
 
-                        $noticeImgObj = new \App\Models\NoticeImg();
+                        $noticeImgObj = new NoticeImg;
                         $noticeImgObj->notice_id = $notice->id;
-                        $noticeImgObj->img_path = $dirPath . '/' . $fileName;
+                        $noticeImgObj->img_path = $dirPath.'/'.$fileName;
                         $noticeImgObj->created_at = Carbon::now();
                         $noticeImgObj->save();
                     } elseif (strpos($imgData, 'assets/notice/') === 0) {
-                        $noticeImgObj = new \App\Models\NoticeImg();
+                        $noticeImgObj = new NoticeImg;
                         $noticeImgObj->notice_id = $notice->id;
                         $noticeImgObj->img_path = $imgData;
                         $noticeImgObj->created_at = Carbon::now();

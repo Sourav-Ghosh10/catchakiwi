@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Business;
-use App\Models\User;
 use App\Models\Category;
-use App\Models\Country;
 use App\Models\City;
+use App\Models\Country;
 use App\Models\Towns;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AdminBusinessController extends Controller
@@ -26,21 +26,21 @@ class AdminBusinessController extends Controller
             'countries.name as country_name',
             'countries.shortname as country_shortname',
             'primary_cat.title as primary_category_name',
-            'secondary_cat.title as secondary_category_name'
+            'secondary_cat.title as secondary_category_name',
         ])
-        ->join('users', 'users.id', '=', 'business.user_id')
-        ->join('countries', 'countries.id', '=', 'business.country')
-        ->leftJoin('categories as primary_cat', 'primary_cat.id', '=', 'business.primary_category')
-        ->leftJoin('categories as secondary_cat', 'secondary_cat.id', '=', 'business.secondary_category');
+            ->join('users', 'users.id', '=', 'business.user_id')
+            ->join('countries', 'countries.id', '=', 'business.country')
+            ->leftJoin('categories as primary_cat', 'primary_cat.id', '=', 'business.primary_category')
+            ->leftJoin('categories as secondary_cat', 'secondary_cat.id', '=', 'business.secondary_category');
 
         // Search functionality
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->has('search') && ! empty($request->search)) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('business.company_name', 'LIKE', "%{$search}%")
-                  ->orWhere('business.display_name', 'LIKE', "%{$search}%")
-                  ->orWhere('users.name', 'LIKE', "%{$search}%")
-                  ->orWhere('users.email', 'LIKE', "%{$search}%");
+                    ->orWhere('business.display_name', 'LIKE', "%{$search}%")
+                    ->orWhere('users.name', 'LIKE', "%{$search}%")
+                    ->orWhere('users.email', 'LIKE', "%{$search}%");
             });
         }
 
@@ -65,7 +65,7 @@ class AdminBusinessController extends Controller
         $locationInfo = [
             'country_name' => 'Unknown',
             'city_name' => 'Unknown',
-            'state_name' => 'Unknown'
+            'state_name' => 'Unknown',
         ];
 
         // Get categories
@@ -79,18 +79,19 @@ class AdminBusinessController extends Controller
             'business' => $business,
             'categories' => $categories,
             'countries' => $countries,
-            'locationInfo' => $locationInfo
+            'locationInfo' => $locationInfo,
         ]);
     }
+
     public function update(Request $request, $id)
     {
         $business = Business::findOrFail($id);
-        
+
         $validatedData = $request->validate([
             'homebased_business' => 'required|in:yes,no',
             'suits_you' => 'nullable|string|max:100',
             'company_name' => 'required|string|max:255',
-            'display_name' => 'required|string|max:100|unique:business,display_name,' . $id,
+            'display_name' => 'required|string|max:100|unique:business,display_name,'.$id,
             'primary_category' => 'required|integer|exists:categories,id',
             'secondary_category' => 'nullable|integer|exists:categories,id',
             'business_description' => 'required|string',
@@ -109,7 +110,7 @@ class AdminBusinessController extends Controller
             'facebook' => 'nullable|url|max:255',
             'linkedIn' => 'nullable|url|max:255',
             'twitter' => 'nullable|url|max:255',
-            'status' => 'required|in:0,1'
+            'status' => 'required|in:0,1',
         ]);
 
         // Handle image upload
@@ -119,11 +120,11 @@ class AdminBusinessController extends Controller
             if ($oldImage && file_exists(public_path($oldImage))) {
                 unlink(public_path($oldImage));
             }
-            
+
             $image = $request->file('imageUpload');
-            $imageName = time() . '_' . $image->getClientOriginalName();
+            $imageName = time().'_'.$image->getClientOriginalName();
             $image->move(public_path('uploads/business'), $imageName);
-            $validatedData['select_image'] = 'uploads/business/' . $imageName;
+            $validatedData['select_image'] = 'uploads/business/'.$imageName;
         }
 
         // Map form fields to database columns
@@ -149,7 +150,7 @@ class AdminBusinessController extends Controller
             'facebook' => $validatedData['facebook'],
             'linkedIn' => $validatedData['linkedIn'],
             'twitter' => $validatedData['twitter'],
-            'status' => $validatedData['status']
+            'status' => $validatedData['status'],
         ];
 
         // Add image if uploaded
@@ -160,7 +161,7 @@ class AdminBusinessController extends Controller
         $business->update($updateData);
 
         return redirect()->route('admin.businesses.index')
-                        ->with('success', 'Business updated successfully!');
+            ->with('success', 'Business updated successfully!');
     }
 
     /**
@@ -173,7 +174,7 @@ class AdminBusinessController extends Controller
         $business->save();
 
         $statusText = $business->status == '1' ? 'activated' : 'deactivated';
-        
+
         return redirect()->back()->with('success', "Business has been {$statusText} successfully!");
     }
 
@@ -182,39 +183,40 @@ class AdminBusinessController extends Controller
      */
     private function getUserLocationInfo($profile)
     {
-        if($profile->country_status == "0") {
-            $suburb = City::select("countries.id","cities.name as city_name","states.name as state_name","countries.name as country_name","countries.shortname")
-            ->join('states','states.id','=',"cities.state_id")
-            ->join('countries' ,"countries.id","=", "states.country_id")
-            ->where('cities.id',$profile->suburb_id)->first();
+        if ($profile->country_status == '0') {
+            $suburb = City::select('countries.id', 'cities.name as city_name', 'states.name as state_name', 'countries.name as country_name', 'countries.shortname')
+                ->join('states', 'states.id', '=', 'cities.state_id')
+                ->join('countries', 'countries.id', '=', 'states.country_id')
+                ->where('cities.id', $profile->suburb_id)->first();
         } else {
-            $suburb = Towns::select("countries.id","towns.suburb_name","cities.name as city_name","states.name as state_name","countries.name as country_name","countries.shortname")
-            ->join('cities','cities.id','=','towns.city_id')
-            ->join('states','states.id','=',"cities.state_id")
-            ->join('countries' ,"countries.id","=", "states.country_id")
-            ->where('towns.id',$profile->suburb_id)->first();
+            $suburb = Towns::select('countries.id', 'towns.suburb_name', 'cities.name as city_name', 'states.name as state_name', 'countries.name as country_name', 'countries.shortname')
+                ->join('cities', 'cities.id', '=', 'towns.city_id')
+                ->join('states', 'states.id', '=', 'cities.state_id')
+                ->join('countries', 'countries.id', '=', 'states.country_id')
+                ->where('towns.id', $profile->suburb_id)->first();
         }
 
         return [
             'country_id' => $suburb->id ?? 0,
-            'country_name' => strtolower($suburb->shortname ?? ""),
-            'city_name' => $suburb->city_name ?? "",
-            'state_name' => $suburb->state_name ?? "",
-            'suburb_name' => $suburb->suburb_name ?? ""
+            'country_name' => strtolower($suburb->shortname ?? ''),
+            'city_name' => $suburb->city_name ?? '',
+            'state_name' => $suburb->state_name ?? '',
+            'suburb_name' => $suburb->suburb_name ?? '',
         ];
     }
+
     public function getUserBusinesses(Request $request)
     {
         try {
             $userId = $request->input('user_id');
-            
-            if (!$userId) {
+
+            if (! $userId) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'User ID is required'
+                    'message' => 'User ID is required',
                 ], 400);
             }
-            
+
             // Fetch businesses for the user with category and country information
             $businesses = DB::table('business as b')
                 ->leftJoin('countries as c', 'c.id', '=', 'b.country')
@@ -234,22 +236,22 @@ class AdminBusinessController extends Controller
                     'pc.title_url as primary_category_url',
                     'sc.title_url as secondary_category_url',
                     'pc.title as primary_category_name',
-                    'sc.title as secondary_category_name'
+                    'sc.title as secondary_category_name',
                 ])
                 ->orderBy('b.created_at', 'desc')
                 ->get();
-            
+
             return response()->json([
                 'success' => true,
-                'businesses' => $businesses
+                'businesses' => $businesses,
             ]);
-            
+
         } catch (\Exception $e) {
-            //Log::error('Error fetching user businesses: ' . $e->getMessage());
-            
+            // Log::error('Error fetching user businesses: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching businesses'
+                'message' => 'Error fetching businesses',
             ], 500);
         }
     }

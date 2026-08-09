@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Suburb;
 
 class User extends Authenticatable
 {
@@ -39,7 +37,7 @@ class User extends Authenticatable
         'agent',
         'updated_at',
         'status',
-      	'dob',
+        'dob',
         'dob_visibility',
         'city_visibility',
         'suburb_visibility',
@@ -48,10 +46,10 @@ class User extends Authenticatable
         'lastname',
         'lname_visibility',
         'password_otp',
-      	'password_otp_expires_at',
-      	'pending_password',
-      	'temp_email',
-      	'email_change_requested_at'
+        'password_otp_expires_at',
+        'pending_password',
+        'temp_email',
+        'email_change_requested_at',
     ];
 
     /**
@@ -92,15 +90,18 @@ class User extends Authenticatable
     {
         return $this->belongsTo(City::class, 'suburb_id');
     }
+
     public function town()
     {
         return $this->belongsTo(Towns::class, 'suburb_id');
     }
+
     public function businesses()
     {
         return $this->hasMany(Business::class);
     }
-  	public function messagesSent()
+
+    public function messagesSent()
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
@@ -114,8 +115,9 @@ class User extends Authenticatable
     {
         return $this->image ? asset($this->image) : asset('assets/images/no_pic.png');
     }
-  	public function receivedNotifications()
+
+    public function receivedNotifications()
     {
-      return $this->belongsToMany(Notification::class, 'notification_user')->withPivot('read', 'read_at');
+        return $this->belongsToMany(Notification::class, 'notification_user')->withPivot('read', 'read_at');
     }
 }

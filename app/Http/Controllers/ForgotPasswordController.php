@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\PasswordResetOtp;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 
 class ForgotPasswordController extends Controller
 {
@@ -29,7 +28,7 @@ class ForgotPasswordController extends Controller
     public function showOtpForm(Request $request)
     {
         // Check if email is provided in the query string
-        if (!$request->has('email')) {
+        if (! $request->has('email')) {
             return redirect()->route('password.request')
                 ->with('error', 'Email is required');
         }
@@ -45,7 +44,7 @@ class ForgotPasswordController extends Controller
     {
         // Validate email
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required|email|exists:users,email',
         ]);
 
         if ($validator->fails()) {
@@ -73,7 +72,7 @@ class ForgotPasswordController extends Controller
         PasswordResetOtp::create([
             'email' => $email,
             'otp' => $otp,
-            'expires_at' => Carbon::now()->addMinutes(10)
+            'expires_at' => Carbon::now()->addMinutes(10),
         ]);
 
         try {
@@ -84,23 +83,24 @@ class ForgotPasswordController extends Controller
 
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Failed to send OTP. Error: ' . $e->getMessage())
+                ->with('error', 'Failed to send OTP. Error: '.$e->getMessage())
                 ->withInput();
         }
     }
-	private function sendZohoMail($name, $toEmail, $subject, $htmlContent)
+
+    private function sendZohoMail($name, $toEmail, $subject, $htmlContent)
     {
         // === Step 1: Exchange Refresh Token for Access Token ===
         $client_id = env('ZOHO_CLIENT_ID');
         $client_secret = env('ZOHO_CLIENT_SECRET');
         $refresh_token = env('ZOHO_REFRESH_TOKEN');
-        $token_url = "https://accounts.zoho.com/oauth/v2/token";
+        $token_url = 'https://accounts.zoho.com/oauth/v2/token';
 
         $tokenData = [
-            "refresh_token" => $refresh_token,
-            "client_id" => $client_id,
-            "client_secret" => $client_secret,
-            "grant_type" => "refresh_token"
+            'refresh_token' => $refresh_token,
+            'client_id' => $client_id,
+            'client_secret' => $client_secret,
+            'grant_type' => 'refresh_token',
         ];
 
         $ch = curl_init();
@@ -112,8 +112,8 @@ class ForgotPasswordController extends Controller
         curl_close($ch);
 
         $tokenResponse = json_decode($response, true);
-        if (!isset($tokenResponse['access_token'])) {
-            throw new \Exception("Unable to get Zoho access token: " . $response);
+        if (! isset($tokenResponse['access_token'])) {
+            throw new \Exception('Unable to get Zoho access token: '.$response);
         }
 
         $access_token = $tokenResponse['access_token'];
@@ -123,11 +123,11 @@ class ForgotPasswordController extends Controller
         $api_url = "https://mail.zoho.com/api/accounts/{$account_id}/messages";
 
         $mailData = [
-            "fromAddress" => "support@catchakiwi.co.nz",
-            "toAddress"   => trim(strtolower($toEmail)),
-            "subject"     => $subject,
-            "content"     => $htmlContent,
-            //"contentType" => "html"
+            'fromAddress' => 'support@catchakiwi.co.nz',
+            'toAddress' => trim(strtolower($toEmail)),
+            'subject' => $subject,
+            'content' => $htmlContent,
+            // "contentType" => "html"
         ];
 
         $ch = curl_init();
@@ -135,7 +135,7 @@ class ForgotPasswordController extends Controller
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Zoho-oauthtoken {$access_token}",
-            "Content-Type: application/json"
+            'Content-Type: application/json',
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($mailData));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -144,12 +144,11 @@ class ForgotPasswordController extends Controller
         $result = json_decode($sendResponse, true);
 
         if (isset($result['errorCode'])) {
-            throw new \Exception("Zoho Mail API Error: " . $result['message']);
+            throw new \Exception('Zoho Mail API Error: '.$result['message']);
         }
 
         return true;
     }
-
 
     /**
      * Verify OTP and reset password (Step 2 - Process)
@@ -161,7 +160,7 @@ class ForgotPasswordController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
             'otp' => 'required|digits:6',
-            'password' => 'required|min:8|confirmed'
+            'password' => 'required|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -176,7 +175,7 @@ class ForgotPasswordController extends Controller
             ->first();
 
         // Check if OTP exists
-        if (!$otpRecord) {
+        if (! $otpRecord) {
             return back()
                 ->with('error', 'Invalid OTP. Please check and try again.')
                 ->withInput($request->except('password', 'password_confirmation'));
@@ -185,6 +184,7 @@ class ForgotPasswordController extends Controller
         // Check if OTP is expired
         if ($otpRecord->isExpired()) {
             $otpRecord->delete();
+
             return back()
                 ->with('error', 'OTP has expired. Please request a new one.')
                 ->withInput($request->except('password', 'password_confirmation'));
@@ -193,7 +193,7 @@ class ForgotPasswordController extends Controller
         // Find user and update password
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return back()
                 ->with('error', 'User not found')
                 ->withInput($request->except('password', 'password_confirmation'));
@@ -223,7 +223,6 @@ class ForgotPasswordController extends Controller
             ->with('success', 'Password reset successfully! You can now login with your new password.');
     }
 
-
     /**
      * Resend OTP to user's email
      * Route: POST /forgot-password/resend-otp
@@ -232,7 +231,7 @@ class ForgotPasswordController extends Controller
     {
         // Validate email
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required|email|exists:users,email',
         ]);
 
         if ($validator->fails()) {
@@ -254,7 +253,7 @@ class ForgotPasswordController extends Controller
         PasswordResetOtp::create([
             'email' => $email,
             'otp' => $otp,
-            'expires_at' => Carbon::now()->addMinutes(10)
+            'expires_at' => Carbon::now()->addMinutes(10),
         ]);
 
         // Send new OTP using Zoho Mail API helper
@@ -270,9 +269,8 @@ class ForgotPasswordController extends Controller
                 ->with('success', 'New OTP sent successfully to your email. Please check your inbox or spam folder.');
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Failed to send OTP. Error: ' . $e->getMessage())
+                ->with('error', 'Failed to send OTP. Error: '.$e->getMessage())
                 ->withInput();
         }
     }
-
 }

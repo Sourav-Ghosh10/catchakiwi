@@ -15,6 +15,6 @@ class VerifyCsrfToken extends Middleware
         'login',
         'login/submit', // URI pattern
         // 'admin/login/*', // URI pattern with wildcard for all login related routes
-        // 'admin/login/*', 
+        // 'admin/login/*',
     ];
 }

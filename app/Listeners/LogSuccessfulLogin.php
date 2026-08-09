@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Listeners;
 
 use Illuminate\Auth\Events\Login;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 class LogSuccessfulLogin
 {
     public function handle(Login $event)
     {
         if (Auth::guard('admin')->check()) {
-            return; 
+            return;
         }
         $user = $event->user;
         $ip = Request::ip();
         $user->last_login_ip = $ip;
-        //$location = Location::get($ip);
+        // $location = Location::get($ip);
         if ($ip == '127.0.0.1' || $ip == '::1') {
             $user->last_login_country = 'Local';
         } else {

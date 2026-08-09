@@ -1,20 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BusinessController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AjaxController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\LocationController;
-use App\Http\Controllers\AdsController;
-use App\Http\Controllers\NoticeController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\CustomAuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminBusinessController;
+use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\CategoryController;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\Admin\NoticeCategoryController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdsController;
+use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CustomAuthenticatedSessionController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,7 +32,7 @@ use App\Http\Controllers\ChatController;
 // Route::get('/', function () {
 //     return view('frontend/home');
 // });
-Route::get('/', [UserController::class, 'Home'])->name('/'); 
+Route::get('/', [UserController::class, 'Home'])->name('/');
 
 Route::get('/terms-and-condition', function () {
     return view('frontend/terms-condition');
@@ -61,13 +64,13 @@ Route::get('/admin-logout', function () {
 })->name('admin.logout');
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
     // Your admin routes here
-  	Route::get('/notifications', [AdminController::class, 'notificationIndex'])->name('notifications.index');
-	Route::get('/notification/create', [AdminController::class, 'notificationCreate'])->name('notification.create');
+    Route::get('/notifications', [AdminController::class, 'notificationIndex'])->name('notifications.index');
+    Route::get('/notification/create', [AdminController::class, 'notificationCreate'])->name('notification.create');
     Route::post('/notification/send', [AdminController::class, 'sendNotification'])->name('notification.send');
     Route::post('/notification/subcategories', [AdminController::class, 'getSubcategories'])->name('notification.subcategories');
     Route::post('/notification/users', [AdminController::class, 'getUsersByCategories'])->name('notification.users');
     Route::get('/notifications/{notification}', [AdminController::class, 'notificationShow'])->name('notifications.show');
-  	Route::post('/notification/users', [AdminController::class, 'getUsers'])->name('notification.users');
+    Route::post('/notification/users', [AdminController::class, 'getUsers'])->name('notification.users');
     Route::get('/email-change-requests', [AdminController::class, 'emailChange'])->name('email-change-requests');
 
     Route::post('/email-change/{user}/approve', [AdminController::class, 'emailChangeapprove'])->name('email-change.approve');
@@ -80,10 +83,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/users/{id}/edit', [AdminController::class, 'useredit'])->name('users.edit');
     Route::put('/users/{id}', [AdminController::class, 'userUpdate'])->name('users.update');
     Route::get('/admin/users/change-status/{id}', [AdminController::class, 'changeStatus'])->name('users.change-status');
-   	Route::post('/users/businesses', [AdminBusinessController::class, 'getUserBusinesses'])
+    Route::post('/users/businesses', [AdminBusinessController::class, 'getUserBusinesses'])
         ->name('users.businesses');
     // Other admin routes...
-    //Route::resource('ads', AdsController::class);
+    // Route::resource('ads', AdsController::class);
 
     Route::resource('ads', AdsController::class)->names([
         'index' => 'ads.index',
@@ -102,14 +105,14 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::put('/locations/update', [LocationController::class, 'update']);
     Route::put('/locations/add', [LocationController::class, 'add']);
     Route::post('/locations/city-delete', [LocationController::class, 'Delete']);
-  
-  	Route::prefix('businesses')->name('businesses.')->group(function () {
+
+    Route::prefix('businesses')->name('businesses.')->group(function () {
         Route::get('/', [AdminBusinessController::class, 'index'])->name('index');
         Route::get('/edit/{id}', [AdminBusinessController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [AdminBusinessController::class, 'update'])->name('update');
         Route::get('/change-status/{id}', [AdminBusinessController::class, 'changeStatus'])->name('change-status');
     });
-  	Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
@@ -117,21 +120,21 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Article Management
-    Route::resource('article-categories', \App\Http\Controllers\Admin\ArticleCategoryController::class)->names('article-categories');
-    Route::get('articles', [\App\Http\Controllers\Admin\ArticleController::class, 'index'])->name('articles.index');
-    Route::get('articles/{id}/edit', [\App\Http\Controllers\Admin\ArticleController::class, 'edit'])->name('articles.edit');
-    Route::put('articles/{id}', [\App\Http\Controllers\Admin\ArticleController::class, 'update'])->name('articles.update');
-    Route::get('articles/status/{id}/{status}', [\App\Http\Controllers\Admin\ArticleController::class, 'changeStatus'])->name('articles.status');
+    Route::resource('article-categories', ArticleCategoryController::class)->names('article-categories');
+    Route::get('articles', [App\Http\Controllers\Admin\ArticleController::class, 'index'])->name('articles.index');
+    Route::get('articles/{id}/edit', [App\Http\Controllers\Admin\ArticleController::class, 'edit'])->name('articles.edit');
+    Route::put('articles/{id}', [App\Http\Controllers\Admin\ArticleController::class, 'update'])->name('articles.update');
+    Route::get('articles/status/{id}/{status}', [App\Http\Controllers\Admin\ArticleController::class, 'changeStatus'])->name('articles.status');
 
     // Notice Management
-    Route::resource('notice-categories', \App\Http\Controllers\Admin\NoticeCategoryController::class)->names('notice-categories');
-    Route::get('notices', [\App\Http\Controllers\Admin\NoticeController::class, 'index'])->name('notices.index');
-    Route::post('notices/{id}/approve', [\App\Http\Controllers\Admin\NoticeController::class, 'approve'])->name('notices.approve');
-    Route::post('notices/{id}/reject', [\App\Http\Controllers\Admin\NoticeController::class, 'reject'])->name('notices.reject');
-    Route::post('notices/{id}/upgrade', [\App\Http\Controllers\Admin\NoticeController::class, 'upgrade'])->name('notices.upgrade');
-    Route::get('notices/{id}/edit', [\App\Http\Controllers\Admin\NoticeController::class, 'edit'])->name('notices.edit');
-    Route::put('notices/{id}/update', [\App\Http\Controllers\Admin\NoticeController::class, 'update'])->name('notices.update');
-    Route::delete('notices/{id}', [\App\Http\Controllers\Admin\NoticeController::class, 'destroy'])->name('notices.destroy');
+    Route::resource('notice-categories', NoticeCategoryController::class)->names('notice-categories');
+    Route::get('notices', [App\Http\Controllers\Admin\NoticeController::class, 'index'])->name('notices.index');
+    Route::post('notices/{id}/approve', [App\Http\Controllers\Admin\NoticeController::class, 'approve'])->name('notices.approve');
+    Route::post('notices/{id}/reject', [App\Http\Controllers\Admin\NoticeController::class, 'reject'])->name('notices.reject');
+    Route::post('notices/{id}/upgrade', [App\Http\Controllers\Admin\NoticeController::class, 'upgrade'])->name('notices.upgrade');
+    Route::get('notices/{id}/edit', [App\Http\Controllers\Admin\NoticeController::class, 'edit'])->name('notices.edit');
+    Route::put('notices/{id}/update', [App\Http\Controllers\Admin\NoticeController::class, 'update'])->name('notices.update');
+    Route::delete('notices/{id}', [App\Http\Controllers\Admin\NoticeController::class, 'destroy'])->name('notices.destroy');
 });
 /*
 ---------------------------------------------------------------------
@@ -149,21 +152,20 @@ Route::get('/cron/delete-inactive-notices', [NoticeController::class, 'deleteIna
 
 Route::get('/get-a-quote', [BusinessController::class, 'getaQuote'])->name('get-a-quote');
 Route::get('/{country}/business', [BusinessController::class, 'list']);
-Route::get('/{country}/business/search', [UserController::class, 'Search'])->name('search'); 
+Route::get('/{country}/business/search', [UserController::class, 'Search'])->name('search');
 Route::get('/{country}/business/{primary}/{secondary}', [BusinessController::class, 'CategoryWiseList']);
 Route::get('/{country}/business/{primary}', [BusinessController::class, 'CategoryWiseList']);
 Route::post('/business/reviewsub', [BusinessController::class, 'reviewSub'])->name('business.reviewsub');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
-    Route::get('/add-your-business', [BusinessController::class, 'addYourBusiness'])->name('add-your-business'); 
+    Route::get('/add-your-business', [BusinessController::class, 'addYourBusiness'])->name('add-your-business');
     Route::post('/business/list/insert', [BusinessController::class, 'listInsert'])->name('business.list.insert');
     Route::get('/business/edit/{id}', [BusinessController::class, 'businessEdit'])->name('business.list.edit');
     Route::put('/business/update/{id}', [BusinessController::class, 'businessUpdate'])->name('business.list.update');
     Route::delete('/business/delete/{id}', [BusinessController::class, 'businessDelete'])->name('business.list.delete');
     Route::post('/business/update-status', [BusinessController::class, 'changeStatus'])->name('business.update-status');
 
-    
     Route::get('/notice-post', [UserController::class, 'Notice'])->name('notice-post');
     Route::post('/notice-submit', [UserController::class, 'NoticePost'])->name('notice-submit');
     Route::get('/notice/edit/{id}', [UserController::class, 'NoticeEdit'])->name('notice.edit');
@@ -176,7 +178,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store/aboutus', [UserController::class, 'StoreAboutusr'])->name('store.aboutus');
 });
 
-//$business = DB::table('business')->join('countries','countries.id','=','business.country')->get();
+// $business = DB::table('business')->join('countries','countries.id','=','business.country')->get();
 // if(!empty($business)){
 //     foreach($business as $busi){
 Route::get('/{country}/business/{primary}/{secondary}/{slug}', [BusinessController::class, 'details']);
@@ -184,7 +186,6 @@ Route::get('/{country}/business/{cat}/{subcat}/{slug}/print', [BusinessControlle
 Route::get('/{country}/profile/{user_id}', [BusinessController::class, 'businessProfile']);
 //     }
 // }
-
 
 Route::get('/business/category', [BusinessController::class, 'category']);
 Route::get('/article/list', [ArticleController::class, 'list'])->name('article.list');
@@ -207,7 +208,6 @@ Route::post('GetCityStatesameVal', [UserController::class, 'GetCityStatesameVal'
 Route::post('getCitystateforselectsize', [UserController::class, 'getCitystateForSelectsize'])->name('getCitystateforselectsize');
 
 Route::post('getstateforselectsize', [UserController::class, 'getStateForSelectsize'])->name('getstateforselectsize');
-
 
 Route::get('changecountry', [UserController::class, 'changeCountry'])->name('changecountry');
 
@@ -252,16 +252,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/typing', [ChatController::class, 'typing'])->name('chat.typing');
     Route::put('/chat/edit-message/{id}', [ChatController::class, 'editMessage'])->name('chat.edit');
     Route::get('/chat/unread', [ChatController::class, 'unreadCounts']);
-  	Route::post('/chat/mark-seen/{receiverId}', [ChatController::class, 'markSeen']);
-  	Route::post('/profile/change-email', [UserController::class, 'requestEmailChange']);
+    Route::post('/chat/mark-seen/{receiverId}', [ChatController::class, 'markSeen']);
+    Route::post('/profile/change-email', [UserController::class, 'requestEmailChange']);
     Route::post('/profile/password-request', [UserController::class, 'requestPasswordChange'])->name('profile.password-request');
-	Route::post('/profile/password-verify', [UserController::class, 'verifyPasswordOtp'])->name('profile.password-verify');
+    Route::post('/profile/password-verify', [UserController::class, 'verifyPasswordOtp'])->name('profile.password-verify');
     Route::post('/notification/read', [UserController::class, 'markAsRead'])->name('notification.read');
 });
 
-Route::get('/start-websockets', function() {
+Route::get('/start-websockets', function () {
     $artisan = base_path('artisan');
-    
+
     // Find the correct CyberPanel PHP 8.2+ path
     $phpPaths = [
         '/usr/local/lsws/lsphp84/bin/php',
@@ -269,7 +269,7 @@ Route::get('/start-websockets', function() {
         '/usr/local/lsws/lsphp82/bin/php',
         '/opt/cpanel/ea-php83/root/usr/bin/php',
         '/opt/cpanel/ea-php82/root/usr/bin/php',
-        'php'
+        'php',
     ];
     $php = 'php';
     foreach ($phpPaths as $path) {
@@ -278,64 +278,68 @@ Route::get('/start-websockets', function() {
             break;
         }
     }
-    
+
     $logFile = storage_path('logs/websockets.log');
-    
+
     // Log the attempt to help with debugging
-    \Log::info("Attempting to start WebSockets using: nohup $php $artisan websockets:serve > $logFile 2>&1 &");
-    
+    Log::info("Attempting to start WebSockets using: nohup $php $artisan websockets:serve > $logFile 2>&1 &");
+
     exec("nohup $php $artisan websockets:serve > $logFile 2>&1 &");
-    
+
     return "WebSocket server START command sent using $php!<br><br>Check <a href='/check-websockets-log'>/check-websockets-log</a> to see if it crashed.";
 });
 
-Route::get('/kill-websockets', function() {
+Route::get('/kill-websockets', function () {
     exec("pkill -f 'websockets:serve'", $output);
-    exec("fuser -k 6001/tcp 2>/dev/null", $output2); // Force kill anything on port 6001
-    return "All stuck WebSocket processes have been KILLED! 💥<br><br>Now please visit <b>/start-websockets</b> to start a fresh one.";
+    exec('fuser -k 6001/tcp 2>/dev/null', $output2); // Force kill anything on port 6001
+
+    return 'All stuck WebSocket processes have been KILLED! 💥<br><br>Now please visit <b>/start-websockets</b> to start a fresh one.';
 });
 
-Route::get('/find-ssl', function() {
+Route::get('/find-ssl', function () {
     $paths = [
         '/home/catchakiwi.com/ssl/catchakiwi.com.crt',
         '/home/catchakiwi.com/ssl/catchakiwi.com.key',
         '/etc/letsencrypt/live/catchakiwi.com/fullchain.pem',
-        '/etc/letsencrypt/live/catchakiwi.com/privkey.pem'
+        '/etc/letsencrypt/live/catchakiwi.com/privkey.pem',
     ];
     $found = [];
     foreach ($paths as $path) {
         if (file_exists($path)) {
-            $found[] = $path . " (READABLE)";
+            $found[] = $path.' (READABLE)';
         } else {
-            $found[] = $path . " (NOT FOUND/NO PERMISSION)";
+            $found[] = $path.' (NOT FOUND/NO PERMISSION)';
         }
     }
-    return implode("<br>", $found);
+
+    return implode('<br>', $found);
 });
 
-Route::get('/check-websockets', function() {
+Route::get('/check-websockets', function () {
     exec("ps aux | grep 'websockets:serve' | grep -v grep", $output);
     if (empty($output)) {
-        return "🔴 WebSocket server is NOT running!";
+        return '🔴 WebSocket server is NOT running!';
     }
-    return "🟢 WebSocket server IS RUNNING!<br><br>" . implode("<br>", $output);
+
+    return '🟢 WebSocket server IS RUNNING!<br><br>'.implode('<br>', $output);
 });
 
-Route::get('/check-websockets-log', function() {
+Route::get('/check-websockets-log', function () {
     $logFile = storage_path('logs/websockets.log');
-    if (!file_exists($logFile)) {
-        return "No log file found. Please visit /start-websockets first.";
+    if (! file_exists($logFile)) {
+        return 'No log file found. Please visit /start-websockets first.';
     }
-    return "<pre>" . file_get_contents($logFile) . "</pre>";
+
+    return '<pre>'.file_get_contents($logFile).'</pre>';
 });
-Route::get('/run-composer', function() {
+Route::get('/run-composer', function () {
     $phpPaths = [
         '/usr/local/lsws/lsphp84/bin/php',
         '/usr/local/lsws/lsphp83/bin/php',
         '/usr/local/lsws/lsphp82/bin/php',
         '/opt/cpanel/ea-php83/root/usr/bin/php',
         '/opt/cpanel/ea-php82/root/usr/bin/php',
-        'php'
+        'php',
     ];
     $php = 'php';
     foreach ($phpPaths as $path) {
@@ -344,12 +348,15 @@ Route::get('/run-composer', function() {
             break;
         }
     }
-    
+
     $composer = exec('which composer');
-    if (!$composer) $composer = 'composer';
-    
+    if (! $composer) {
+        $composer = 'composer';
+    }
+
     exec("COMPOSER_HOME=/tmp HOME=/tmp $php $composer install --no-dev --optimize-autoloader 2>&1", $output);
-    return "Running composer with: $php $composer<br><br>" . implode("<br>", $output);
+
+    return "Running composer with: $php $composer<br><br>".implode('<br>', $output);
 });
 
-//===================================================================================================================
+// ===================================================================================================================

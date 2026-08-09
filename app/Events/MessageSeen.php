@@ -4,7 +4,6 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,6 +14,7 @@ class MessageSeen implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $receiverId;
+
     public $seenBy;
 
     /**
@@ -31,10 +31,10 @@ class MessageSeen implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel|array
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat.' . $this->receiverId);
+        return new PrivateChannel('chat.'.$this->receiverId);
     }
 }

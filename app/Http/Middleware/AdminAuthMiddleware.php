@@ -9,11 +9,12 @@ class AdminAuthMiddleware
     public function handle($request, Closure $next)
     {
 
-        //echo session('admin_id');exit;
-        if (session()->has('admin_login') && session('admin_login')===true) {
+        // echo session('admin_id');exit;
+        if (session()->has('admin_login') && session('admin_login') === true) {
             return $next($request);
         }
+
         return redirect('admin/');
-        //abort(403, 'Unauthorized action.');
+        // abort(403, 'Unauthorized action.');
     }
 }

@@ -1,10 +1,13 @@
 <?php
 
-$now = \Carbon\Carbon::now();
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
+$now = Carbon::now();
 $countryCode = 'NZ';
 
-$categories = \Illuminate\Support\Facades\DB::table('notice_category')
-    ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(
+$categories = DB::table('notice_category')
+    ->select('notice_category.*', DB::raw("(
         SELECT COUNT(*) FROM notice 
         LEFT JOIN users ON users.id = notice.user_id 
         LEFT JOIN cities as c0 ON c0.id = users.suburb_id AND users.country_status = '0'
@@ -16,11 +19,11 @@ $categories = \Illuminate\Support\Facades\DB::table('notice_category')
         LEFT JOIN countries as co1 ON co1.id = s1.country_id
         WHERE notice.category_id = notice_category.id 
             AND notice.status = '1' 
-            AND notice.notice_EXPIRE >= '" . $now . "'
-            AND notice.country = '" . $countryCode . "'
+            AND notice.notice_EXPIRE >= '".$now."'
+            AND notice.country = '".$countryCode."'
     ) as notices_count"))
     ->get();
 
-foreach($categories as $c) {
-    echo $c->category . ": " . $c->notices_count . "\n";
+foreach ($categories as $c) {
+    echo $c->category.': '.$c->notices_count."\n";
 }

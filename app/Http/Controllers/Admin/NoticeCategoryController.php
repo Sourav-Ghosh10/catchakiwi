@@ -12,6 +12,7 @@ class NoticeCategoryController extends Controller
     public function index()
     {
         $categories = NoticeCategory::all();
+
         return view('admin.notice_categories.index', compact('categories'));
     }
 
@@ -32,9 +33,9 @@ class NoticeCategoryController extends Controller
         $data['status'] = 1;
 
         if ($request->hasFile('icon')) {
-            $imageName = time() . '.' . $request->icon->extension();
+            $imageName = time().'.'.$request->icon->extension();
             $request->icon->move(public_path('assets/images/notice'), $imageName);
-            $data['icon'] = 'assets/images/notice/' . $imageName;
+            $data['icon'] = 'assets/images/notice/'.$imageName;
         }
 
         NoticeCategory::create($data);
@@ -46,7 +47,7 @@ class NoticeCategoryController extends Controller
     {
         $category = NoticeCategory::findOrFail($id);
         $request->validate([
-            'category' => 'required|string|max:255|unique:notice_category,category,' . $id,
+            'category' => 'required|string|max:255|unique:notice_category,category,'.$id,
             'subtitle' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'type' => 'nullable|string|max:255',
@@ -59,9 +60,9 @@ class NoticeCategoryController extends Controller
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('icon')) {
-            $imageName = time() . '.' . $request->icon->extension();
+            $imageName = time().'.'.$request->icon->extension();
             $request->icon->move(public_path('assets/images/notice'), $imageName);
-            $data['icon'] = 'assets/images/notice/' . $imageName;
+            $data['icon'] = 'assets/images/notice/'.$imageName;
         }
 
         $category->update($data);
@@ -73,6 +74,7 @@ class NoticeCategoryController extends Controller
     {
         $category = NoticeCategory::findOrFail($id);
         $category->delete();
+
         return redirect()->back()->with('success', 'Notice Category deleted successfully');
     }
 }

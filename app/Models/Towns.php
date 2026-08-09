@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Towns extends Model
 {
-    protected $fillable = ["city_id", "suburb_name","lat","longitude","zoom_level"];
+    protected $fillable = ['city_id', 'suburb_name', 'lat', 'longitude', 'zoom_level'];
 
     public function city()
     {

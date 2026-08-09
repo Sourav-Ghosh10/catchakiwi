@@ -12,6 +12,7 @@ class ArticleCategoryController extends Controller
     public function index()
     {
         $categories = ArticleCategory::all();
+
         return view('admin.article_categories.index', compact('categories'));
     }
 
@@ -35,7 +36,7 @@ class ArticleCategoryController extends Controller
     {
         $category = ArticleCategory::findOrFail($id);
         $request->validate([
-            'title' => 'required|string|max:255|unique:article_categories,title,' . $id,
+            'title' => 'required|string|max:255|unique:article_categories,title,'.$id,
             'description' => 'nullable|string',
         ]);
 
@@ -52,6 +53,7 @@ class ArticleCategoryController extends Controller
     {
         $category = ArticleCategory::findOrFail($id);
         $category->delete();
+
         return redirect()->back()->with('success', 'Category deleted successfully');
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PasswordResetOtp extends Model
 {
@@ -22,7 +24,7 @@ class PasswordResetOtp extends Model
     protected $fillable = [
         'email',
         'otp',
-        'expires_at'
+        'expires_at',
     ];
 
     /**
@@ -38,8 +40,6 @@ class PasswordResetOtp extends Model
 
     /**
      * Check if the OTP has expired
-     *
-     * @return bool
      */
     public function isExpired(): bool
     {
@@ -48,14 +48,12 @@ class PasswordResetOtp extends Model
 
     /**
      * Generate a random 6-digit OTP
-     *
-     * @return string
      */
     public static function generateOtp(): string
     {
         // Generate random number between 0 and 999999
         $otp = random_int(0, 999999);
-        
+
         // Pad with leading zeros to make it 6 digits
         return str_pad($otp, 6, '0', STR_PAD_LEFT);
     }
@@ -63,8 +61,8 @@ class PasswordResetOtp extends Model
     /**
      * Scope a query to only include expired OTPs
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeExpired($query)
     {
@@ -74,8 +72,8 @@ class PasswordResetOtp extends Model
     /**
      * Scope a query to only include valid (non-expired) OTPs
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeValid($query)
     {
@@ -85,7 +83,7 @@ class PasswordResetOtp extends Model
     /**
      * Get the user associated with this OTP
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user()
     {

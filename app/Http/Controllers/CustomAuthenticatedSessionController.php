@@ -1,13 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use App\Providers\RouteServiceProvider;
-use App\Models\User;
-use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+
 class CustomAuthenticatedSessionController extends AuthenticatedSessionController
 {
     public function store(Request $request)
@@ -35,7 +35,7 @@ class CustomAuthenticatedSessionController extends AuthenticatedSessionControlle
                 ]);
 
                 if ($request->has('redirect')) {
-                    return redirect('/' . $request->post('redirect'));
+                    return redirect('/'.$request->post('redirect'));
                 } elseif ($request->has('redirectto')) {
                     return redirect()->to($request->post('redirectto'));
                 } else {
@@ -45,13 +45,14 @@ class CustomAuthenticatedSessionController extends AuthenticatedSessionControlle
         }
 
         return back()->withErrors([
-            //'email' => 'The provided credentials do not match our records or your account is inactive.',
+            // 'email' => 'The provided credentials do not match our records or your account is inactive.',
             'email' => '',
         ]);
     }
+
     private function getUserCountry($ip)
     {
-        if ($ip == '127.0.0.1' || $ip == '::1' || !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+        if ($ip == '127.0.0.1' || $ip == '::1' || ! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
             return 'Local';
         }
 
@@ -59,6 +60,7 @@ class CustomAuthenticatedSessionController extends AuthenticatedSessionControlle
             // Using ipinfo.io (free tier available)
             // Use @ to suppress warnings and check result
             $response = @file_get_contents("http://ipinfo.io/{$ip}/country");
+
             return $response !== false ? trim($response) : 'Unknown';
 
         } catch (\Throwable $e) {
@@ -66,4 +68,3 @@ class CustomAuthenticatedSessionController extends AuthenticatedSessionControlle
         }
     }
 }
-?>

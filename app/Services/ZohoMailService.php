@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Log;
 class ZohoMailService
 {
     protected string $fromAddress = 'support@catchakiwi.co.nz';
+
     protected ?string $accountId;
+
     protected ?string $clientId;
+
     protected ?string $clientSecret;
+
     protected ?string $refreshToken;
 
     public function __construct()
@@ -45,7 +49,8 @@ class ZohoMailService
         curl_close($ch);
 
         if ($curlError) {
-            Log::error('ZohoMailService: Token cURL Error: ' . $curlError);
+            Log::error('ZohoMailService: Token cURL Error: '.$curlError);
+
             return null;
         }
 
@@ -53,6 +58,7 @@ class ZohoMailService
 
         if (empty($data['access_token'])) {
             Log::error('ZohoMailService: Access token missing from response', $data ?? []);
+
             return null;
         }
 
@@ -62,12 +68,10 @@ class ZohoMailService
     /**
      * Send an email via Zoho Mail API.
      *
-     * @param  string|array  $to       Single address or array of addresses
-     * @param  string        $subject
-     * @param  string        $htmlContent  HTML body content
-     * @param  array         $bcc      Optional BCC addresses
-     * @param  string|null   $from     Override from address (default: support@catchakiwi.co.nz)
-     * @return bool
+     * @param  string|array  $to  Single address or array of addresses
+     * @param  string  $htmlContent  HTML body content
+     * @param  array  $bcc  Optional BCC addresses
+     * @param  string|null  $from  Override from address (default: support@catchakiwi.co.nz)
      */
     public function send(
         string|array $to,
@@ -78,7 +82,7 @@ class ZohoMailService
     ): bool {
         $accessToken = $this->getAccessToken();
 
-        if (!$accessToken) {
+        if (! $accessToken) {
             return false;
         }
 
@@ -92,7 +96,7 @@ class ZohoMailService
             'content' => $htmlContent,
         ];
 
-        if (!empty($bcc)) {
+        if (! empty($bcc)) {
             $payload['bccAddress'] = implode(',', $bcc);
         }
 
@@ -104,7 +108,7 @@ class ZohoMailService
             CURLOPT_POST => true,
             CURLOPT_HTTPHEADER => [
                 "Authorization: Zoho-oauthtoken {$accessToken}",
-                "Content-Type: application/json",
+                'Content-Type: application/json',
             ],
             CURLOPT_POSTFIELDS => json_encode($payload),
             CURLOPT_RETURNTRANSFER => true,
@@ -117,7 +121,8 @@ class ZohoMailService
         curl_close($ch);
 
         if ($curlError) {
-            Log::error('ZohoMailService: Send cURL Error: ' . $curlError);
+            Log::error('ZohoMailService: Send cURL Error: '.$curlError);
+
             return false;
         }
 
@@ -128,6 +133,7 @@ class ZohoMailService
         }
 
         Log::error('ZohoMailService: Send failed', $result ?? ['raw' => $response]);
+
         return false;
     }
 

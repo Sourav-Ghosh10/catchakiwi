@@ -38,7 +38,7 @@ class Article extends Model
         parent::boot();
         static::creating(function ($article) {
             if (empty($article->slug)) {
-                $article->slug = Str::slug($article->title) . '-' . uniqid();
+                $article->slug = Str::slug($article->title).'-'.uniqid();
             }
         });
     }

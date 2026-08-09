@@ -15,7 +15,7 @@ $categories = [
 ];
 
 foreach ($categories as $cat) {
-    DB::table('notice_category')->where('category', 'like', '%' . $cat['title'] . '%')->update([
+    DB::table('notice_category')->where('category', 'like', '%'.$cat['title'].'%')->update([
         'subtitle' => $cat['subtitle'],
         'icon' => $cat['icon'],
         'color' => $cat['color'],

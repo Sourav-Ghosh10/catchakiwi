@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ads;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class NoticeController extends Controller
 {
     public function noticeBoard(Request $request, $categoryParam = null)
     {
         $countryCode = session('CountryCode', 'NZ');
-        $ads = \App\Models\Ads::where('country', $countryCode)->get();
+        $ads = Ads::where('country', $countryCode)->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = $grouped->get('side', []);
 
-        if (!$categoryParam) {
+        if (! $categoryParam) {
             $categoryParam = $request->input('category');
         }
         $search = $request->input('search');
 
-        $categories = \Illuminate\Support\Facades\DB::table('notice_category')
-            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(
+        $categories = DB::table('notice_category')
+            ->select('notice_category.*', DB::raw("(
                 SELECT COUNT(*) FROM notice 
                 LEFT JOIN users ON users.id = notice.user_id 
                 LEFT JOIN cities as c0 ON c0.id = users.suburb_id AND users.country_status = '0'
@@ -31,8 +35,8 @@ class NoticeController extends Controller
                 LEFT JOIN countries as co1 ON co1.id = s1.country_id
                 WHERE notice.category_id = notice_category.id 
                   AND notice.status = '1' 
-                  AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "'
-                  AND notice.country = '" . $countryCode . "'
+                  AND notice.notice_EXPIRE >= '".Carbon::now()."'
+                  AND notice.country = '".$countryCode."'
             ) as notices_count"))
             ->get();
 
@@ -46,16 +50,16 @@ class NoticeController extends Controller
         }
         $categoryId = $activeCategory ? $activeCategory->id : null;
 
-        $noticesQuery = \Illuminate\Support\Facades\DB::table('notice')
+        $noticesQuery = DB::table('notice')
             ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
-            ->leftJoin('cities as c0', function($join) {
+            ->leftJoin('cities as c0', function ($join) {
                 $join->on('c0.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '0');
+                    ->where('users.country_status', '=', '0');
             })
-            ->leftJoin('towns as t1', function($join) {
+            ->leftJoin('towns as t1', function ($join) {
                 $join->on('t1.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '1');
+                    ->where('users.country_status', '=', '1');
             })
             ->leftJoin('cities as c1', 'c1.id', '=', 't1.city_id')
             ->leftJoin('states as s0', 's0.id', '=', 'c0.state_id')
@@ -64,7 +68,7 @@ class NoticeController extends Controller
             ->leftJoin('countries as co1', 'co1.id', '=', 's1.country_id')
             ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
             ->where('notice.status', '1')
-            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->where('notice.notice_EXPIRE', '>=', Carbon::now())
             ->where('notice.country', $countryCode)
             ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
@@ -74,9 +78,9 @@ class NoticeController extends Controller
         }
 
         if ($search) {
-            $noticesQuery->where(function($q) use ($search) {
+            $noticesQuery->where(function ($q) use ($search) {
                 $q->where('notice.heading', 'like', "%{$search}%")
-                  ->orWhere('notice.content', 'like', "%{$search}%");
+                    ->orWhere('notice.content', 'like', "%{$search}%");
             });
         }
 
@@ -84,7 +88,7 @@ class NoticeController extends Controller
 
         // Fetch images
         $noticeIds = $notices->pluck('id');
-        $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
+        $noticeImages = DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
             ->orderBy('id', 'asc')
             ->get()
@@ -96,7 +100,7 @@ class NoticeController extends Controller
     public function noticeBoardV2(Request $request)
     {
         $countryCode = session('CountryCode', 'NZ');
-        $ads = \App\Models\Ads::where('country', $countryCode)->get();
+        $ads = Ads::where('country', $countryCode)->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = $grouped->get('side', []);
 
@@ -104,8 +108,8 @@ class NoticeController extends Controller
         $categoryParam = $request->input('category');
 
         // Fetch categories with counts
-        $categories = \Illuminate\Support\Facades\DB::table('notice_category')
-            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(
+        $categories = DB::table('notice_category')
+            ->select('notice_category.*', DB::raw("(
                 SELECT COUNT(*) FROM notice 
                 LEFT JOIN users ON users.id = notice.user_id 
                 LEFT JOIN cities as c0 ON c0.id = users.suburb_id AND users.country_status = '0'
@@ -117,8 +121,8 @@ class NoticeController extends Controller
                 LEFT JOIN countries as co1 ON co1.id = s1.country_id
                 WHERE notice.category_id = notice_category.id 
                   AND notice.status = '1' 
-                  AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "'
-                  AND notice.country = '" . $countryCode . "'
+                  AND notice.notice_EXPIRE >= '".Carbon::now()."'
+                  AND notice.country = '".$countryCode."'
             ) as notices_count"))
             ->get();
 
@@ -133,16 +137,16 @@ class NoticeController extends Controller
         $categoryId = $activeCategory ? $activeCategory->id : null;
 
         // Fetch latest notices
-        $latestNoticesQuery = \Illuminate\Support\Facades\DB::table('notice')
+        $latestNoticesQuery = DB::table('notice')
             ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
-            ->leftJoin('cities as c0', function($join) {
+            ->leftJoin('cities as c0', function ($join) {
                 $join->on('c0.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '0');
+                    ->where('users.country_status', '=', '0');
             })
-            ->leftJoin('towns as t1', function($join) {
+            ->leftJoin('towns as t1', function ($join) {
                 $join->on('t1.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '1');
+                    ->where('users.country_status', '=', '1');
             })
             ->leftJoin('cities as c1', 'c1.id', '=', 't1.city_id')
             ->leftJoin('states as s0', 's0.id', '=', 'c0.state_id')
@@ -151,15 +155,15 @@ class NoticeController extends Controller
             ->leftJoin('countries as co1', 'co1.id', '=', 's1.country_id')
             ->select('notice.*', 'notice_category.category as category_name')
             ->where('notice.status', '1')
-            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->where('notice.notice_EXPIRE', '>=', Carbon::now())
             ->where('notice.country', $countryCode)
             ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 
         if ($search) {
-            $latestNoticesQuery->where(function($q) use ($search) {
+            $latestNoticesQuery->where(function ($q) use ($search) {
                 $q->where('notice.heading', 'like', "%{$search}%")
-                  ->orWhere('notice.content', 'like', "%{$search}%");
+                    ->orWhere('notice.content', 'like', "%{$search}%");
             });
         }
 
@@ -174,15 +178,15 @@ class NoticeController extends Controller
         }
 
         // Fetch spotlight notice ($5 Service Deal - ID 1)
-        $spotlightNotice = \Illuminate\Support\Facades\DB::table('notice')
+        $spotlightNotice = DB::table('notice')
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
-            ->leftJoin('cities as c0', function($join) {
+            ->leftJoin('cities as c0', function ($join) {
                 $join->on('c0.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '0');
+                    ->where('users.country_status', '=', '0');
             })
-            ->leftJoin('towns as t1', function($join) {
+            ->leftJoin('towns as t1', function ($join) {
                 $join->on('t1.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '1');
+                    ->where('users.country_status', '=', '1');
             })
             ->leftJoin('cities as c1', 'c1.id', '=', 't1.city_id')
             ->leftJoin('states as s0', 's0.id', '=', 'c0.state_id')
@@ -192,14 +196,14 @@ class NoticeController extends Controller
             ->select('notice.*')
             ->where('notice.category_id', 1)
             ->where('notice.status', '1')
-            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->where('notice.notice_EXPIRE', '>=', Carbon::now())
             ->where('notice.country', $countryCode)
             ->orderBy('notice.created_at', 'desc')
             ->first();
 
         // Fetch images for these notices
         $noticeIds = $latestNotices->pluck('id');
-        $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
+        $noticeImages = DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
             ->orderBy('id', 'asc')
             ->get()
@@ -211,7 +215,7 @@ class NoticeController extends Controller
     public function searchNotices(Request $request)
     {
         $countryCode = session('CountryCode', 'NZ');
-        $ads = \App\Models\Ads::where('country', $countryCode)->get();
+        $ads = Ads::where('country', $countryCode)->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = $grouped->get('side', []);
 
@@ -219,8 +223,8 @@ class NoticeController extends Controller
         $categoryParam = $request->input('category');
 
         // Fetch categories with counts
-        $categories = \Illuminate\Support\Facades\DB::table('notice_category')
-            ->select('notice_category.*', \Illuminate\Support\Facades\DB::raw("(
+        $categories = DB::table('notice_category')
+            ->select('notice_category.*', DB::raw("(
                 SELECT COUNT(*) FROM notice 
                 LEFT JOIN users ON users.id = notice.user_id 
                 LEFT JOIN cities as c0 ON c0.id = users.suburb_id AND users.country_status = '0'
@@ -232,8 +236,8 @@ class NoticeController extends Controller
                 LEFT JOIN countries as co1 ON co1.id = s1.country_id
                 WHERE notice.category_id = notice_category.id 
                   AND notice.status = '1' 
-                  AND notice.notice_EXPIRE >= '" . \Carbon\Carbon::now() . "'
-                  AND notice.country = '" . $countryCode . "'
+                  AND notice.notice_EXPIRE >= '".Carbon::now()."'
+                  AND notice.country = '".$countryCode."'
             ) as notices_count"))
             ->get();
 
@@ -248,16 +252,16 @@ class NoticeController extends Controller
         $categoryId = $activeCategory ? $activeCategory->id : null;
 
         // Fetch matching notices
-        $noticesQuery = \Illuminate\Support\Facades\DB::table('notice')
+        $noticesQuery = DB::table('notice')
             ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
-            ->leftJoin('cities as c0', function($join) {
+            ->leftJoin('cities as c0', function ($join) {
                 $join->on('c0.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '0');
+                    ->where('users.country_status', '=', '0');
             })
-            ->leftJoin('towns as t1', function($join) {
+            ->leftJoin('towns as t1', function ($join) {
                 $join->on('t1.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '1');
+                    ->where('users.country_status', '=', '1');
             })
             ->leftJoin('cities as c1', 'c1.id', '=', 't1.city_id')
             ->leftJoin('states as s0', 's0.id', '=', 'c0.state_id')
@@ -266,15 +270,15 @@ class NoticeController extends Controller
             ->leftJoin('countries as co1', 'co1.id', '=', 's1.country_id')
             ->select('notice.*', 'notice_category.category as category_name', 'users.name as user_name')
             ->where('notice.status', '1')
-            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->where('notice.notice_EXPIRE', '>=', Carbon::now())
             ->where('notice.country', $countryCode)
             ->orderByRaw("CASE WHEN notice.noticetype = 'feature' THEN 1 ELSE 2 END ASC")
             ->orderBy('notice.created_at', 'desc');
 
         if ($search) {
-            $noticesQuery->where(function($q) use ($search) {
+            $noticesQuery->where(function ($q) use ($search) {
                 $q->where('notice.heading', 'like', "%{$search}%")
-                  ->orWhere('notice.content', 'like', "%{$search}%");
+                    ->orWhere('notice.content', 'like', "%{$search}%");
             });
         }
 
@@ -286,7 +290,7 @@ class NoticeController extends Controller
 
         // Fetch images for these notices
         $noticeIds = $notices->pluck('id');
-        $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
+        $noticeImages = DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
             ->orderBy('id', 'asc')
             ->get()
@@ -297,9 +301,9 @@ class NoticeController extends Controller
 
     public function incrementView($id)
     {
-        \Illuminate\Support\Facades\DB::table('notice')
+        DB::table('notice')
             ->where('id', $id)
-            ->update(['views' => \Illuminate\Support\Facades\DB::raw('COALESCE(views, 0) + 1')]);
+            ->update(['views' => DB::raw('COALESCE(views, 0) + 1')]);
 
         return response()->json(['success' => true]);
     }
@@ -307,7 +311,7 @@ class NoticeController extends Controller
     public function latestPosts(Request $request)
     {
         $countryCode = session('CountryCode', 'NZ');
-        $ads = \App\Models\Ads::where('country', $countryCode)->get();
+        $ads = Ads::where('country', $countryCode)->get();
         $grouped = collect($ads)->groupBy('type');
         $sideData = $grouped->get('side', []);
 
@@ -315,18 +319,18 @@ class NoticeController extends Controller
         $location = $request->input('location');
         $categoryId = $request->input('category');
 
-        $categories = \Illuminate\Support\Facades\DB::table('notice_category')->get();
+        $categories = DB::table('notice_category')->get();
 
-        $latestNoticesQuery = \Illuminate\Support\Facades\DB::table('notice')
+        $latestNoticesQuery = DB::table('notice')
             ->join('notice_category', 'notice_category.id', '=', 'notice.category_id')
             ->leftJoin('users', 'users.id', '=', 'notice.user_id')
-            ->leftJoin('cities as c0', function($join) {
+            ->leftJoin('cities as c0', function ($join) {
                 $join->on('c0.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '0');
+                    ->where('users.country_status', '=', '0');
             })
-            ->leftJoin('towns as t1', function($join) {
+            ->leftJoin('towns as t1', function ($join) {
                 $join->on('t1.id', '=', 'users.suburb_id')
-                     ->where('users.country_status', '=', '1');
+                    ->where('users.country_status', '=', '1');
             })
             ->leftJoin('cities as c1', 'c1.id', '=', 't1.city_id')
             ->leftJoin('states as s0', 's0.id', '=', 'c0.state_id')
@@ -335,34 +339,34 @@ class NoticeController extends Controller
             ->leftJoin('countries as co1', 'co1.id', '=', 's1.country_id')
             ->select('notice.*', 'notice_category.category as category_name')
             ->where('notice.status', '1')
-            ->where('notice.notice_EXPIRE', '>=', \Carbon\Carbon::now())
+            ->where('notice.notice_EXPIRE', '>=', Carbon::now())
             ->where('notice.country', $countryCode)
             ->orderBy('notice.created_at', 'desc');
 
         if ($search) {
-            $latestNoticesQuery->where(function($q) use ($search) {
+            $latestNoticesQuery->where(function ($q) use ($search) {
                 $q->where('notice.heading', 'like', "%{$search}%")
-                  ->orWhere('notice.content', 'like', "%{$search}%");
+                    ->orWhere('notice.content', 'like', "%{$search}%");
             });
         }
-        
+
         if ($categoryId) {
             $latestNoticesQuery->where('notice.category_id', $categoryId);
         }
 
         if ($location) {
-            $latestNoticesQuery->where(function($q) use ($location) {
+            $latestNoticesQuery->where(function ($q) use ($location) {
                 $q->where('c0.name', 'like', "%{$location}%")
-                  ->orWhere('t1.suburb_name', 'like', "%{$location}%")
-                  ->orWhere('c1.name', 'like', "%{$location}%")
-                  ->orWhere('notice.town_suburb', 'like', "%{$location}%");
+                    ->orWhere('t1.suburb_name', 'like', "%{$location}%")
+                    ->orWhere('c1.name', 'like', "%{$location}%")
+                    ->orWhere('notice.town_suburb', 'like', "%{$location}%");
             });
         }
 
         $notices = $latestNoticesQuery->paginate(12);
 
         $noticeIds = collect($notices->items())->pluck('id');
-        $noticeImages = \Illuminate\Support\Facades\DB::table('notice_image')
+        $noticeImages = DB::table('notice_image')
             ->whereIn('notice_id', $noticeIds)
             ->orderBy('id', 'asc')
             ->get()
@@ -372,7 +376,7 @@ class NoticeController extends Controller
             return [$catInfo->id => $catInfo->type ?? null];
         });
         $noticeCategorySlugs = collect($categories)->mapWithKeys(function ($catInfo) {
-            return [$catInfo->id => $catInfo->slug ?? \Illuminate\Support\Str::slug($catInfo->category)];
+            return [$catInfo->id => $catInfo->slug ?? Str::slug($catInfo->category)];
         });
 
         if ($request->ajax()) {
@@ -384,22 +388,22 @@ class NoticeController extends Controller
 
     public function deleteInactiveNotices()
     {
-        $oneMonthAgo = \Carbon\Carbon::now()->subMonth();
-        
-        $noticesToDelete = \Illuminate\Support\Facades\DB::table('notice')
-            ->where(function($query) use ($oneMonthAgo) {
+        $oneMonthAgo = Carbon::now()->subMonth();
+
+        $noticesToDelete = DB::table('notice')
+            ->where(function ($query) use ($oneMonthAgo) {
                 $query->where('expire_at', '<', $oneMonthAgo)
-                      ->orWhere('notice_EXPIRE', '<', $oneMonthAgo);
+                    ->orWhere('notice_EXPIRE', '<', $oneMonthAgo);
             })
             ->get();
-            
+
         $count = $noticesToDelete->count();
-        
+
         foreach ($noticesToDelete as $notice) {
-            \Illuminate\Support\Facades\DB::table('notice_image')->where('notice_id', $notice->id)->delete();
-            \Illuminate\Support\Facades\DB::table('notice')->where('id', $notice->id)->delete();
+            DB::table('notice_image')->where('notice_id', $notice->id)->delete();
+            DB::table('notice')->where('id', $notice->id)->delete();
         }
-        
+
         return response()->json(['success' => true, 'message' => "Deleted $count inactive notices."]);
     }
 }
