@@ -14,7 +14,7 @@ class IpLocate
         if (Session::has('CountryCode')) {
 
         } else {
-            $userIP = $_SERVER['REMOTE_ADDR'];
+            $userIP = $request->ip();
 
             if ($userIP == '127.0.0.1' || $userIP == '::1' || ! filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
                 session(['CountryCode' => 'NZ', 'Country' => 'New Zealand', 'location' => 'NZ-New Zealand']);
