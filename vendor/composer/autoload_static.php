@@ -426,8 +426,8 @@ class ComposerStaticInite2168c9d22de493b3bdc97b9c0e42835
         ),
         'Nette\\' => 
         array (
-            0 => __DIR__ . '/..' . '/nette/utils/src',
-            1 => __DIR__ . '/..' . '/nette/schema/src',
+            0 => __DIR__ . '/..' . '/nette/schema/src',
+            1 => __DIR__ . '/..' . '/nette/utils/src',
         ),
         'Monolog\\' => 
         array (
@@ -577,10 +577,12 @@ class ComposerStaticInite2168c9d22de493b3bdc97b9c0e42835
         'Database\\Seeders\\' => 
         array (
             0 => __DIR__ . '/../..' . '/database/seeders',
+            1 => __DIR__ . '/..' . '/laravel/pint/database/seeders',
         ),
         'Database\\Factories\\' => 
         array (
             0 => __DIR__ . '/../..' . '/database/factories',
+            1 => __DIR__ . '/..' . '/laravel/pint/database/factories',
         ),
         'DASPRiD\\Enum\\' => 
         array (
@@ -617,6 +619,7 @@ class ComposerStaticInite2168c9d22de493b3bdc97b9c0e42835
         'App\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
+            1 => __DIR__ . '/..' . '/laravel/pint/app',
         ),
     );
 
@@ -638,6 +641,10 @@ class ComposerStaticInite2168c9d22de493b3bdc97b9c0e42835
         'App\\Actions\\Fortify\\UpdateUserProfileInformation' => __DIR__ . '/../..' . '/app/Actions/Fortify/UpdateUserProfileInformation.php',
         'App\\Actions\\Jetstream\\DeleteUser' => __DIR__ . '/../..' . '/app/Actions/Jetstream/DeleteUser.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Events\\MessageEdited' => __DIR__ . '/../..' . '/app/Events/MessageEdited.php',
+        'App\\Events\\MessageSeen' => __DIR__ . '/../..' . '/app/Events/MessageSeen.php',
+        'App\\Events\\MessageSent' => __DIR__ . '/../..' . '/app/Events/MessageSent.php',
+        'App\\Events\\UserTyping' => __DIR__ . '/../..' . '/app/Events/UserTyping.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\Admin\\AdminBusinessController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/AdminBusinessController.php',
