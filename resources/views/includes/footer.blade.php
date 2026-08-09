@@ -325,7 +325,7 @@ function truncate(str, n) {
 }
 
 function openChatInProfile(userId) {
-    window.open('https://catchakiwi.com/profile#parentHorizontalTab3', '_self');
+    window.location.href = '/profile?chat_user_id=' + userId + '#parentHorizontalTab3';
 }
 
 // Run every 12 seconds

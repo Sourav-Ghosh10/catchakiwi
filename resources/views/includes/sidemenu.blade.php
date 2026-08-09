@@ -48,7 +48,7 @@
                                             <li class="loading">Loading messages...</li>
                                         </ul>
                                         <p class="seeallnotifi">
-                                            <a href="https://catchakiwi.com/profile#parentHorizontalTab3">See All</a>
+                                            <a href="{{ url('/profile') }}#parentHorizontalTab3">See All</a>
                                         </p>
                                     </div>
                                 </a>
