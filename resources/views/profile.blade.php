@@ -1298,7 +1298,8 @@ function fetchMessages(id) {
     .then(r => r.json())
     .then(msgs => {
         desktopMessages.innerHTML = '';
-        msgs.forEach(m => renderMessage(m, desktopMessages));
+        // Reverse so newest message appears first (at the top)
+        msgs.slice().reverse().forEach(m => renderMessage(m, desktopMessages));
         desktopMessages.scrollTop = 0;
     })
     .catch(console.error);
@@ -1396,12 +1397,12 @@ function sendMessage(receiverId, text, mobileContainer = null) {
             </div>`;
 
         if (desktopMessages) {
-            desktopMessages.appendChild(div);
+            desktopMessages.prepend(div);
             desktopMessages.scrollTop = 0;
         } else if (mobileContainer) {
             const wrap = mobileContainer.querySelector('.messages');
             if (wrap) {
-                wrap.appendChild(div);
+                wrap.prepend(div);
                 wrap.scrollTop = 0;
             }
         }
@@ -1554,7 +1555,10 @@ if (typeof Echo !== 'undefined') {
                 const msg = e.message;
                 // If this is the currently open chat, append it
                 if (currentChatId == msg.sender_id) {
-                    renderMessage(msg, desktopMessages);
+                    // Prepend so newest message appears at the top
+                    const tempContainer = document.createElement('div');
+                    renderMessage(msg, tempContainer);
+                    desktopMessages.prepend(tempContainer.firstChild);
                     desktopMessages.scrollTop = 0;
                     // Auto mark seen since the chat is open
                     markSeen(msg.sender_id);
