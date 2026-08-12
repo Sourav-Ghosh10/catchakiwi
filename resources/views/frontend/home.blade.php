@@ -277,10 +277,10 @@
       <!-- body start-->
       <div class="container">
          <div class="home_midbody">
-            <h2>Search Your Kiwi Business Community</h2>
-         <!--   <p>So often, two people who need to connect walk straight past each other in the street. Don't let Catchakiwi
-         become just an online community, let it become the hub of our community.</p>-->
-            <p class="desk-text">Every day, amazing people like you pass by without ever knowing the connections that could change their lives. With Catchakiwi, you’re not just joining an online community—you’re stepping into the vibrant center of our shared community.</p>
+            <h2>Got something to offer?</h2>
+            <p class="desk-text">A product. A service. An idea. A skill.</p>
+            <p class="desk-text">Put it on Catchakiwi and see where it takes you.</p>
+            <p class="desk-text">Catch &rarr; Connect &rarr; Grow</p>
             <button class="p-3 d-flex align-items-center justify-content-center newcacpop" id="newcacpop">
                 <span class="me-sm-3">The new catchakiwi is coming</span>
                 <div class="bg">

@@ -140,7 +140,8 @@
                             if ($isItemsCategory && $noticeLookingFor !== '') {
                                 $noticeDisplayCategory = $isWantedNotice ? 'Items Wanted' : 'Items for Sale';
                             }
-                            $noticeDisplayLocation = $notice->town_suburb ? trim(Str::before($notice->town_suburb, ',')) : null;
+                            $parts = $notice->town_suburb ? array_map('trim', explode(',', $notice->town_suburb)) : [];
+                            $noticeDisplayLocation = count($parts) >= 2 ? $parts[1] : ($parts[0] ?? null);
                         @endphp
                         <div class="notice-card {{ $notice->noticetype == 'feature' ? 'featured-card' : '' }} {{ $noticeCardTypeClass }} {{ $noticeCardCategoryClass }}" data-notice-id="{{ $notice->id }}" role="button" tabindex="0">
                             <div class="notice-card-image-wrapper">
