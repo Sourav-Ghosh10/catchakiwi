@@ -343,8 +343,10 @@
          </div>
       </div>
       <div class="for_cellphonepara">
-         <p>Building a home-based business isn’t easy, but you don’t have to do it alone. Catchakiwi connects you with like-minded entrepreneurs, turning your community into a powerful business network.
-         </p>
+         <p>Got something to offer?</p>
+         <p>A product. A service. An idea. A skill.</p>
+         <p>Put it on Catchakiwi and see where it takes you.</p>
+         <p>Catch &rarr; Connect &rarr; Grow</p>
       </div>
       <!-- body start end-->
      
