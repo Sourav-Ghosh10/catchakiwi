@@ -280,7 +280,7 @@
             <h2>Got something to offer?</h2>
             <p class="desk-text">A product. A service. An idea. A skill.</p>
             <p class="desk-text">Put it on Catchakiwi and see where it takes you.</p>
-            <p class="desk-text">Catch &rarr; Connect &rarr; Grow</p>
+            <p class="desk-text">Catch &rarr; Connect &rarr; Grow</p> 
             <button class="p-3 d-flex align-items-center justify-content-center newcacpop" id="newcacpop">
                 <span class="me-sm-3">The new catchakiwi is coming</span>
                 <div class="bg">
