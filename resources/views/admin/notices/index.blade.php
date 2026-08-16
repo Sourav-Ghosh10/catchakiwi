@@ -178,4 +178,68 @@
 </div>
 @endforeach
 
+<script>
+(function () {
+    function sortTable(table, colIndex, asc) {
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort(function (a, b) {
+            const cellA = a.cells[colIndex];
+            const cellB = b.cells[colIndex];
+            if (!cellA || !cellB) return 0;
+
+            // Use data-sort attribute if available (for date columns), else text
+            const valA = (cellA.dataset.sort ?? cellA.innerText).trim().toLowerCase();
+            const valB = (cellB.dataset.sort ?? cellB.innerText).trim().toLowerCase();
+
+            // Numeric sort for the # column
+            const numA = parseFloat(valA);
+            const numB = parseFloat(valB);
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return asc ? numA - numB : numB - numA;
+            }
+
+            return asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+
+        rows.forEach(function (row) { tbody.appendChild(row); });
+    }
+
+    function initSortable(table) {
+        const headers = table.querySelectorAll('th.sortable-col');
+        let lastCol = -1, lastAsc = true;
+
+        headers.forEach(function (th) {
+            th.addEventListener('click', function () {
+                const col = parseInt(th.dataset.col, 10);
+                const asc = (lastCol === col) ? !lastAsc : true;
+                lastCol = col;
+                lastAsc = asc;
+
+                // Reset all icons
+                table.querySelectorAll('th.sortable-col .sort-icon').forEach(function (icon) {
+                    icon.textContent = '⇅';
+                    icon.style.color = '';
+                });
+
+                // Set active icon
+                const icon = th.querySelector('.sort-icon');
+                icon.textContent = asc ? '▲' : '▼';
+                icon.style.color = '#17a2b8';
+
+                sortTable(table, col, asc);
+            });
+        });
+    }
+
+    // Init on page load and also after tab switch (tables may render lazily)
+    function initAll() {
+        document.querySelectorAll('table.sortable-table').forEach(initSortable);
+    }
+
+    document.addEventListener('DOMContentLoaded', initAll);
+})();
+</script>
+
 @include('includes/admin-footer')

@@ -1,22 +1,38 @@
 <div class="table-responsive">
-    <table class="table table-dark">
+    <table class="table table-dark sortable-table" id="noticesTable-{{ uniqid() }}">
         <thead>
             <tr>
-                <th> # </th>
-                <th> User </th>
-                <th> Country </th>
-                <th> Category </th>
-                <th> Type </th>
-                <th> Heading </th>
-                <th> Status </th>
-                <th> Expires On </th>
-                <th> Actions </th>
+                <th class="sortable-col" data-col="0" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    # <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="1" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    User <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="2" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    Country <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="3" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    Category <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="4" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    Type <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="5" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    Heading <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="6" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    Status <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th class="sortable-col" data-col="7" style="cursor:pointer; white-space:nowrap; user-select:none;">
+                    Expires On <span class="sort-icon text-muted" style="font-size:11px;">⇅</span>
+                </th>
+                <th style="white-space:nowrap;">Actions</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($filteredNotices as $key => $notice)
+            @forelse($filteredNotices as $notice)
             <tr>
-                <td> {{ $key + 1 }} </td>
+                <td> {{ $notice->id }} </td>
                 <td> 
                     <div style="font-weight: bold;">{{ $notice->user_name ?? 'N/A' }}</div>
                     <div style="font-size: 11px; color: #8f94a2;">{{ $notice->user_email ?? 'N/A' }}</div>
@@ -40,7 +56,7 @@
                         <span class="badge badge-warning">Pending Approval</span>
                     @endif
                 </td>
-                <td>
+                <td data-sort="{{ $notice->notice_EXPIRE ?? '0000-00-00' }}">
                     @if($notice->notice_EXPIRE)
                         <span class="{{ \Carbon\Carbon::parse($notice->notice_EXPIRE)->isPast() ? 'text-danger' : 'text-success' }}">
                             {{ \Carbon\Carbon::parse($notice->notice_EXPIRE)->format('d M Y') }}
