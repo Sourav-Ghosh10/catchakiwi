@@ -37,20 +37,9 @@
                                     <div class="text-center mt-2">
                                     </div>
                                 </div>
-								<a href="#" class="email_notift">
+								<a href="{{ url('/profile') }}#parentHorizontalTab3" class="header_msg_link">
                                     <span id="headerMsgCount">0</span>
-                                    <img src="{{ asset('assets/images/top_emailicon.png') }}" alt="">
-
-                                    <div class="notification_dropdown msgdrop">
-                                        <p class="notifi_title">Messages</p>
-                                        <ul id="headerMsgList">
-                                            <!-- Messages injected here by JS -->
-                                            <li class="loading">Loading messages...</li>
-                                        </ul>
-                                        <p class="seeallnotifi">
-                                            <a href="{{ url('/profile') }}#parentHorizontalTab3">See All</a>
-                                        </p>
-                                    </div>
+                                    <img src="{{ asset('assets/images/top_emailicon.png') }}" alt="Messages">
                                 </a>
 								@endif
 								<div class="slide_menu">

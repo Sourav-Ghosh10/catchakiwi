@@ -724,7 +724,12 @@ class UserController extends Controller
         $notice->budget = $request->input('budget');
         $notice->message_text = $request->input('message_text');
         $notice->country = $request->input('header_country') ?? session('CountryCode', 'NZ');
+        $notice->gs_address = $request->input('gs_address') ?: null;
+        $notice->gs_lat = $request->input('gs_lat') ?: null;
+        $notice->gs_lng = $request->input('gs_lng') ?: null;
+        $notice->gs_additional_info = $request->input('gs_additional_info') ?: null;
         $notice->created_at = Carbon::now();
+
 
         if ($noticetype === 'standard') {
             $notice->status = '1'; // Approved by default
@@ -1058,6 +1063,10 @@ class UserController extends Controller
         $notice->start_date = $request->input('start_date');
         $notice->budget = $request->input('budget');
         $notice->message_text = $request->input('message_text');
+        $notice->gs_address = $request->input('gs_address') ?: null;
+        $notice->gs_lat = $request->input('gs_lat') ?: null;
+        $notice->gs_lng = $request->input('gs_lng') ?: null;
+        $notice->gs_additional_info = $request->input('gs_additional_info') ?: null;
 
         if ($noticetype === 'standard') {
             $notice->status = '1';

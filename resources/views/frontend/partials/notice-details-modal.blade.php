@@ -86,6 +86,35 @@
                         @endif
                     </div>
 
+                    @if($noticeCategorySlug === 'garage-sales' && !empty($notice->gs_address))
+                        <div class="notice-modal-garage-location">
+                            <div class="notice-modal-address">
+                                <i class="fa fa-map-marker" style="color:#9bcd22; margin-right:6px;"></i>
+                                <strong>{{ $notice->gs_address }}</strong>
+                            </div>
+                            @if(!empty($notice->gs_lat) && !empty($notice->gs_lng))
+                                <div class="notice-modal-map">
+                                    <iframe
+                                        width="100%"
+                                        height="200"
+                                        frameborder="0"
+                                        scrolling="no"
+                                        marginheight="0"
+                                        marginwidth="0"
+                                        src="https://www.openstreetmap.org/export/embed.html?bbox={{ floatval($notice->gs_lng) - 0.01 }}%2C{{ floatval($notice->gs_lat) - 0.01 }}%2C{{ floatval($notice->gs_lng) + 0.01 }}%2C{{ floatval($notice->gs_lat) + 0.01 }}&amp;layer=mapnik&amp;marker={{ $notice->gs_lat }}%2C{{ $notice->gs_lng }}"
+                                        style="border:1px solid #e0e0e0; border-radius:6px; margin-top:8px;"
+                                    ></iframe>
+                                </div>
+                            @endif
+                            @if(!empty($notice->gs_additional_info))
+                                <div class="notice-modal-additional-info" style="margin-top:10px; font-size:13px; color:#555;">
+                                    <i class="fa fa-info-circle" style="color:#9bcd22; margin-right:5px;"></i>
+                                    {{ $notice->gs_additional_info }}
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     @if(!empty($notice->message_text))
                         <div class="notice-modal-message">
                             <span>Message</span>

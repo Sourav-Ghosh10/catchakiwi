@@ -149,6 +149,60 @@
                                         </div>
                                     </div>
 
+                                    <!-- Garage Sales Fields -->
+                                    <div id="garage_sales_fields" style="display:none;">
+                                        <div class="frm_dv" style="position:relative;">
+                                            <label for="gs_address_input">Sale Address:</label>
+                                            <div style="flex:1; max-width:535px; position:relative;">
+                                                <input
+                                                    type="text"
+                                                    id="gs_address_input"
+                                                    name="gs_address"
+                                                    placeholder="Start typing the sale address…"
+                                                    autocomplete="off"
+                                                    value="{{ old('gs_address', $notice->gs_address ?? '') }}"
+                                                >
+                                                <span id="gs_address_spinner" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9bcd22;">&#8987;</span>
+                                                <ul id="gs_address_suggestions" style="
+                                                    display:none;
+                                                    position:absolute;
+                                                    top:100%; left:0; right:0;
+                                                    background:#fff;
+                                                    border:1px solid #9bcd22;
+                                                    border-top:none;
+                                                    list-style:none;
+                                                    margin:0; padding:0;
+                                                    z-index:9999;
+                                                    max-height:220px;
+                                                    overflow-y:auto;
+                                                    box-shadow:0 4px 12px rgba(0,0,0,.12);
+                                                    font-family:'Poppins',sans-serif;
+                                                    font-size:13px;
+                                                "></ul>
+                                            </div>
+                                            <input type="hidden" name="gs_lat" id="gs_lat" value="{{ old('gs_lat', $notice->gs_lat ?? '') }}">
+                                            <input type="hidden" name="gs_lng" id="gs_lng" value="{{ old('gs_lng', $notice->gs_lng ?? '') }}">
+                                        </div>
+                                        <div id="gs_map_preview" style="display:none; margin-bottom:15px;">
+                                            <div class="frm_dv">
+                                                <label></label>
+                                                <div id="gs_map_container" style="flex:1; max-width:535px; height:200px; border:1px solid #9bcd22; border-radius:4px; overflow:hidden;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="frm_dv">
+                                            <label for="gs_additional_info">Additional Info:</label>
+                                            <textarea
+                                                name="gs_additional_info"
+                                                id="gs_additional_info"
+                                                placeholder="e.g. Date, time, items for sale, parking info… (200 char max)"
+                                                maxlength="200"
+                                                rows="3"
+                                                style="flex:1; max-width:535px; min-height:80px; border:1px solid #9bcd22; padding:10px 12px; font-family:'Poppins',sans-serif; font-size:14px; resize:vertical;"
+                                            >{{ old('gs_additional_info', $notice->gs_additional_info ?? '') }}</textarea>
+                                        </div>
+                                    </div>
+
+
                                     <div class="frm_dv textareadv">
                                         <label id="body_label">Add your content: </label>
                                         <div class="notice-field-column">
@@ -156,6 +210,7 @@
                                             <div id="body_counter" class="notice-character-counter">{{ isset($notice) ? strlen($notice->content) : 0 }} / {{ isset($notice) && in_array($notice->category_id, [1, 9]) ? '300' : '155' }} characters</div>
                                         </div>
                                     </div>
+
                                     <style>
                                         .image-upload-grid {
                                             display: grid;
@@ -603,14 +658,19 @@
                                 var itemCategoryNames = ['items for sale', 'items for sale or wanted'];
                                 var isItemsCategory = itemCategorySlugs.includes(categorySlug)
                                     || itemCategoryNames.includes(categoryName);
+                                var isGarageSales = (categorySlug === 'garage-sales') || (categoryName === 'garage sales');
                                 var restOfFields = document.getElementById('rest_of_fields');
                                 var getAQuoteFields = document.getElementById('get_a_quote_fields');
                                 var serviceDealFields = document.getElementById('service_deal_fields');
+                                var garageSalesFields = document.getElementById('garage_sales_fields');
                                 var additionalImagesSection = document.getElementById('additional_images_section');
                                 var bodyLabel = document.getElementById('body_label');
                                 var bodyTextarea = document.getElementsByName('notice_body')[0];
                                 var itemOptionsFields = document.getElementById('item_options_fields');
                                 var noticeOptionsFields = document.getElementById('notice_options_fields');
+
+                                // Always hide garage fields first, re-show if needed
+                                if (garageSalesFields) garageSalesFields.style.display = 'none';
 
                                 if (categoryId) {
                                     restOfFields.style.display = 'block';
@@ -686,6 +746,15 @@
                                             });
                                         }
                                         updateQuoteTowns();
+                                    } else if (isGarageSales) {
+                                        serviceDealFields.style.display = 'none';
+                                        getAQuoteFields.style.display = 'none';
+                                        additionalImagesSection.style.display = 'none';
+                                        if (garageSalesFields) garageSalesFields.style.display = 'block';
+                                        bodyLabel.innerText = 'Description:';
+                                        bodyTextarea.placeholder = 'Describe your garage sale (300 char max).';
+                                        bodyTextarea.maxLength = 300;
+                                        document.getElementById('body_counter').innerText = bodyTextarea.value.length + ' / 300 characters';
                                     } else {
                                         serviceDealFields.style.display = 'none';
                                         getAQuoteFields.style.display = 'none';
@@ -805,8 +874,118 @@
                                 }
                             });
                         </script>
+
+                        <script>
+                        // ── OpenStreetMap Address Autocomplete & Map for Garage Sales ─────────────────
+                        (function () {
+                            var addressInput   = document.getElementById('gs_address_input');
+                            var suggestionsList = document.getElementById('gs_address_suggestions');
+                            var spinner        = document.getElementById('gs_address_spinner');
+                            var latField       = document.getElementById('gs_lat');
+                            var lngField       = document.getElementById('gs_lng');
+                            var mapPreview     = document.getElementById('gs_map_preview');
+                            var mapContainer   = document.getElementById('gs_map_container');
+                            var debounceTimer  = null;
+                            var leafletMap     = null;
+                            var leafletMarker  = null;
+
+                            if (!addressInput) return;
+
+                            function hideSuggestions() {
+                                suggestionsList.innerHTML = '';
+                                suggestionsList.style.display = 'none';
+                            }
+
+                            function clearCoords() {
+                                latField.value = '';
+                                lngField.value = '';
+                                if (mapPreview) mapPreview.style.display = 'none';
+                            }
+
+                            function initMap(lat, lng) {
+                                if (typeof L === 'undefined') return;
+                                if (mapPreview) mapPreview.style.display = 'block';
+                                
+                                if (!leafletMap) {
+                                    leafletMap = L.map(mapContainer).setView([lat, lng], 15);
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        maxZoom: 19,
+                                        attribution: '© OpenStreetMap'
+                                    }).addTo(leafletMap);
+                                    leafletMarker = L.marker([lat, lng]).addTo(leafletMap);
+                                } else {
+                                    leafletMap.setView([lat, lng], 15);
+                                    leafletMarker.setLatLng([lat, lng]);
+                                }
+                            }
+
+                            function loadSDK(cb) {
+                                if (typeof L !== 'undefined') { cb(); return; }
+                                var head = document.head;
+                                var link = document.createElement('link');
+                                link.rel = 'stylesheet';
+                                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                                head.appendChild(link);
+                                
+                                var s = document.createElement('script');
+                                s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                                s.onload = cb;
+                                head.appendChild(s);
+                            }
+
+                            function fetchSuggestions(q) {
+                                if (spinner) spinner.style.display = 'inline';
+                                fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en&q=' + encodeURIComponent(q))
+                                    .then(function(r) { return r.json(); })
+                                    .then(function(d) {
+                                        if (spinner) spinner.style.display = 'none';
+                                        suggestionsList.innerHTML = '';
+                                        if (!d || !d.length) { hideSuggestions(); return; }
+                                        d.forEach(function(item) {
+                                            var label = item.display_name;
+                                            var li = document.createElement('li');
+                                            li.textContent = label;
+                                            li.style.cssText = 'padding:9px 14px; cursor:pointer; border-bottom:1px solid #f0f0f0;';
+                                            li.addEventListener('mouseenter', function() { li.style.background = '#f6fbf0'; });
+                                            li.addEventListener('mouseleave', function() { li.style.background = ''; });
+                                            li.addEventListener('mousedown', function(e) {
+                                                e.preventDefault();
+                                                addressInput.value = label;
+                                                latField.value = item.lat;
+                                                lngField.value = item.lon; // Note: Nominatim uses 'lon' instead of 'lng'
+                                                hideSuggestions();
+                                                loadSDK(function() { initMap(item.lat, item.lon); });
+                                            });
+                                            suggestionsList.appendChild(li);
+                                        });
+                                        suggestionsList.style.display = 'block';
+                                    }).catch(function() { if (spinner) spinner.style.display = 'none'; });
+                            }
+
+                            addressInput.addEventListener('input', function() {
+                                clearTimeout(debounceTimer);
+                                clearCoords();
+                                var q = this.value.trim();
+                                if (q.length < 3) { hideSuggestions(); return; }
+                                debounceTimer = setTimeout(function() { fetchSuggestions(q); }, 500); // 500ms debounce for Nominatim
+                            });
+
+                            addressInput.addEventListener('blur', function() {
+                                setTimeout(hideSuggestions, 200);
+                            });
+
+                            // If editing an existing garage sale notice that already has coords
+                            if (latField.value && lngField.value) {
+                                loadSDK(function() {
+                                    initMap(parseFloat(latField.value), parseFloat(lngField.value));
+                                });
+                            }
+                        })();
+                        </script>
+
                     </div>
                 </div>
+
                 <div class="modal fade bd-example-modal-lg imagecrop" id="model" tabindex="-1" role="dialog"
                     aria-labelledby="myLargeModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
