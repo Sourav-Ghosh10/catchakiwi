@@ -933,9 +933,14 @@
                                 head.appendChild(s);
                             }
 
+                            // Map session CountryCode to Nominatim ISO country code
+                            var sessionCountryCode = '{{ strtolower(session("CountryCode", "NZ")) }}';
+                            // Nominatim uses 'gb' for UK
+                            if (sessionCountryCode === 'uk') sessionCountryCode = 'gb';
+
                             function fetchSuggestions(q) {
                                 if (spinner) spinner.style.display = 'inline';
-                                fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en&q=' + encodeURIComponent(q))
+                                fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en&countrycodes=' + sessionCountryCode + '&q=' + encodeURIComponent(q))
                                     .then(function(r) { return r.json(); })
                                     .then(function(d) {
                                         if (spinner) spinner.style.display = 'none';
