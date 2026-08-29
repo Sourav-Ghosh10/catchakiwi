@@ -173,7 +173,7 @@
             return;
         }
 
-        function openNoticeModal(noticeId) {
+        window.openNoticeModal = function (noticeId) {
             var template = document.getElementById('notice-modal-template-' + noticeId);
 
             if (!template) {
@@ -188,7 +188,7 @@
             if (title) {
                 title.id = 'noticeModalTitle';
             }
-        }
+        };
 
         function closeNoticeModal() {
             modal.setAttribute('aria-hidden', 'true');
@@ -217,13 +217,13 @@
                     return;
                 }
 
-                openNoticeModal(card.getAttribute('data-notice-id'));
+                window.openNoticeModal(card.getAttribute('data-notice-id'));
             });
 
             card.addEventListener('keydown', function (event) {
                 if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
-                    openNoticeModal(card.getAttribute('data-notice-id'));
+                    window.openNoticeModal(card.getAttribute('data-notice-id'));
                 }
             });
         });
