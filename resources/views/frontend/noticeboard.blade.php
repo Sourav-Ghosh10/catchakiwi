@@ -126,11 +126,22 @@
                                 var markers = [];
                                 @foreach($notices as $notice)
                                     @if(!empty($notice->gs_lat) && !empty($notice->gs_lng))
-                                        var lat = {{ floatval($notice->gs_lat) }};
-                                        var lng = {{ floatval($notice->gs_lng) }};
-                                        var popupContent = "<b>{{ addslashes($notice->heading) }}</b><br>{{ addslashes($notice->town_suburb ?? '') }}";
-                                        var marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
-                                        markers.push(marker);
+                                        (function(id, heading, location) {
+                                            var lat = {{ floatval($notice->gs_lat) }};
+                                            var lng = {{ floatval($notice->gs_lng) }};
+                                            var popupContent = '<div style="cursor:pointer;" onclick="if(typeof openNoticeModal === \'function\') openNoticeModal(' + id + ')">' +
+                                                '<strong style="font-size:14px; color:#333; display:block; margin-bottom:4px;">' + heading + '</strong>' +
+                                                '<span style="font-size:12px; color:#666;">' + location + '</span>' +
+                                                '<div style="margin-top:6px; font-size:11px; color:#9bcd22; font-weight:bold;">Click to view details &rarr;</div>' +
+                                                '</div>';
+                                            var marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
+                                            marker.on('click', function() {
+                                                if (typeof openNoticeModal === 'function') {
+                                                    openNoticeModal(id);
+                                                }
+                                            });
+                                            markers.push(marker);
+                                        })({{ $notice->id }}, {!! json_encode($notice->heading) !!}, {!! json_encode($notice->town_suburb ?? '') !!});
                                     @endif
                                 @endforeach
 
