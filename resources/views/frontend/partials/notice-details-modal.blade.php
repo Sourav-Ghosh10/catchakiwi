@@ -46,10 +46,7 @@
                     <p class="notice-modal-description">{{ $notice->content }}</p>
 
                     <div class="notice-modal-details">
-                        <div>
-                            <span>Category</span>
-                            <strong>{{ $notice->category_name }}</strong>
-                        </div>
+
                         <div>
                             <span>Type</span>
                             <strong>{{ ucfirst($notice->noticetype ?? 'standard') }}</strong>
