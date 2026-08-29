@@ -20,6 +20,13 @@
         @endphp
         <div id="notice-modal-template-{{ $notice->id }}">
             <div class="notice-modal-shell {{ $noticeCardTypeClass }} {{ $noticeCardCategoryClass }}">
+                <div class="notice-modal-category" style="padding: 22px 28px 0 28px; margin-bottom: -10px;">
+                    @if($notice->category_name == 'Items for Sale or Wanted' && $notice->noticetype == 'standard')
+                        FREE
+                    @else
+                        {{ strtoupper($notice->category_name) }}
+                    @endif
+                </div>
                 <div class="notice-modal-gallery">
                     @if(isset($noticeImages[$notice->id]) && count($noticeImages[$notice->id]) > 0)
                         @foreach($noticeImages[$notice->id] as $image)
@@ -35,15 +42,14 @@
                     @endif
                 </div>
                 <div class="notice-modal-content">
-                    <div class="notice-modal-category">
-                        @if($notice->category_name == 'Items for Sale or Wanted' && $notice->noticetype == 'standard')
-                            FREE
-                        @else
-                            {{ strtoupper($notice->category_name) }}
-                        @endif
-                    </div>
                     <h2 class="notice-modal-title">{{ $notice->heading }}</h2>
-                    <p class="notice-modal-description">{{ $notice->content }}</p>
+                    <div class="notice-modal-description">{!! $notice->content !!}</div>
+                    @if(!empty($notice->gs_additional_info))
+                        <div class="notice-modal-additional-info" style="margin-bottom:24px; font-size:13px; color:#555;">
+                            <i class="fa fa-info-circle" style="color:#9bcd22; margin-right:5px;"></i>
+                            {{ $notice->gs_additional_info }}
+                        </div>
+                    @endif
 
                     <div class="notice-modal-details">
 
@@ -93,7 +99,7 @@
                                 <div class="notice-modal-map">
                                     <iframe
                                         width="100%"
-                                        height="200"
+                                        height="300"
                                         frameborder="0"
                                         scrolling="no"
                                         marginheight="0"
@@ -103,12 +109,7 @@
                                     ></iframe>
                                 </div>
                             @endif
-                            @if(!empty($notice->gs_additional_info))
-                                <div class="notice-modal-additional-info" style="margin-top:10px; font-size:13px; color:#555;">
-                                    <i class="fa fa-info-circle" style="color:#9bcd22; margin-right:5px;"></i>
-                                    {{ $notice->gs_additional_info }}
-                                </div>
-                            @endif
+
                         </div>
                     @endif
 
