@@ -21,7 +21,13 @@
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <div class="left_notice">
                         <div class="left_notice_header">
-                            <h2>{{ $activeCategory ? $activeCategory->category : 'Catchakiwi Noticeboard' }}<br>
+                            <h2>
+                                @if($activeCategory || !empty($search))
+                                    <a href="{{ route('notice-board') }}" class="notice-back-btn" title="Back to Noticeboard">
+                                        <i class="fa fa-arrow-left"></i>
+                                    </a>
+                                @endif
+                                {{ $activeCategory ? $activeCategory->category : 'Catchakiwi Noticeboard' }}<br>
                                 <span>{{ $activeCategory ? 'Explore notices in ' . $activeCategory->category : 'Connect, Share, Discover local notices' }}</span>
                             </h2>
                             <div class="left_notice_actions">
@@ -31,27 +37,6 @@
                                 @else
                                     <a href="{{ URL::to('/login?redirect=' . urlencode('notice-post?category=' . ($activeCategory ? $activeCategory->slug : 1))) }}" class="postfree_button">Post a Free Notice</a>
                                 @endif
-                            </div>
-                        </div>
-                        <div class="notice_refineresults">
-                            <h3>Refine Results:</h3>
-                            <div class="row">
-                                @php $catsCollection = collect($categories); @endphp
-                                @foreach($catsCollection->chunk(ceil($catsCollection->count() / 3)) as $chunk)
-                                    <div class="col-md-4">
-                                        <ul>
-                                            @foreach($chunk as $cat)
-                                                <li>
-                                                    <a href="{{ route('notice-board', $cat->slug) }}"
-                                                        class="{{ (isset($activeCategory) && $activeCategory->id == $cat->id) ? 'active-refine-category' : '' }}">
-                                                        {{ $cat->category }}
-                                                        ({{ str_pad($cat->notices_count, 2, '0', STR_PAD_LEFT) }})
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -76,6 +61,8 @@
                                 background: #fff;
                                 transition: box-shadow 0.2s ease-in-out;
                                 margin-bottom: 20px;
+                                display: flex;
+                                flex-direction: column;
                             }
                             .garage-sale-card:hover {
                                 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -90,6 +77,7 @@
                             }
                             .garage-sale-card-body {
                                 padding: 15px;
+                                flex: 1;
                             }
                             .garage-sale-card-title {
                                 margin-top: 0;
@@ -126,22 +114,17 @@
                                 var markers = [];
                                 @foreach($notices as $notice)
                                     @if(!empty($notice->gs_lat) && !empty($notice->gs_lng))
-                                        (function(id, heading, location) {
+                                        (function(id, heading) {
                                             var lat = {{ floatval($notice->gs_lat) }};
                                             var lng = {{ floatval($notice->gs_lng) }};
-                                            var popupContent = '<div style="cursor:pointer;" onclick="if(typeof openNoticeModal === \'function\') openNoticeModal(' + id + ')">' +
-                                                '<strong style="font-size:14px; color:#333; display:block; margin-bottom:4px;">' + heading + '</strong>' +
-                                                '<span style="font-size:12px; color:#666;">' + location + '</span>' +
-                                                '<div style="margin-top:6px; font-size:11px; color:#9bcd22; font-weight:bold;">Click to view details &rarr;</div>' +
-                                                '</div>';
-                                            var marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
+                                            var marker = L.marker([lat, lng], { title: heading }).addTo(map);
                                             marker.on('click', function() {
                                                 if (typeof openNoticeModal === 'function') {
                                                     openNoticeModal(id);
                                                 }
                                             });
                                             markers.push(marker);
-                                        })({{ $notice->id }}, {!! json_encode($notice->heading) !!}, {!! json_encode($notice->town_suburb ?? '') !!});
+                                        })({{ $notice->id }}, {!! json_encode($notice->heading) !!});
                                     @endif
                                 @endforeach
 
@@ -174,6 +157,20 @@
                                             <p class="garage-sale-card-desc">
                                                 {{ strip_tags($notice->content) }}
                                             </p>
+                                        </div>
+                                        <div class="notice-card-footer">
+                                            <div class="notice-card-user">
+                                                <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice-card-user-logo">
+                                                <span>{{ $notice->user_name ?? 'Catchakiwi' }}</span>
+                                            </div>
+                                            <div class="notice-card-meta">
+                                                <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
+                                                <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn"
+                                                    title="Message user" onclick="event.stopPropagation();">
+                                                    <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message"
+                                                        class="notice-card-chat-icon">
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -227,6 +224,20 @@
                                                 <i class="fa fa-map-marker"></i> {{ $noticeDisplayLocation }}
                                             </div>
                                         @endif
+                                    </div>
+                                    <div class="notice-card-footer">
+                                        <div class="notice-card-user">
+                                            <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice-card-user-logo">
+                                            <span>{{ $notice->user_name ?? 'Catchakiwi' }}</span>
+                                        </div>
+                                        <div class="notice-card-meta">
+                                            <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
+                                            <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn"
+                                                title="Message user" onclick="event.stopPropagation();">
+                                                <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message"
+                                                    class="notice-card-chat-icon">
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             @empty

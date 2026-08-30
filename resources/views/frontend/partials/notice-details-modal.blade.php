@@ -52,11 +52,6 @@
                     @endif
 
                     <div class="notice-modal-details">
-
-                        <div>
-                            <span>Type</span>
-                            <strong>{{ ucfirst($notice->noticetype ?? 'standard') }}</strong>
-                        </div>
                         @if($notice->town_suburb)
                             <div>
                                 <span>Location</span>

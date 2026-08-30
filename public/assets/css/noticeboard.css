@@ -244,6 +244,28 @@
     margin-top: 5px;
 }
 
+.notice-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #edf2f7;
+    color: #2d3748;
+    font-size: 16px;
+    margin-right: 12px;
+    vertical-align: middle;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+}
+
+.notice-back-btn:hover {
+    background: #9bcd22;
+    color: #fff;
+    transform: translateX(-3px);
+}
+
 .notice_refineresults {
     background: #fff;
     border-radius: 12px;

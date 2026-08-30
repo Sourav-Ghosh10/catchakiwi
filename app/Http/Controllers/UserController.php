@@ -694,6 +694,7 @@ class UserController extends Controller
             'budget' => 'nullable|string',
             'message_text' => 'nullable|string',
             'item_type' => 'nullable|string',
+            'gs_additional_info' => 'nullable|string|max:180',
         ]);
 
         $category_id = $request->input('category_id');
@@ -1037,6 +1038,7 @@ class UserController extends Controller
             'budget' => 'nullable|string',
             'message_text' => 'nullable|string',
             'item_type' => 'nullable|string',
+            'gs_additional_info' => 'nullable|string|max:180',
         ]);
 
         $user_id = Auth::user()->id;

@@ -191,14 +191,17 @@
                                         </div>
                                         <div class="frm_dv">
                                             <label for="gs_additional_info">Additional Info:</label>
-                                            <textarea
-                                                name="gs_additional_info"
-                                                id="gs_additional_info"
-                                                placeholder="e.g. Date, time, items for sale, parking info… (200 char max)"
-                                                maxlength="200"
-                                                rows="3"
-                                                style="flex:1; max-width:535px; min-height:80px; border:1px solid #9bcd22; padding:10px 12px; font-family:'Poppins',sans-serif; font-size:14px; resize:vertical;"
-                                            >{{ old('gs_additional_info', $notice->gs_additional_info ?? '') }}</textarea>
+                                            <div class="notice-field-column">
+                                                <textarea
+                                                    name="gs_additional_info"
+                                                    id="gs_additional_info"
+                                                    placeholder="e.g. Date, time, items for sale, parking info… (180 char max)"
+                                                    maxlength="180"
+                                                    rows="3"
+                                                    style="flex:1; width:100%; max-width:535px; min-height:80px; border:1px solid #9bcd22; padding:10px 12px; font-family:'Poppins',sans-serif; font-size:14px; resize:vertical;"
+                                                >{{ old('gs_additional_info', $notice->gs_additional_info ?? '') }}</textarea>
+                                                <div id="gs_additional_info_counter" class="notice-character-counter">{{ isset($notice) && !empty($notice->gs_additional_info) ? strlen($notice->gs_additional_info) : 0 }} / 180 characters</div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -813,6 +816,16 @@
                             document.getElementById('notice_title').addEventListener('input', function() {
                                 document.getElementById('title_counter').innerText = this.value.length + ' / 35 characters';
                             });
+
+                            var gsAddInfo = document.getElementById('gs_additional_info');
+                            if (gsAddInfo) {
+                                gsAddInfo.addEventListener('input', function() {
+                                    var counter = document.getElementById('gs_additional_info_counter');
+                                    if (counter) {
+                                        counter.innerText = this.value.length + ' / 180 characters';
+                                    }
+                                });
+                            }
 
                             document.getElementById('notice_body').addEventListener('input', function() {
                                 var max = this.maxLength > 0 ? this.maxLength : 155;

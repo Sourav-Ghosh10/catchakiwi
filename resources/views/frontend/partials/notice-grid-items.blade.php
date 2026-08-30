@@ -43,6 +43,20 @@
                 </div>
             @endif
         </div>
+        <div class="notice-card-footer">
+            <div class="notice-card-user">
+                <img src="{{ asset('assets/images/notice_logoimg.png')}}" alt="" class="notice-card-user-logo">
+                <span>{{ $notice->user_name ?? 'Catchakiwi' }}</span>
+            </div>
+            <div class="notice-card-meta">
+                <span class="notice-card-views"><i class="fa fa-eye"></i> {{ $notice->views ?? 0 }}</span>
+                <a href="{{ url('/profile#parentHorizontalTab3') }}" class="notice-card-chat-btn"
+                    title="Message user" onclick="event.stopPropagation();">
+                    <img src="{{ asset('assets/images/notice_chaticon.png')}}" alt="Message"
+                        class="notice-card-chat-icon">
+                </a>
+            </div>
+        </div>
     </div>
 @empty
     <div class="alert alert-info notice-grid-empty notice-grid-empty-search text-center py-5 w-100">
