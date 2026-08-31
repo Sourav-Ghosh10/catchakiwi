@@ -53,6 +53,10 @@
                         <!-- Leaflet Map -->
                         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
                         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                        <!-- Leaflet MarkerCluster -->
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+                        <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
                         <style>
                             .garage-sale-card {
                                 border: 1px solid #ddd;
@@ -108,29 +112,33 @@
                             document.addEventListener('DOMContentLoaded', function() {
                                 var map = L.map('garage-sales-map').setView([-40.9006, 174.8860], 5);
                                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                                    maxZoom: 19
                                 }).addTo(map);
 
+                                var markersCluster = L.markerClusterGroup();
                                 var markers = [];
                                 @foreach($notices as $notice)
                                     @if(!empty($notice->gs_lat) && !empty($notice->gs_lng))
                                         (function(id, heading) {
                                             var lat = {{ floatval($notice->gs_lat) }};
                                             var lng = {{ floatval($notice->gs_lng) }};
-                                            var marker = L.marker([lat, lng], { title: heading }).addTo(map);
+                                            var marker = L.marker([lat, lng], { title: heading });
                                             marker.on('click', function() {
                                                 if (typeof openNoticeModal === 'function') {
                                                     openNoticeModal(id);
                                                 }
                                             });
+                                            markersCluster.addLayer(marker);
                                             markers.push(marker);
                                         })({{ $notice->id }}, {!! json_encode($notice->heading) !!});
                                     @endif
                                 @endforeach
 
+                                map.addLayer(markersCluster);
+
                                 if (markers.length > 0) {
-                                    var group = new L.featureGroup(markers);
-                                    map.fitBounds(group.getBounds().pad(0.1));
+                                    map.fitBounds(markersCluster.getBounds().pad(0.1));
                                 }
                             });
                         </script>

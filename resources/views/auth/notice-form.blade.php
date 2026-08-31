@@ -923,7 +923,7 @@
                                     leafletMap = L.map(mapContainer).setView([lat, lng], 15);
                                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                         maxZoom: 19,
-                                        attribution: '© OpenStreetMap'
+                                        attribution: '&copy; OpenStreetMap contributors'
                                     }).addTo(leafletMap);
                                     leafletMarker = L.marker([lat, lng]).addTo(leafletMap);
                                 } else {
