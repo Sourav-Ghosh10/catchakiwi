@@ -421,24 +421,24 @@ color: #fff;}
     padding-top: 8px;
   }
   /* Make the top bar row a flex container so both cols fit on one line */
-  .top_bar .row {
+  .top_bar > .container > .row {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
   }
-  .top_bar .row > [class*="col-"] {
+  .top_bar > .container > .row > [class*="col-"] {
     flex: 0 0 auto;
     max-width: none;
   }
   /* Left col: globe + country select */
-  .top_bar .row > .col-7 {
+  .top_bar > .container > .row > .col-7 {
     width: auto;
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
   }
   /* Right col: icons + hamburger */
-  .top_bar .row > .col-5 {
+  .top_bar > .container > .row > .col-5 {
     width: auto;
     flex: 0 0 auto;
     padding-right: 0;

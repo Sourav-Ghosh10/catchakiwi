@@ -162,25 +162,18 @@
       @endif
 </div>
  @if(Auth::user())
-                     	
-                     		 @if (empty(Auth::user()->image))
-                     		 <a href="#" class="after_logname">
-                     		<img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}">
-							</a>
-							 
-							 @else
-							 <a href="#" class="after_logname">
-							 <!--<img src="{{ Auth::user()->profile_photo_url }}" alt="">-->
-							 <img src="{{ asset(\Auth::user()->image) }}"/>
-							 
-							 </a>
-							 @endif
-						</div>
-						</ul>
-						@else
-					
-						</ul>
-						@endif
+ 	 @if (empty(Auth::user()->image))
+ 	 <a href="#" class="after_logname">
+ 	    <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}">
+	 </a>
+	 @else
+	 <a href="#" class="after_logname">
+	    <!--<img src="{{ Auth::user()->profile_photo_url }}" alt="">-->
+	    <img src="{{ asset(\Auth::user()->image) }}"/>
+	 </a>
+	 @endif
+ @endif
+</div>
 </nav>
 						
 						
