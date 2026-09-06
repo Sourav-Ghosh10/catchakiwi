@@ -17,6 +17,7 @@
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
     <body>
+        @include('includes/activity-indicator')
         <div class="font-sans text-gray-900 antialiased">
             {{ $slot }}
         </div>

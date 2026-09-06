@@ -109,3 +109,4 @@ $(document).ready(function(){
 
 </head>
 <body>
+@include('includes/activity-indicator')

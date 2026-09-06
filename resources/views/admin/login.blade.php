@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="../../assets/images/favicon.png" />
   </head> 
   <body>
+    @include('includes/activity-indicator')
     <div class="container-scroller">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="row w-100 m-0">

@@ -19,6 +19,7 @@
 
   </head>
   <body>
+    @include('includes/activity-indicator')
     <div class="container-scroller">
       
       <!-- partial:partials/_sidebar.html -->

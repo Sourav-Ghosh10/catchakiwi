@@ -276,6 +276,7 @@
     </style>
 </head>
 <body>
+    @include('includes/activity-indicator')
     <div class="forgot-password-container">
       <div class="container"><div class="logo"><h1><a href="https://catchakiwi.com/"><img src="{{ asset('assets/images/logo-inner.png') }}" alt="" style="max-width: 330px; margin: 0 auto;
  display: block;" /></a></h1></div></div>
