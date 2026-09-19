@@ -221,7 +221,7 @@
                                              <td align="left" valign="top" class="expdate">
                                                 {{ \Carbon\Carbon::parse($n->expire_at)->format('h:ia d/m/Y') }}</td>
                                              <td align="left" valign="top">
-                                                <a href="{{ route('notice-board') }}" class="edit">View <img
+                                                <a href="{{ route('notices') }}" class="edit">View <img
                                                       src="{{ asset('assets/images/edit_icon.png') }}" alt=""></a>
                                              </td>
                                           </tr>

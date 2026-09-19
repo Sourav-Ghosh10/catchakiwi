@@ -1030,6 +1030,10 @@
     align-items: center !important;
   }
 
+  .top_bar.inner .nz_region {
+    background-image: url(../images/globe_iconblk.png) !important;
+  }
+
   .nz_region select {
     max-width: 100% !important;
     width: auto !important;
@@ -1047,6 +1051,10 @@
     height: 28px !important;
     line-height: 20px !important;
     cursor: pointer !important;
+  }
+
+  .top_bar.inner .nz_region select {
+    color: #333333 !important;
   }
 
   .nz_region select option {
@@ -1123,6 +1131,10 @@
     line-height: 20px !important;
     white-space: nowrap !important;
     text-decoration: none !important;
+  }
+
+  .top_bar.inner .mobtop_login a {
+    color: #333333 !important;
   }
 
   /* Profile avatar: move before hamburger */

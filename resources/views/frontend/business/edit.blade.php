@@ -169,7 +169,7 @@
       <div class="newupload">
        <label>Select your business Logo or Image </label>
         <div class=customupbtn>
-          <input name="imageUpload" type="file" id="businessimage" class="imageUpload">
+          <input name="imageUpload" type="file" id="businessimage" class="imageUpload" accept="image/*">
           <input type="hidden" name="base64image" id="base64image" value="{{ old('base64image') }}">
         </div>
     	

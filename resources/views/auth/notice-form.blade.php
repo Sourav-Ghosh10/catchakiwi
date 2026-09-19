@@ -9,7 +9,7 @@
                             <h3><img src="{{ asset('assets/images/notice_titleicon.png') }}" alt="Notice Board"> Notice Board
                                 <br>
                                 <span><a href="{{ url('/') }}" style="color: #729b0f; text-decoration: none;">Home</a> >
-                                    <a href="{{ route('notice-board') }}"
+                                    <a href="{{ route('notices') }}"
                                         style="color: #729b0f; text-decoration: none;">Notice Board</a> > 
                                     {{ isset($notice) ? 'Edit Notice' : 'Post Notice' }}</span>
                             </h3>
@@ -515,7 +515,7 @@
                                                         </div>
                                                     @endif
                                                     <input type="file" name="noticeimg[]" class="imageUpload"
-                                                        id="noticeimg1" style="display:none;">
+                                                        id="noticeimg1" accept="image/*" style="display:none;">
                                                     <input type="hidden" name="noticeimgbase64[]"
                                                         class="noticeimgbase64" id="noticeimgbase641"
                                                         value="{{ isset($noticeImages) && isset($noticeImages[0]) ? $noticeImages[0]->img_path : '' }}">
@@ -536,7 +536,7 @@
                                                         </div>
                                                     @endif
                                                     <input type="file" name="noticeimg[]" class="imageUpload"
-                                                        id="noticeimg2" style="display:none;">
+                                                        id="noticeimg2" accept="image/*" style="display:none;">
                                                     <input type="hidden" name="noticeimgbase64[]"
                                                         class="noticeimgbase64" id="noticeimgbase642"
                                                         value="{{ isset($noticeImages) && isset($noticeImages[1]) ? $noticeImages[1]->img_path : '' }}">
@@ -557,7 +557,7 @@
                                                         </div>
                                                     @endif
                                                     <input type="file" name="noticeimg[]" class="imageUpload"
-                                                        id="noticeimg3" style="display:none;">
+                                                        id="noticeimg3" accept="image/*" style="display:none;">
                                                     <input type="hidden" name="noticeimgbase64[]"
                                                         class="noticeimgbase64" id="noticeimgbase643"
                                                         value="{{ isset($noticeImages) && isset($noticeImages[2]) ? $noticeImages[2]->img_path : '' }}">
@@ -580,7 +580,7 @@
                                                             </div>
                                                         @endif
                                                         <input type="file" name="noticeimg[]" class="imageUpload"
-                                                            id="noticeimg{{ $imageIndex }}" hidden>
+                                                            id="noticeimg{{ $imageIndex }}" accept="image/*" hidden>
                                                         <input type="hidden" name="noticeimgbase64[]"
                                                             class="noticeimgbase64" id="noticeimgbase64{{ $imageIndex }}"
                                                             value="{{ isset($noticeImages) && isset($noticeImages[$imgKey]) ? $noticeImages[$imgKey]->img_path : '' }}">

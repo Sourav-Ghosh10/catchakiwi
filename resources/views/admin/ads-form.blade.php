@@ -274,7 +274,7 @@
                                     <i class="bi bi-cloud-arrow-up-fill"></i>
                                     <p>Select a new image or drag it here</p>
                                     <span>High quality JPEG, PNG or WebP supported</span>
-                                    <input type="file" name="adsimg" class="imageUpload" id="imageInput">
+                                    <input type="file" name="adsimg" class="imageUpload" id="imageInput" accept="image/*">
                                 </div>
 
                                 @error('msg')

@@ -223,7 +223,7 @@
       <div class="newupload">
       <label>Select Your Business Logo or Image</label>
         <div class=customupbtn>
-          <input name="imageUpload" type="file" value="browse" id="businessimage" class="imageUpload"  placeholder="" >
+          <input name="imageUpload" type="file" value="browse" id="businessimage" class="imageUpload" accept="image/*" placeholder="" >
           <input type="hidden" name="base64image" name="base64image" id="base64image" value="{{ old('base64image') }}">
           <!--<span>For better results, make sure to upload an image that has a 4:3 (800x600) aspect ratio.</span>-->
          </div>

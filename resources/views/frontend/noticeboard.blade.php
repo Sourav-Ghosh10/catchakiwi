@@ -23,7 +23,7 @@
                         <div class="left_notice_header">
                             <h2>
                                 @if($activeCategory || !empty($search))
-                                    <a href="{{ route('notice-board') }}" class="notice-back-btn" title="Back to Noticeboard">
+                                    <a href="{{ route('notices') }}" class="notice-back-btn" title="Back to Noticeboard">
                                         <i class="fa fa-arrow-left"></i>
                                     </a>
                                 @endif
