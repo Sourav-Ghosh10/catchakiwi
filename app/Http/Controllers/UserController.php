@@ -1127,8 +1127,11 @@ class UserController extends Controller
         $user_id = Auth::user()->id;
         $notice = Notice::where('id', $id)->where('user_id', $user_id)->first();
 
+        $targetHash = $request->input('tab_hash', '#parentHorizontalTab2');
+        $previousUrl = strtok(url()->previous(), '#');
+
         if (! $notice) {
-            return redirect()->route('profile')->with('error', 'Notice not found or you do not have permission to delete it.');
+            return redirect()->to($previousUrl . $targetHash)->with('error', 'Notice not found or you do not have permission to delete it.');
         }
 
         // Delete associated images
@@ -1136,7 +1139,7 @@ class UserController extends Controller
 
         $notice->delete();
 
-        return redirect()->route('profile')->with('success', 'Notice deleted successfully.');
+        return redirect()->to($previousUrl . $targetHash)->with('success', 'Notice deleted successfully.');
     }
 
     public function NoticeReactivate(Request $request, $id)
@@ -1154,6 +1157,9 @@ class UserController extends Controller
         }
         $notice->save();
 
-        return redirect()->back()->with('success', 'Notice reactivated successfully!');
+        $targetHash = $request->input('tab_hash', '#parentHorizontalTab2');
+        $previousUrl = strtok(url()->previous(), '#');
+
+        return redirect()->to($previousUrl . $targetHash)->with('success', 'Notice reactivated successfully!');
     }
 }

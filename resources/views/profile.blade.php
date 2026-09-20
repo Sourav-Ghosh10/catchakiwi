@@ -324,6 +324,7 @@
                                                                       <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Expired</span>
                                                                       <form action="{{ route('notice.reactivate', $ntc->id) }}" method="POST" style="margin-top:5px;">
                                                                           @csrf
+                                                                          <input type="hidden" name="tab_hash" value="#parentHorizontalTab2">
                                                                           <button type="submit" class="btn btn-sm btn-success" style="padding: 2px 5px; font-size: 11px; margin-bottom:3px;">Reactivate</button>
                                                                       </form>
                                                                       <div style="font-size: 10px; color: #dc3545; line-height: 1.1; max-width: 150px; margin: 0 auto;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
@@ -338,6 +339,7 @@
                                                                   <span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Inactive</span>
                                                                   <form action="{{ route('notice.reactivate', $ntc->id) }}" method="POST" style="margin-top:5px;">
                                                                       @csrf
+                                                                      <input type="hidden" name="tab_hash" value="#parentHorizontalTab2">
                                                                       <button type="submit" class="btn btn-sm btn-success" style="padding: 2px 5px; font-size: 11px; margin-bottom:3px;">Reactivate</button>
                                                                   </form>
                                                                   <div style="font-size: 10px; color: #dc3545; line-height: 1.1; max-width: 150px; margin: 0 auto;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
@@ -351,6 +353,7 @@
                                                                   <form action="{{ route('notice.delete', $ntc->id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this notice?');">
                                                                       @csrf
                                                                       @method('DELETE')
+                                                                      <input type="hidden" name="tab_hash" value="#parentHorizontalTab2">
                                                                       <button type="submit" class="delete" style="background:none; border:none; padding:0; margin:0; cursor:pointer; display: inline-flex; align-items: center; justify-content: center; height: 28px;">
                                                                           <img src="{{ asset('assets/images/delete_icon.png') }}" alt="Delete">
                                                                       </button>
@@ -2352,18 +2355,38 @@ function clearSearch() {
             confirmButtonText: 'OK',
             confirmButtonColor: '#729b0f'
         }).then((result) => {
-            // After the user clicks OK, open the articles tab
             if (result.isConfirmed) {
-                // Trigger click on the "Listings" tab (second tab)
                 const listingsTab = document.querySelector('.resp-tabs-list.hor_1 li:nth-child(2)');
                 if (listingsTab) {
                     listingsTab.click();
 
-                    // After a short delay, open the Articles accordion
                     setTimeout(() => {
-                        const articleTab = document.querySelector('.article_tab');
-                        if (articleTab && !articleTab.classList.contains('active')) {
-                            articleTab.click();
+                        const successText = '{{ session('success') }}'.toLowerCase();
+                        let targetTabSelector = '.nitice_tab';
+                        let accordionIndex = 1;
+
+                        if (successText.includes('article')) {
+                            targetTabSelector = '.article_tab';
+                            accordionIndex = 2;
+                        } else if (successText.includes('business')) {
+                            targetTabSelector = '.busi_tab';
+                            accordionIndex = 0;
+                        }
+
+                        if ($('#accordion').data('ui-accordion') || $('#accordion').hasClass('ui-accordion')) {
+                            $('#accordion').accordion('option', 'active', accordionIndex);
+                        } else {
+                            const targetTab = document.querySelector(targetTabSelector);
+                            if (targetTab) {
+                                targetTab.click();
+                            }
+                        }
+
+                        const target = $(targetTabSelector);
+                        if (target.length) {
+                            $('html, body').animate({
+                                scrollTop: target.offset().top - 80
+                            }, 500);
                         }
                     }, 300);
                 }
@@ -2413,21 +2436,6 @@ function clearSearch() {
         });
     });
 </script>
-<script>
-    $(document).ready(function() {
-        // If coming from notice board (or anywhere) with this hash, scroll to chat
-        if (window.location.hash === '#parentHorizontalTab3') {
-            setTimeout(function() {
-                var target = $('.newmsgchatbox');
-                if (target.length) {
-                    $('html, body').animate({
-                        scrollTop: target.offset().top - 80
-                    }, 800);
-                }
-            }, 300); // slight delay to allow tab to open
-        }
-    });
-</script>
    <!-- body start end-->
 
    <script>
@@ -2472,3 +2480,32 @@ function clearSearch() {
 
    @include('includes/footer-js')
    @include('includes/footer')
+
+   <script>
+       $(window).on('load', function() {
+           if (window.location.hash === '#parentHorizontalTab2') {
+               setTimeout(function() {
+                   if ($('#accordion').data('ui-accordion') || $('#accordion').hasClass('ui-accordion')) {
+                       $('#accordion').accordion('option', 'active', 1);
+                   } else if ($('.nitice_tab').length) {
+                       $('.nitice_tab').trigger('click');
+                   }
+                   var target = $('.nitice_tab');
+                   if (target.length) {
+                       $('html, body').animate({
+                           scrollTop: target.offset().top - 80
+                       }, 500);
+                   }
+               }, 200);
+           } else if (window.location.hash === '#parentHorizontalTab3') {
+               setTimeout(function() {
+                   var target = $('.newmsgchatbox');
+                   if (target.length) {
+                       $('html, body').animate({
+                           scrollTop: target.offset().top - 80
+                       }, 800);
+                   }
+               }, 300);
+           }
+       });
+   </script>

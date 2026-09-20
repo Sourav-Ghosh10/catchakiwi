@@ -104,9 +104,42 @@
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                             }
+                            .garage-sales-map-wrapper {
+                                border: 2px dashed #e8e8e8;
+                                border-radius: 4px;
+                                margin-bottom: 20px;
+                                padding: 5px;
+                                background: #fff;
+                            }
+                            #garage-sales-map {
+                                height: 500px;
+                                width: 100%;
+                            }
+                            @media only screen and (max-width: 767.98px) {
+                                .garage-sales-map-wrapper {
+                                    width: 100vw !important;
+                                    position: relative !important;
+                                    left: 50% !important;
+                                    right: 50% !important;
+                                    margin-left: -50vw !important;
+                                    margin-right: -50vw !important;
+                                    border: none !important;
+                                    border-radius: 0 !important;
+                                    padding: 0 !important;
+                                    margin-bottom: 20px !important;
+                                    background: transparent !important;
+                                    box-shadow: none !important;
+                                }
+                                #garage-sales-map {
+                                    height: 75vh !important;
+                                    min-height: 400px !important;
+                                    width: 100vw !important;
+                                    border-radius: 0 !important;
+                                }
+                            }
                         </style>
-                        <div style="border: 2px dashed #e8e8e8; border-radius: 4px; margin-bottom: 20px; padding: 5px; background: #fff;">
-                             <div id="garage-sales-map" style="height: 500px; width: 100%;"></div>
+                        <div class="garage-sales-map-wrapper">
+                             <div id="garage-sales-map"></div>
                         </div>
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
@@ -140,6 +173,10 @@
                                 if (markers.length > 0) {
                                     map.fitBounds(markersCluster.getBounds().pad(0.1));
                                 }
+
+                                setTimeout(function() {
+                                    map.invalidateSize();
+                                }, 200);
                             });
                         </script>
 
