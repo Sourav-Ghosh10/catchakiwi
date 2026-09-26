@@ -482,9 +482,8 @@
 
 .right_advertisesec img {
     width: 100%;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    object-fit: contain;
 }
 
 .notice_chat {

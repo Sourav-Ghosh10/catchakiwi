@@ -1361,7 +1361,7 @@
 }
 
 /* =========================================================
-   MOBILE ADVERTISEMENTS STYLING (CAROUSEL / RESPONSIVE CARDS)
+   MOBILE ADVERTISEMENTS STYLING (CAROUSEL / UNIFORM CARDS)
 ========================================================= */
 @media only screen and (max-width: 767px) {
   .right_advertisesec,
@@ -1383,12 +1383,12 @@
     box-sizing: border-box !important;
   }
 
-  .right_advertisesec > a,
-  .right_advertisesec > img,
-  .bottom_advsec > a,
-  .bottom_advsec > img {
+  /* Target ANY direct ad element (wrapper div, a tag, or img tag) */
+  .right_advertisesec > *,
+  .bottom_advsec > * {
     flex: 0 0 240px !important;
     width: 240px !important;
+    min-width: 240px !important;
     max-width: 82vw !important;
     height: 150px !important;
     display: inline-flex !important;
@@ -1397,26 +1397,40 @@
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important;
-    padding: 8px !important;
+    padding: 10px !important;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06) !important;
     scroll-snap-align: start !important;
     text-decoration: none !important;
     box-sizing: border-box !important;
     margin: 0 !important;
     overflow: hidden !important;
+    position: relative !important;
   }
 
+  /* Links inside ad wrappers */
+  .right_advertisesec > * a,
+  .bottom_advsec > * a {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+  }
+
+  /* Images inside ad cards */
   .right_advertisesec img,
   .bottom_advsec img {
     width: 100% !important;
-    max-width: 100% !important;
     height: 100% !important;
+    max-width: 100% !important;
     max-height: 100% !important;
     object-fit: contain !important;
     border-radius: 8px !important;
     background: transparent !important;
     padding: 0 !important;
     border: none !important;
+    box-shadow: none !important;
     margin: 0 !important;
     display: block !important;
   }
