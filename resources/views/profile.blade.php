@@ -327,7 +327,7 @@
                                                                           <input type="hidden" name="tab_hash" value="#parentHorizontalTab2">
                                                                           <button type="submit" class="btn btn-sm btn-success" style="padding: 2px 5px; font-size: 11px; margin-bottom:3px;">Reactivate</button>
                                                                       </form>
-                                                                      <div style="font-size: 10px; color: #dc3545; line-height: 1.1; max-width: 150px; margin: 0 auto;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
+                                                                      <div style="font-size: 10px; color: #dc3545; line-height: 1.2; max-width: 150px; margin: 4px auto 0 auto; white-space: normal !important; word-break: break-word !important; text-align: center;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
                                                                   @else
                                                                       <span class="badge badge-success" style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
                                                                           <i class="fa fa-check"></i> Active
@@ -342,7 +342,7 @@
                                                                       <input type="hidden" name="tab_hash" value="#parentHorizontalTab2">
                                                                       <button type="submit" class="btn btn-sm btn-success" style="padding: 2px 5px; font-size: 11px; margin-bottom:3px;">Reactivate</button>
                                                                   </form>
-                                                                  <div style="font-size: 10px; color: #dc3545; line-height: 1.1; max-width: 150px; margin: 0 auto;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
+                                                                  <div style="font-size: 10px; color: #dc3545; line-height: 1.2; max-width: 150px; margin: 4px auto 0 auto; white-space: normal !important; word-break: break-word !important; text-align: center;">An inactive notice will be permanently deleted in one calendar month if not reactivated</div>
                                                               @endif
                                                           </td>
                                                           <td align="left" valign="top"><img src="{{ asset('assets/images/view_icon.png') }}" alt=""> {{ $ntc->views ?? 0 }}</td>

@@ -144,12 +144,24 @@
   .prof_dasaccod .dash_content .div_scroll {
     overflow-y: hidden;
     position: relative;
-    overflow-x: scroll;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+
+  .prof_dasaccod .dash_content table {
+    min-width: 580px !important;
   }
 
   .prof_dasaccod .dash_content table td a,
   .prof_dasaccod .dash_content table td {
     white-space: nowrap;
+  }
+
+  .prof_dasaccod .dash_content table td.stuaactive,
+  .prof_dasaccod .dash_content table td.stuaactive div {
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
   .latest_buspan {

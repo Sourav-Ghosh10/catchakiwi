@@ -89,6 +89,9 @@
                 if(canvas){
                     var base64data = canvas.toDataURL('image/jpeg', 0.8);
                     if(uploadtype=="imageUpload" || uploadtype=="imageUpload2"){
+                        if (typeof window.showCatchakiwiLoader === 'function') {
+                            window.showCatchakiwiLoader();
+                        }
                         $('#base64image').val(base64data);
                         var preview = document.getElementById('imagePreview');
                         if (preview) {
@@ -97,6 +100,9 @@
                         // alert('Submitting profile photo...');
                         $('#profile_photo').submit();
                     }else if(uploadtype=="coverupload"){
+                        if (typeof window.showCatchakiwiLoader === 'function') {
+                            window.showCatchakiwiLoader();
+                        }
                         $('#base64coverimage').val(base64data);
                         // alert('Submitting cover banner...');
                         $('#profilecoverbanner').submit();
@@ -118,7 +124,18 @@
                 }
             } catch(err) {
                 console.error('Crop error:', err);
+                if (typeof window.hideCatchakiwiLoader === 'function') {
+                    window.hideCatchakiwiLoader();
+                }
                 alert('Crop failed: ' + err.message);
+            }
+        });
+
+        // Automatically show Catchakiwi spinner overlay on form submissions (Notice post/edit, Business add/edit, Profile forms, etc.)
+        $(document).on("submit", "form", function(e) {
+            if ($(this).hasClass('no-loader')) return;
+            if (typeof window.showCatchakiwiLoader === 'function') {
+                window.showCatchakiwiLoader();
             }
         });
 
