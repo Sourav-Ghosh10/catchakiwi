@@ -1000,20 +1000,21 @@
   /* Left col: globe + country select */
   .top_bar > .container > .row > .col-7,
   .top_bar > .container > .row > .col-3,
-  .top_bar.inner > .container > .row > [class*="col-"]:first-child {
-    flex: 1 1 auto !important;
+  .top_bar.inner > .container > .row > .nz_region_col {
+    order: 1 !important;
+    flex: 0 0 auto !important;
     min-width: 0 !important;
-    overflow: hidden !important;
-    padding-left: 10px !important;
+    padding-left: 5px !important;
   }
 
   /* Right col: icons + hamburger */
   .top_bar > .container > .row > .col-5,
   .top_bar > .container > .row > .col-9,
-  .top_bar.inner > .container > .row > .top_menu {
+  .top_bar.inner > .container > .row > .top_menu_col {
+    order: 2 !important;
     width: auto !important;
     flex: 0 0 auto !important;
-    padding-right: 10px !important;
+    padding-right: 5px !important;
   }
 
   .nz_region {
