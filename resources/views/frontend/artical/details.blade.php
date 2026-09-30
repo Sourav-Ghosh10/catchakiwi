@@ -115,17 +115,21 @@
                         <i class="fa fa-heart"></i>
                         <span>Support our advertisers, catchakiwi exists because of them</span>
                     </div>
-                    @foreach($sideData as $ad)
-                        <div class="mb-4 mt-3">
-                            @if($ad->link)
-                                <a href="{{ $ad->link }}" target="_blank">
-                                    <img src="{{ asset($ad->ads_image) }}" class="img-fluid rounded shadow-sm w-100" alt="Ad">
-                                </a>
-                            @else
-                                <img src="{{ asset($ad->ads_image) }}" class="img-fluid rounded shadow-sm w-100" alt="Ad">
-                            @endif
-                        </div>
-                    @endforeach
+                    <div class="right_advertisesec">
+                        @if(!empty($sideData))
+                            @foreach($sideData as $ad)
+                                <div class="ad-card">
+                                    @if($ad->link)
+                                        <a href="{{ $ad->link }}" target="_blank">
+                                            <img src="{{ asset($ad->ads_image) }}" alt="Ad">
+                                        </a>
+                                    @else
+                                        <img src="{{ asset($ad->ads_image) }}" alt="Ad">
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

@@ -216,13 +216,15 @@
           @if(!empty($sideData))
             @foreach ($sideData as $ad) 
                 @if($ad->ads_image!="")
-                    @if($ad->link)
-                        <a href="{{ $ad->link }}" target="_blank">
+                    <div class="ad-card">
+                        @if($ad->link)
+                            <a href="{{ $ad->link }}" target="_blank">
+                                <img src="{{ asset($ad->ads_image) }}" alt="">
+                            </a>
+                        @else
                             <img src="{{ asset($ad->ads_image) }}" alt="">
-                        </a>
-                    @else
-                        <img src="{{ asset($ad->ads_image) }}" alt="">
-                    @endif
+                        @endif
+                    </div>
                 @endif
             @endforeach
           @endif

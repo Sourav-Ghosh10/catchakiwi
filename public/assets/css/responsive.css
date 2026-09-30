@@ -1418,11 +1418,15 @@
     margin: 0 !important;
     overflow: hidden !important;
     position: relative !important;
+    flex-shrink: 0 !important;
   }
 
   /* Links inside ad wrappers */
+  .right_advertisesec > a,
+  .bottom_advsec > a,
   .right_advertisesec > * a,
-  .bottom_advsec > * a {
+  .bottom_advsec > * a,
+  .ad-card a {
     width: 100% !important;
     height: 100% !important;
     display: flex !important;
@@ -1433,7 +1437,8 @@
 
   /* Images inside ad cards */
   .right_advertisesec img,
-  .bottom_advsec img {
+  .bottom_advsec img,
+  .ad-card img {
     width: 100% !important;
     height: 100% !important;
     max-width: 100% !important;
@@ -1446,6 +1451,21 @@
     box-shadow: none !important;
     margin: 0 !important;
     display: block !important;
+  }
+
+  /* Ensure direct img children keep card layout */
+  .right_advertisesec > img,
+  .bottom_advsec > img {
+    flex: 0 0 240px !important;
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 82vw !important;
+    height: 150px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 10px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06) !important;
   }
 
   .support_advertiser {
