@@ -4927,6 +4927,12 @@ background: #fff;
   margin: 0;
   padding: 0;
 }
+.inlogo img {
+  max-height: 40px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+}
 
 .searchpan {
   display: flex;

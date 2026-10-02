@@ -3,7 +3,7 @@
 <div class="top_search nomob_search">
    <div class="container">
       <div class="logo">
-         <h1><a href="index.html"><img src="{{ asset('assets/images/logo-inner.png') }}') }}" alt="" /></a></h1>
+         <h1><a href="{{ url('/') }}"><img src="{{ asset('assets/images/logo-inner.png') }}" alt="" /></a></h1>
       </div>
    </div>
    <div class="container">

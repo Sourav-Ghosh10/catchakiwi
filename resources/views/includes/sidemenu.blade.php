@@ -162,16 +162,14 @@
       @endif
 </div>
  @if(Auth::user())
- 	 @if (empty(Auth::user()->image))
- 	 <a href="#" class="after_logname">
- 	    <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}">
-	 </a>
-	 @else
-	 <a href="#" class="after_logname">
-	    <!--<img src="{{ Auth::user()->profile_photo_url }}" alt="">-->
-	    <img src="{{ asset(\Auth::user()->image) }}"/>
-	 </a>
-	 @endif
+ 	 @php
+ 	    $userImg = (!empty(Auth::user()->image) && file_exists(public_path(Auth::user()->image)))
+ 	        ? asset(Auth::user()->image)
+ 	        : (Auth::user()->profile_photo_url ?? asset('assets/images/dash_icon.png'));
+ 	 @endphp
+ 	 <a href="{{ url('/profile') }}" class="after_logname">
+ 	    <img src="{{ $userImg }}" alt="{{ Auth::user()->name }}" onerror="this.onerror=null;this.src='{{ Auth::user()->profile_photo_url ?? asset('assets/images/dash_icon.png') }}';">
+ 	 </a>
  @endif
 </div>
 </nav>
