@@ -360,6 +360,28 @@ class NoticeController extends Controller
                     ->orWhere('t1.suburb_name', 'like', "%{$location}%")
                     ->orWhere('c1.name', 'like', "%{$location}%")
                     ->orWhere('notice.town_suburb', 'like', "%{$location}%");
+
+                $locationParts = array_map('trim', explode(',', $location));
+                $ignoredWords = ['new zealand', 'australia', 'india', 'united kingdom', 'united states', 'china', 'nz', 'au', 'in', 'uk', 'us'];
+
+                foreach ($locationParts as $part) {
+                    $cleanPart = trim($part);
+                    $wordPart = trim(preg_replace('/[0-9]+/', '', $cleanPart));
+
+                    if (strlen($cleanPart) >= 2 && !is_numeric($cleanPart) && !in_array(strtolower($cleanPart), $ignoredWords)) {
+                        $q->orWhere('c0.name', 'like', "%{$cleanPart}%")
+                            ->orWhere('t1.suburb_name', 'like', "%{$cleanPart}%")
+                            ->orWhere('c1.name', 'like', "%{$cleanPart}%")
+                            ->orWhere('notice.town_suburb', 'like', "%{$cleanPart}%");
+                    }
+
+                    if (strlen($wordPart) >= 2 && $wordPart !== $cleanPart && !in_array(strtolower($wordPart), $ignoredWords)) {
+                        $q->orWhere('c0.name', 'like', "%{$wordPart}%")
+                            ->orWhere('t1.suburb_name', 'like', "%{$wordPart}%")
+                            ->orWhere('c1.name', 'like', "%{$wordPart}%")
+                            ->orWhere('notice.town_suburb', 'like', "%{$wordPart}%");
+                    }
+                }
             });
         }
 

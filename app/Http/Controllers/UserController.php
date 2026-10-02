@@ -180,7 +180,36 @@ class UserController extends Controller
         }
 
         if ($location) {
-            $query->where('business.region', 'LIKE', "%$location%");
+            $query->where(function ($q) use ($location) {
+                // 1. Full string match on location fields
+                $q->where('business.region', 'LIKE', '%' . $location . '%')
+                  ->orWhere('business.address', 'LIKE', '%' . $location . '%')
+                  ->orWhere('business.town_suburb', 'LIKE', '%' . $location . '%')
+                  ->orWhere('business.city_or_district', 'LIKE', '%' . $location . '%');
+
+                // 2. Partial match on individual address parts (e.g., suburb, town, city, region)
+                $locationParts = array_map('trim', explode(',', $location));
+                $ignoredWords = ['new zealand', 'australia', 'india', 'united kingdom', 'united states', 'china', 'nz', 'au', 'in', 'uk', 'us'];
+
+                foreach ($locationParts as $part) {
+                    $cleanPart = trim($part);
+                    $wordPart = trim(preg_replace('/[0-9]+/', '', $cleanPart));
+
+                    if (strlen($cleanPart) >= 2 && !is_numeric($cleanPart) && !in_array(strtolower($cleanPart), $ignoredWords)) {
+                        $q->orWhere('business.region', 'LIKE', '%' . $cleanPart . '%')
+                          ->orWhere('business.city_or_district', 'LIKE', '%' . $cleanPart . '%')
+                          ->orWhere('business.town_suburb', 'LIKE', '%' . $cleanPart . '%')
+                          ->orWhere('business.address', 'LIKE', '%' . $cleanPart . '%');
+                    }
+
+                    if (strlen($wordPart) >= 2 && $wordPart !== $cleanPart && !in_array(strtolower($wordPart), $ignoredWords)) {
+                        $q->orWhere('business.region', 'LIKE', '%' . $wordPart . '%')
+                          ->orWhere('business.city_or_district', 'LIKE', '%' . $wordPart . '%')
+                          ->orWhere('business.town_suburb', 'LIKE', '%' . $wordPart . '%')
+                          ->orWhere('business.address', 'LIKE', '%' . $wordPart . '%');
+                    }
+                }
+            });
         }
 
         $searchQuery = $request->input('search');
