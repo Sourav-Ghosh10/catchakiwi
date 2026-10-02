@@ -22,28 +22,18 @@
                             </select>
                             <div class="selectize-continue" id="service-continue"><i class="fa fa-chevron-right"></i></div>
                         </div>
-                        <div class="serchlocation">
-                            <select name="location" id="locationselect" placeholder="Type Your Location">
-                                <option></option>
-                                @if(!empty($states))
-                                    @foreach($states as $state)
-                                        <option value="{{ $state['name'] }}">{{ $state['name'] }}</option>
-                                        @foreach($state['cities'] as $cities)
-                                            <option value="{{ $cities['name'] . ',' . $state['name'] }}">
-                                                {{ $cities['name'] . ',' . $state['name'] }}</option>
-                                            @if(session('CountryCode') == "NZ")
-                                                @foreach($cities['towns'] as $town)
-                                                    <option
-                                                        value="{{ $town['suburb_name'] . ',' . $cities['name'] . ',' . $state['name'] }}">
-                                                        {{ $town['suburb_name'] . ',' . $cities['name'] . ',' . $state['name'] }}
-                                                    </option>
-                                                @endforeach
-                                            @endif
-                                        @endforeach
-                                    @endforeach
-                                @endif
-                            </select>
-                            <div class="selectize-continue" id="location-continue"><i class="fa fa-chevron-right"></i></div>
+                                                <div class="serchlocation">
+                            <input 
+                                type="text" 
+                                name="location" 
+                                id="locationselect" 
+                                class="search-location-input" 
+                                placeholder="Type Your Location" 
+                                autocomplete="off" 
+                                value="{{ request('location', $location ?? '') }}"
+                            >
+                            <span id="search_location_spinner" style="display:none; position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#9bcd22;">&#8987;</span>
+                            <ul id="search_location_suggestions" class="search-location-suggestions"></ul>
                         </div>
                         <input name="" type="submit" value="Search" />
                     </div>
@@ -254,70 +244,75 @@
             }
         });
 
-        $('#locationselect').selectize({
-            placeholder: 'Type Your Location',
-            create: true,
-            createOnBlur: true,
-            persist: true,
-            render: {
-                option: function (data, escape) {
-                    return '<div class="option">' + escape(data.text) + '</div>';
-                },
-                no_results: function () {
-                    return '<div class="selectize-no-results">No results found</div>';
+        // OpenStreetMap Location Autocomplete for Search
+        (function () {
+            var locInput = document.getElementById('locationselect');
+            var suggestionsList = document.getElementById('search_location_suggestions');
+            var spinner = document.getElementById('search_location_spinner');
+            var debounceTimer = null;
+
+            if (!locInput) return;
+
+            function hideSuggestions() {
+                if (suggestionsList) {
+                    suggestionsList.innerHTML = '';
+                    suggestionsList.style.display = 'none';
                 }
-            },
-            onFocus: function () {
-                var value = this.getValue();
-                if (value) {
-                    var text = this.options[value] ? this.options[value].text : value;
-                    this.clear(true);
-                    this.setTextboxValue(text);
-                }
-                this.open();
-            },
-            onDropdownOpen: function ($dropdown) {
-                $('#location-continue').show();
-                var self = this;
-                setTimeout(function () {
-                    if (!self.hasOptions) {
-                        $dropdown.append('<div class="selectize-no-results">No results found</div>');
-                    }
-                }, 1);
-            },
-            onDropdownClose: function () {
-                $('#location-continue').hide();
-            },
-            onType: function (str) {
-                var self = this;
-                setTimeout(function () {
-                    var $dropdownContent = self.$dropdown_content;
-                    if (!$dropdownContent.children().length) {
-                        $dropdownContent.html('<div class="selectize-no-results">No results found</div>');
-                    }
-                }, 1);
             }
-        });
+
+            var sessionCountryCode = '{{ strtolower(session("CountryCode", "NZ")) }}';
+            if (sessionCountryCode === 'uk') sessionCountryCode = 'gb';
+
+            function fetchSuggestions(q) {
+                if (spinner) spinner.style.display = 'inline';
+                var countryFilter = sessionCountryCode ? '&countrycodes=' + sessionCountryCode : '';
+                fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en' + countryFilter + '&q=' + encodeURIComponent(q))
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) {
+                        if (spinner) spinner.style.display = 'none';
+                        if (!suggestionsList) return;
+                        suggestionsList.innerHTML = '';
+                        if (!d || !d.length) { hideSuggestions(); return; }
+                        d.forEach(function(item) {
+                            var label = item.display_name;
+                            var li = document.createElement('li');
+                            li.textContent = label;
+                            li.addEventListener('mousedown', function(e) {
+                                e.preventDefault();
+                                locInput.value = label;
+                                hideSuggestions();
+                            });
+                            suggestionsList.appendChild(li);
+                        });
+                        suggestionsList.style.display = 'block';
+                    }).catch(function() { if (spinner) spinner.style.display = 'none'; });
+            }
+
+            locInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                var q = this.value.trim();
+                if (q.length < 3) { hideSuggestions(); return; }
+                debounceTimer = setTimeout(function() { fetchSuggestions(q); }, 500);
+            });
+
+            locInput.addEventListener('blur', function() {
+                setTimeout(hideSuggestions, 200);
+            });
+        })();
 
         $('#service-continue').click(function () {
-            $('#serviceselect')[0].selectize.close();
-        });
-        $('#location-continue').click(function () {
-            $('#locationselect')[0].selectize.close();
-        });
-
-        // Ensure typed text is submitted if no option is selected
-        $('.home_searchsec form').on('submit', function () {
-            var serviceSelectize = $('#serviceselect')[0].selectize;
-            var locationSelectize = $('#locationselect')[0].selectize;
-
-            if (!serviceSelectize.getValue() && serviceSelectize.lastQuery) {
-                serviceSelectize.addOption({ value: serviceSelectize.lastQuery, text: serviceSelectize.lastQuery });
-                serviceSelectize.setValue(serviceSelectize.lastQuery);
+            if ($('#serviceselect').length && $('#serviceselect')[0].selectize) {
+                $('#serviceselect')[0].selectize.close();
             }
-            if (!locationSelectize.getValue() && locationSelectize.lastQuery) {
-                locationSelectize.addOption({ value: locationSelectize.lastQuery, text: locationSelectize.lastQuery });
-                locationSelectize.setValue(locationSelectize.lastQuery);
+        });
+
+        $('form').on('submit', function () {
+            if ($('#serviceselect').length && $('#serviceselect')[0].selectize) {
+                var serviceSelectize = $('#serviceselect')[0].selectize;
+                if (!serviceSelectize.getValue() && serviceSelectize.lastQuery) {
+                    serviceSelectize.addOption({ value: serviceSelectize.lastQuery, text: serviceSelectize.lastQuery });
+                    serviceSelectize.setValue(serviceSelectize.lastQuery);
+                }
             }
         });
     });

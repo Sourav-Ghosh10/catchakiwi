@@ -220,11 +220,38 @@
         <input name="appt_number" type="text" value="{{ $business->apartment_number }}">
     </div>
 
-    <div class="frm_dv catfield">
+    <div class="frm_dv catfield" style="position:relative;">
         <label class="dist">Town/suburb, <br>City/District, Region * </label>
-        <select class="addressdd selectsize" name="city_id" id="city_id" required>
-            <!-- Populate city options based on existing data -->
-        </select>
+        <div style="flex:1; position:relative;">
+            <input 
+                type="text" 
+                name="city_id" 
+                id="city_id" 
+                class="street_address @error('city_id') is-invalid @enderror" 
+                placeholder="Start typing your town/suburb, city, region…" 
+                autocomplete="off" 
+                value="{{ old('city_id', $business->region ?? '') }}" 
+                required
+            >
+            <span id="city_id_spinner" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9bcd22;">&#8987;</span>
+            <ul id="city_id_suggestions" style="
+                display:none;
+                position:absolute;
+                top:100%; left:0; right:0;
+                background:#fff;
+                border:1px solid #9bcd22;
+                border-top:none;
+                list-style:none;
+                margin:0; padding:0;
+                z-index:9999;
+                max-height:220px;
+                overflow-y:auto;
+                box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            "></ul>
+        </div>
+        @error('city_id')
+            <span class="invalid-feedback">{{ $message }}</span>
+        @enderror
     </div>
 
     <div class="frm_dv">
@@ -630,51 +657,86 @@ $(document).on('mousedown', '.selectize-input', function() {
 </script>
 
 <script>
-$(document).ready(function () {
-        $('#country_select').change(function () {
-            var selectizeInstance = $('#city_id')[0].selectize;
-            selectizeInstance.setValue("");
-            var countryId = $(this).val();
-            let oldCountry = <?= $business->country ?>
-            //alert(countryId);
-            $.ajax({
-                url: '<?= URL::to('/')  ?>/GetCityStatesameVal', // Replace with your backend route to fetch cities
-                method: 'POST',
-                data: {
-                    country_id: countryId,
-                    _token: $('input[name="_token"]').val(),
-                    selected:"<?= $business->region  ?>" 
-                },
-                success: function (response) {
-                    console.log(response);
-                     
-                    
-                    $('.selectize-control').show();
-                    if (countryId == 157) {
-                        selectizeInstance.settings.placeholder = 'Select Suburb/Town';
-                    } else {
-                        selectizeInstance.settings.placeholder = 'Select City/State';
-                    }
-                    selectizeInstance.updatePlaceholder();
+// ── OpenStreetMap Address Autocomplete for Edit Business ─────────────────
+(function () {
+    var addressInput   = document.getElementById('city_id');
+    var suggestionsList = document.getElementById('city_id_suggestions');
+    var spinner        = document.getElementById('city_id_spinner');
+    var debounceTimer  = null;
 
-                    selectizeInstance.clearOptions();
-                    selectizeInstance.addOption(JSON.parse(response));
-                    selectizeInstance.refreshOptions(false);
-                    if(oldCountry == countryId){
-                        //alert("here");
-                        var selectedValue = <?= json_encode($business->region) ?>;
-                        if (selectedValue) { 
-                            selectizeInstance.setValue(selectedValue); 
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        });
-        $('#country_select').trigger('change');
+    if (!addressInput) return;
+
+    function hideSuggestions() {
+        if (suggestionsList) {
+            suggestionsList.innerHTML = '';
+            suggestionsList.style.display = 'none';
+        }
+    }
+
+    var selectedCountryCode = '{{ strtolower(session("CountryCode", "NZ")) }}';
+
+    function updateCountryCode() {
+        var countryText = $("#country_select option:selected").text().toLowerCase().trim();
+        var countryVal  = $("#country_select").val();
+        if (countryText.includes('new zealand') || countryVal == '157') {
+            selectedCountryCode = 'nz';
+        } else if (countryText.includes('australia')) {
+            selectedCountryCode = 'au';
+        } else if (countryText.includes('united kingdom') || countryText.includes('uk')) {
+            selectedCountryCode = 'gb';
+        } else if (countryText.includes('united states') || countryText.includes('us')) {
+            selectedCountryCode = 'us';
+        }
+    }
+
+    $('#country_select').change(function () {
+        updateCountryCode();
     });
+    updateCountryCode();
+
+    function fetchSuggestions(q) {
+        if (spinner) spinner.style.display = 'inline';
+        var countryFilter = selectedCountryCode ? '&countrycodes=' + selectedCountryCode : '';
+        fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en' + countryFilter + '&q=' + encodeURIComponent(q))
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (spinner) spinner.style.display = 'none';
+                if (!suggestionsList) return;
+                suggestionsList.innerHTML = '';
+                if (!d || !d.length) { hideSuggestions(); return; }
+                d.forEach(function(item) {
+                    var label = item.display_name;
+                    var li = document.createElement('li');
+                    li.textContent = label;
+                    li.style.cssText = 'padding:9px 14px; cursor:pointer; border-bottom:1px solid #f0f0f0; background:#fff; color:#333; font-size:14px; text-align:left;';
+                    li.addEventListener('mouseenter', function() { li.style.background = '#f6fbf0'; });
+                    li.addEventListener('mouseleave', function() { li.style.background = '#fff'; });
+                    li.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        addressInput.value = label;
+                        hideSuggestions();
+                        if (typeof $(addressInput).valid === 'function') {
+                            $(addressInput).valid();
+                        }
+                    });
+                    suggestionsList.appendChild(li);
+                });
+                suggestionsList.style.display = 'block';
+            }).catch(function() { if (spinner) spinner.style.display = 'none'; });
+    }
+
+    addressInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        var q = this.value.trim();
+        if (q.length < 3) { hideSuggestions(); return; }
+        debounceTimer = setTimeout(function() { fetchSuggestions(q); }, 500);
+    });
+
+    addressInput.addEventListener('blur', function() {
+        setTimeout(hideSuggestions, 200);
+    });
+})();
+</script>
     // $(document).ready(function() {
     //         $('#addbusinesssubmit').click(function() {
                 
