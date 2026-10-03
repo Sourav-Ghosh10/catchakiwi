@@ -413,13 +413,13 @@ ul#ui-id-1 {
 /* Card container (ONLY container with border, background, and shadow) */
 .bottom_advsec > *,
 .bottom_advsec .ad-card {
-  flex: 0 0 240px !important;
-  width: 240px !important;
-  min-width: 240px !important;
-  max-width: 240px !important;
-  height: 120px !important;
+  flex: 0 0 280px !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  height: 180px !important;
   margin: 0 !important;
-  padding: 10px !important;
+  padding: 6px !important;
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 10px !important;
@@ -457,7 +457,7 @@ ul#ui-id-1 {
   text-decoration: none !important;
 }
 
-/* Inner <img> tag: FILL THE CARD PROPORTIONATELY */
+/* Inner <img> tag: TALLER FULL DISPLAY */
 .bottom_advsec img,
 .bottom_advsec .ad-card img {
   width: 100% !important;
@@ -469,7 +469,7 @@ ul#ui-id-1 {
   border: none !important;
   background: transparent !important;
   padding: 0 !important;
-  margin: 0 !important;
+  margin: auto !important;
   box-shadow: none !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
 }

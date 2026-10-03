@@ -205,20 +205,25 @@
             <span>Support our advertisers, catchakiwi exists because of them</span>
          </div>
          <div class="bottom_advsec">
-          @if(!empty($sideData))
+          @if(!empty($sideData) && count($sideData) > 0)
             @foreach ($sideData as $ad) 
                 @if($ad->ads_image!="")
                     <div class="ad-card">
                         @if($ad->link)
                             <a href="{{ $ad->link }}" target="_blank">
-                                <img src="{{ asset($ad->ads_image) }}" alt="">
+                                <img src="{{ asset($ad->ads_image) }}" alt="" onerror="this.onerror=null;this.src='{{ asset('assets/images/ads_pic1.png') }}';">
                             </a>
                         @else
-                            <img src="{{ asset($ad->ads_image) }}" alt="">
+                            <img src="{{ asset($ad->ads_image) }}" alt="" onerror="this.onerror=null;this.src='{{ asset('assets/images/ads_pic1.png') }}';">
                         @endif
                     </div>
                 @endif
             @endforeach
+          @else
+             <div class="ad-card"><img src="{{ asset('assets/images/ads_pic1.png') }}" alt=""></div>
+             <div class="ad-card"><img src="{{ asset('assets/images/ads_pic2.png') }}" alt=""></div>
+             <div class="ad-card"><img src="{{ asset('assets/images/ads_pic3.png') }}" alt=""></div>
+             <div class="ad-card"><img src="{{ asset('assets/images/ads_google2.png') }}" alt=""></div>
           @endif
         </div>
       </div>
