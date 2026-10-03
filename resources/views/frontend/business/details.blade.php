@@ -351,33 +351,49 @@
                         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {
-                                var address = "{{ addslashes(($business->address ? $business->address . ', ' : '') . $business->region) }}";
-                                if (address) {
-                                    fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address))
-                                        .then(function(response) { return response.json(); })
+                                var rawAddress = "{{ addslashes(($business->address ? $business->address . ', ' : '') . $business->region) }}";
+                                var parts = rawAddress.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+                                var cleanParts = [];
+                                parts.forEach(function(p){
+                                    if (cleanParts.indexOf(p) === -1) cleanParts.push(p);
+                                });
+                                var address = cleanParts.join(', ');
+                                if (!address) address = "New Zealand";
+
+                                var mapContainer = document.getElementById('osm-map');
+                                if (!mapContainer) return;
+
+                                var map = L.map('osm-map').setView([-40.9006, 174.8860], 6);
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    maxZoom: 19,
+                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                }).addTo(map);
+
+                                function geocodeAndSet(query) {
+                                    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
+                                        .then(function(res) { return res.json(); })
                                         .then(function(data) {
                                             if (data && data.length > 0) {
-                                                var lat = data[0].lat;
-                                                var lon = data[0].lon;
-                                                var map = L.map('osm-map').setView([lat, lon], 15);
-                                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                                    maxZoom: 19,
-                                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                                }).addTo(map);
+                                                var lat = parseFloat(data[0].lat);
+                                                var lon = parseFloat(data[0].lon);
+                                                map.setView([lat, lon], 14);
                                                 L.marker([lat, lon]).addTo(map)
                                                     .bindPopup('<b>{{ addslashes($business->display_name ?? $business->title) }}</b><br>' + address)
                                                     .openPopup();
-                                            } else {
-                                                var mapElem = document.getElementById('osm-map');
-                                                if(mapElem) mapElem.style.display = 'none';
+                                                return true;
                                             }
-                                        })
-                                        .catch(function(err) {
-                                            console.error('OSM Geocoding error:', err);
-                                            var mapElem = document.getElementById('osm-map');
-                                            if(mapElem) mapElem.style.display = 'none';
+                                            return false;
                                         });
                                 }
+
+                                geocodeAndSet(address).then(function(success) {
+                                    if (!success && cleanParts.length > 1) {
+                                        var shortQuery = cleanParts.slice(-2).join(', ');
+                                        geocodeAndSet(shortQuery);
+                                    }
+                                }).catch(function(err) {
+                                    console.error('OSM Geocoding error:', err);
+                                });
                             });
                         </script>
                   @endif
