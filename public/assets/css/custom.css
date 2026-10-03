@@ -376,25 +376,47 @@ ul#ui-id-1 {
   border-radius: 4px !important;
 }
 
-/* Bottom Advertisements Desktop Grid Layout */
-@media only screen and (min-width: 768px) {
-  .bottom_advsec {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 16px !important;
-    margin-top: 20px !important;
-    margin-bottom: 25px !important;
-    width: 100% !important;
-  }
+/* Bottom Advertisements Slider / Carousel (Single horizontal line with smooth scroll) */
+.bottom_advsec {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-snap-type: x mandatory !important;
+  gap: 16px !important;
+  padding: 10px 4px 18px 4px !important;
+  margin-top: 15px !important;
+  margin-bottom: 25px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #9bcd22 #f1f1f1 !important;
+}
 
-  .bottom_advsec > * {
-    flex: 0 0 270px !important;
-    width: 270px !important;
-    max-width: 300px !important;
-    height: 160px !important;
-    margin: 0 !important;
-  }
+.bottom_advsec::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.bottom_advsec::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 10px !important;
+}
+
+.bottom_advsec::-webkit-scrollbar-thumb {
+  background: #9bcd22 !important;
+  border-radius: 10px !important;
+}
+
+.bottom_advsec > * {
+  flex: 0 0 280px !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  height: 160px !important;
+  margin: 0 !important;
+  scroll-snap-align: start !important;
+  box-sizing: border-box !important;
 }
