@@ -14,6 +14,19 @@
         .ql-editor h4, .ql-editor h5, .ql-editor h6 {
             color: inherit; /* Use inherit to maintain the text color */
         }
+        .address-input-wrapper {
+            display: inline-block;
+            vertical-align: top;
+            width: 455px;
+            max-width: 100%;
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            .address-input-wrapper {
+                display: block !important;
+                width: 100% !important;
+            }
+        }
     </style>
     
 <div class="modal fade bd-example-modal-lg imagecrop" id="model" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -216,9 +229,9 @@
         <input name="appt_number" type="text" value="{{ $business->apartment_number }}">
     </div>
 
-    <div class="frm_dv catfield" style="position:relative;">
+    <div class="frm_dv catfield">
         <label class="dist">Address * </label>
-        <div style="flex:1; position:relative;">
+        <div class="address-input-wrapper">
             <input 
                 type="text" 
                 name="city_id" 
@@ -227,6 +240,7 @@
                 placeholder="Start typing your address…" 
                 autocomplete="off" 
                 value="{{ old('city_id', $business->region ? $business->region : $business->address) }}" 
+                style="width: 100%;"
                 required
             >
             <span id="city_id_spinner" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9bcd22;">&#8987;</span>
