@@ -401,14 +401,6 @@ select.form-control option {
                                         </div>
                                     </div>
 
-                                    {{-- Street Address --}}
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Enter Street Address *</label>
-                                            <input name="address" type="text" class="form-control" value="{{ $business->address }}" required>
-                                        </div>
-                                    </div>
-
                                     {{-- Apartment Number --}}
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -417,21 +409,13 @@ select.form-control option {
                                         </div>
                                     </div>
 
-                                    {{-- City/Region --}}
+                                    {{-- Address --}}
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Town/suburb, City/District, Region *</label>
+                                            <label>Address *</label>
                                             <select class="form-control addressdd" name="region" id="city_id" required>
                                                 <option value="">Select City/District</option>
                                             </select>
-                                        </div>
-                                    </div>
-
-                                    {{-- Map --}}
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Map (Note: Paste your address Share Embed link here)</label>
-                                            <input name="map" type="text" class="form-control" value="{{ $business->map }}">
                                         </div>
                                     </div>
 

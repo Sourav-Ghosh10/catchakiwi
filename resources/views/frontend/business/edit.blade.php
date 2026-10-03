@@ -212,25 +212,21 @@
     <input name="website_url" type="text" value="{{ $business->website_url }}">
     </div>
     <div class="frm_dv">
-        <label>Enter Street Address *</label>
-        <input name="street_address" type="text" value="{{ $business->address }}" required>
-    </div>
-    <div class="frm_dv">
         <label>Enter apartment number</label>
         <input name="appt_number" type="text" value="{{ $business->apartment_number }}">
     </div>
 
     <div class="frm_dv catfield" style="position:relative;">
-        <label class="dist">Town/suburb, <br>City/District, Region * </label>
+        <label class="dist">Address * </label>
         <div style="flex:1; position:relative;">
             <input 
                 type="text" 
                 name="city_id" 
                 id="city_id" 
                 class="street_address @error('city_id') is-invalid @enderror" 
-                placeholder="Start typing your town/suburb, city, region…" 
+                placeholder="Start typing your address…" 
                 autocomplete="off" 
-                value="{{ old('city_id', $business->region ?? '') }}" 
+                value="{{ old('city_id', $business->region ? $business->region : $business->address) }}" 
                 required
             >
             <span id="city_id_spinner" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9bcd22;">&#8987;</span>
@@ -252,11 +248,6 @@
         @error('city_id')
             <span class="invalid-feedback">{{ $message }}</span>
         @enderror
-    </div>
-
-    <div class="frm_dv">
-        <label>Map (Note : Paste your address Share Embed link here)</label>
-        <input name="map" type="text" value="{{ $business->map }}">
     </div>
     
     <div class="frm_dv display_addrs">
@@ -365,11 +356,24 @@ const quill = new Quill('#editor', {
   },
   theme: 'snow'
 });
+
+// Sync Quill content to hidden input as the user types
+quill.on('text-change', function() {
+    var content = quill.root.innerHTML;
+    if (quill.getText().trim().length === 0) {
+        content = "";
+    }
+    $('#description').val(content);
+    if ($('#description').length && typeof $('#description').valid === 'function') {
+        $('#description').valid();
+    }
+});
+
 function formsub(){
-        
     var quillContent = document.querySelector('input[name=description]');
-    quillContent.value = quill.root.innerHTML;   
-                
+    if (quillContent) {
+        quillContent.value = quill.root.innerHTML;
+    }
 }
 function resetValidation() {
     var validator = $('#businessForm').validate();
@@ -426,8 +430,7 @@ $(document).ready(function() {
             },
             description: {
                 required: true,
-                minlength: 100,
-                maxlength: 1000
+                minlength: 50
             },
             imageUpload: {
                 extension: "jpg|jpeg|png|gif",
@@ -440,21 +443,15 @@ $(document).ready(function() {
             },
             phone_no: {
                 required: true,
-                maxlength: 15
+                maxlength: 20
             },
-            address: {
+            city_id: {
                 required: true,
                 maxlength: 255
             },
-            postal_code: {
-                required: true,
-                maxlength: 10
-            },
             display_addrs: {
-                required: true,
-                // Ensures the value is either Yes or No
+                required: true
             }
-            // Add rules for other fields based on your Laravel validation rules
         },
         messages: {
             company_name: {
@@ -467,8 +464,7 @@ $(document).ready(function() {
             },
             description: {
                 required: "Please enter a description.",
-                minlength: "Description must be at least 100 characters.",
-                maxlength: "Description must not exceed 1000 characters."
+                minlength: "Business description must be at least 50 characters."
             },
             imageUpload: {
                 extension: "Please upload an image file (jpg, jpeg, png, gif) only.",
@@ -481,25 +477,22 @@ $(document).ready(function() {
             },
             phone_no: {
                 required: "Please enter your phone number.",
-                maxlength: "Phone number must not exceed 15 characters."
+                maxlength: "Phone number must not exceed 20 characters."
             },
-            address: {
+            city_id: {
                 required: "Please enter your address.",
                 maxlength: "Address must not exceed 255 characters."
-            },
-            postal_code: {
-                required: "Please enter postal code.",
-                maxlength: "Postal code must not exceed 10 characters."
             },
             display_addrs: {
                 required: "Please select Yes or No."
             }
-            // Add messages for other fields based on your Laravel validation messages
         },
         submitHandler: function(form) {
-            //istrue = true;
-            //return false;
-            form.submit(); // Submit the form if validation passes
+            $('#description').val(quill.root.innerHTML);
+            if (quill.getText().trim().length === 0) {
+                $('#description').val("");
+            }
+            form.submit();
         }
     });
 });

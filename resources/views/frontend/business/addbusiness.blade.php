@@ -284,13 +284,6 @@
     <input name="website_url" type="text" value="{{ old('website_url') }}" placeholder="" class="thikmark">
     </div>
     <div class="frm_dv">
-        <label>Enter Street Address *</label>
-        <input name="street_address" type="text" placeholder="Enter Street Address" class="street_address @error('street_address') is-invalid @enderror" value="{{ old('street_address') }}"  required>
-        @error('street_address')
-            <span class="invalid-feedback">{{ $message }}</span>
-        @enderror
-    </div>
-    <div class="frm_dv">
         <label>Enter apartment number</label>
         <input name="appt_number" type="text" placeholder="Enter apartment number" class="street_address valid" value="{{ old('appt_number') }}">
     </div>
@@ -309,14 +302,14 @@
     <!--    <input name="appt_number" type="text" placeholder="Street*" class="appt_number" required>-->
     <!--</div>-->
     <div class="frm_dv catfield" style="position:relative;">
-        <label class="dist">Town/suburb, <br>City/District, Region * </label>
+        <label class="dist">Address * </label>
         <div style="flex:1; position:relative;">
             <input 
                 type="text" 
                 name="city_id" 
                 id="city_id" 
                 class="street_address @error('city_id') is-invalid @enderror" 
-                placeholder="Start typing your town/suburb, city, region…" 
+                placeholder="Start typing your address…" 
                 autocomplete="off" 
                 value="{{ old('city_id') }}" 
                 required
@@ -348,10 +341,7 @@
         <!--<select class=" addressdd" name="town_id" id="town_id" placeholder="Select Suburb/City" >-->
         <!--</select>-->
     <!--</div>-->
-    <div class="frm_dv">
-        <label>Map (Note : Paste you address Share Embed link here)</label>
-        <input name="map" type="text" placeholder="Map" class="map"  value="{{ old('map') }}">
-    </div>
+
     
     
     <div class="frm_dv display_addrs">
@@ -541,7 +531,6 @@ $(document).ready(function() {
             email: { required: true, email: true, maxlength: 255 },
             country: { required: true },
             phone_no: { required: true, maxlength: 20 },
-            street_address: { required: true, maxlength: 255 },
             city_id: { required: true },
             display_addrs: { required: true }
         },
@@ -553,8 +542,7 @@ $(document).ready(function() {
             description: "Please provide a business description (min. 50 characters).",
             email: "Please enter a valid email address.",
             phone_no: "Please enter a contact phone number.",
-            street_address: "Please enter the street address.",
-            city_id: "Please select your town/city.",
+            city_id: "Please enter your address.",
             display_addrs: "Please decide if you want to display your address."
         },
         errorElement: 'span',
