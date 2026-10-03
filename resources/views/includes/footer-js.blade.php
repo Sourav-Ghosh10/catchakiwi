@@ -178,6 +178,31 @@
             fileInput.val('');
             previewDiv.addClass('placeholder-icon').html('<i class="fa fa-camera"></i><span>Image '+index+'</span>');
         });
+
+        // Dynamic Website URL Validation (only show tick mark when a valid URL is entered)
+        function validateWebsiteInput(input) {
+            var val = $.trim($(input).val());
+            if (!val) {
+                $(input).removeClass('thikmark');
+                return;
+            }
+            var urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/i;
+            if (urlPattern.test(val)) {
+                $(input).addClass('thikmark');
+            } else {
+                $(input).removeClass('thikmark');
+            }
+        }
+
+        $(document).ready(function() {
+            $('input[name="website_url"]').each(function() {
+                validateWebsiteInput(this);
+            });
+        });
+
+        $(document).on('input blur change keyup', 'input[name="website_url"]', function() {
+            validateWebsiteInput(this);
+        });
     </script>
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
 

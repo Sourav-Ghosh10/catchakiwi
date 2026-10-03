@@ -246,11 +246,12 @@
       </div>
    <div class="home_bg">
       <!-- Header start-->
-      <div class="top_bar">
+      <!-- Desktop Header -->
+      <div class="top_bar d-none d-lg-block">
          <div class="container">
-            <div class="row">
-               <div class="col-lg-3 col-md-7 col-sm-7 col-7">
-                  <p class="nz_region">
+            <div class="row align-items-center">
+               <div class="col-lg-3">
+                  <p class="nz_region mb-0">
                       <select class="countryChange">
                             <option value="IN" {{ (session('CountryCode')=="IN")?"selected":"" }}>IN-India</option>
                             <option value="NZ" {{ (session('CountryCode')=="NZ")?"selected":"" }}>NZ-New Zealand</option>
@@ -261,7 +262,31 @@
                         </select>
                   </p>
                </div>
-               <div class="col-lg-9 col-md-5 col-sm-5 col-5 top_menu">
+               <div class="col-lg-9 top_menu text-right">
+                  @include('includes/topmenu')
+                  @include('includes/sidemenu')
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Mobile Header -->
+      <div class="top_bar d-lg-none py-2">
+         <div class="container-fluid px-3">
+            <div class="d-flex align-items-center justify-content-between w-100">
+               <div class="mobile-header-left">
+                  <p class="nz_region mb-0">
+                      <select class="countryChange">
+                            <option value="IN" {{ (session('CountryCode')=="IN")?"selected":"" }}>IN-India</option>
+                            <option value="NZ" {{ (session('CountryCode')=="NZ")?"selected":"" }}>NZ-New Zealand</option>
+                            <option value="AU" {{ (session('CountryCode')=="AU")?"selected":"" }}>AU-Australia</option>
+                            <option value="CN" {{ (session('CountryCode')=="CN")?"selected":"" }}>CN-China</option>
+                            <option value="UK" {{ (session('CountryCode')=="UK")?"selected":"" }}>UK-United Kingdom</option>
+                            <option value="US" {{ (session('CountryCode')=="US")?"selected":"" }}>US-United States</option>
+                        </select>
+                  </p>
+               </div>
+               <div class="mobile-header-right top_menu">
                   @include('includes/topmenu')
                   @include('includes/sidemenu')
                </div>

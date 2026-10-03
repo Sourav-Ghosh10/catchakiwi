@@ -21,6 +21,7 @@
 <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/ico" sizes="16x16">
 <!--<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap" rel="stylesheet">--> 
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet"> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/css/home_popup.css') }}?v={{ filemtime(public_path('assets/css/home_popup.css')) }}" rel="stylesheet" type="text/css" />
 
@@ -35,7 +36,6 @@
 <link href="{{ asset('assets/css/custom.css') }}?v={{ filemtime(public_path('assets/css/custom.css')) }}" rel="stylesheet" type="text/css" />
 <!--<script src="{{ asset('assets/js/jquery.min.js') }}"></script>-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <!--<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>-->
 <script src="{{ asset('assets/js/bs_leftnavi.js') }}?v={{ filemtime(public_path('assets/js/bs_leftnavi.js')) }}"></script>
 <!--<script src="{{ asset('assets/js/jquery-ui.js') }}"></script>-->

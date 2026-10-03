@@ -339,13 +339,50 @@
                   <p><?= $business->business_description ?></p>
                 <!--  <p><a href="#"><?= $business->title ?></a> / <a href="#" class="active"><?= $business->sec_title ?></a> </p> -->
                </div>
+               @if($business->display_address == "yes")
                <div class="busidtls_location" id="maploc">
                   <h4><img src="{{ asset('assets/images/location_icon.png') }}" alt=""> Map / Location</h4>
-                  <p><?= (($business->display_address == "yes")?$business->address.", ":"") . $business->region ?></p>
-                  @if($business->display_address == "yes" && $business->map)
+                  <p><?= ($business->address ? $business->address . ", " : "") . $business->region ?></p>
+                  @if($business->map)
                         {!! $business->map !!}
+                  @else
+                        <div id="osm-map" style="width: 100%; height: 350px; border-radius: 8px; margin-top: 15px; border: 1px solid #ddd; z-index: 1;"></div>
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                var address = "{{ addslashes(($business->address ? $business->address . ', ' : '') . $business->region) }}";
+                                if (address) {
+                                    fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address))
+                                        .then(function(response) { return response.json(); })
+                                        .then(function(data) {
+                                            if (data && data.length > 0) {
+                                                var lat = data[0].lat;
+                                                var lon = data[0].lon;
+                                                var map = L.map('osm-map').setView([lat, lon], 15);
+                                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                    maxZoom: 19,
+                                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                                }).addTo(map);
+                                                L.marker([lat, lon]).addTo(map)
+                                                    .bindPopup('<b>{{ addslashes($business->display_name ?? $business->title) }}</b><br>' + address)
+                                                    .openPopup();
+                                            } else {
+                                                var mapElem = document.getElementById('osm-map');
+                                                if(mapElem) mapElem.style.display = 'none';
+                                            }
+                                        })
+                                        .catch(function(err) {
+                                            console.error('OSM Geocoding error:', err);
+                                            var mapElem = document.getElementById('osm-map');
+                                            if(mapElem) mapElem.style.display = 'none';
+                                        });
+                                }
+                            });
+                        </script>
                   @endif
-                  <!--<img src="{{ asset('assets/images/map_pic.png') }}" alt="" class="map"> </div>-->
+               </div>
+               @endif
                <div class="busidtls_reviewpan">
                   <h4><img src="{{ asset('assets/images/review_icon.png') }}" alt="">Reviews ({{ count($rating) }})</h4>
                   @php

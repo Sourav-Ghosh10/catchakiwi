@@ -248,12 +248,13 @@
 
    <div class="home_bg">
       <!-- Header start-->
-      <div class="top_bar">
+      <!-- Desktop Header -->
+      <div class="top_bar d-none d-lg-block">
          <div class="container">
-            <div class="row">
-               <div class="col-lg-3 col-md-3 col-sm-3 col-3">
-                    <p class="nz_region">
-                        <select class="countryChange">
+            <div class="row align-items-center">
+               <div class="col-lg-3">
+                  <p class="nz_region mb-0">
+                      <select class="countryChange">
                             <option value="IN" {{ (session('CountryCode')=="IN")?"selected":"" }}>IN-India</option>
                             <option value="NZ" {{ (session('CountryCode')=="NZ")?"selected":"" }}>NZ-New Zealand</option>
                             <option value="AU" {{ (session('CountryCode')=="AU")?"selected":"" }}>AU-Australia</option>
@@ -261,15 +262,39 @@
                             <option value="ENG" {{ (session('CountryCode')=="ENG")?"selected":"" }}>ENG-United Kingdom</option>
                             <option value="US" {{ (session('CountryCode')=="US")?"selected":"" }}>US-United States</option>
                         </select>
-                </p>
+                  </p>
                </div>
-               <div class="col-lg-9 col-md-9 col-sm-9 col-9 top_menu">
+               <div class="col-lg-9 top_menu text-right">
                   @include('includes/topmenu')
                   @include('includes/sidemenu')
-               
-            
+               </div>
+            </div>
          </div>
-        </div>
+      </div>
+
+      <!-- Mobile Header -->
+      <div class="top_bar d-lg-none py-2">
+         <div class="container-fluid px-3">
+            <div class="d-flex align-items-center justify-content-between w-100">
+               <div class="mobile-header-left">
+                  <p class="nz_region mb-0">
+                      <select class="countryChange">
+                            <option value="IN" {{ (session('CountryCode')=="IN")?"selected":"" }}>IN-India</option>
+                            <option value="NZ" {{ (session('CountryCode')=="NZ")?"selected":"" }}>NZ-New Zealand</option>
+                            <option value="AU" {{ (session('CountryCode')=="AU")?"selected":"" }}>AU-Australia</option>
+                            <option value="CN" {{ (session('CountryCode')=="CN")?"selected":"" }}>CN-China</option>
+                            <option value="ENG" {{ (session('CountryCode')=="ENG")?"selected":"" }}>ENG-United Kingdom</option>
+                            <option value="US" {{ (session('CountryCode')=="US")?"selected":"" }}>US-United States</option>
+                        </select>
+                  </p>
+               </div>
+               <div class="mobile-header-right top_menu">
+                  @include('includes/topmenu')
+                  @include('includes/sidemenu')
+               </div>
+            </div>
+         </div>
+      </div>
       <div class="container">
          <div class="logo">
             <h1><a href="{{ URL::to('/') }}"><img src="{{ asset('assets/images/logo.png') }}" alt="" /></a></h1>

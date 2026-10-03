@@ -267,7 +267,7 @@
     <div class="frm_dv display_addrs">
         <label>Display Address? *</label>
         <input name="display_addrs" type="radio" value="yes" {{ $business->display_address == 'yes' ? 'checked' : '' }}>Yes
-        <input name="display_addrs" type="radio" value="no" {{ $business->display_address == 'no' ? 'checked' : '' }}>No
+        <input name="display_addrs" type="radio" value="no" {{ ($business->display_address == 'no' || empty($business->display_address)) ? 'checked' : '' }}>No
         <span>Yes display your business address on your public listing - No keeps it confidential</span>
     </div>
   </div>
@@ -743,76 +743,4 @@ $(document).on('mousedown', '.selectize-input', function() {
         setTimeout(hideSuggestions, 200);
     });
 })();
-</script>
-    // $(document).ready(function() {
-    //         $('#addbusinesssubmit').click(function() {
-                
-    //             return false;
-    //         });
-    //     });
-    // $(document).ready(function () {
-    //     $('#country_select').change(function () {
-    //         var countryId = $(this).val();
-    //         var selectizeInstance = $('#state_id')[0].selectize;
-    //         //console.log(selectizeInstancest);
-    //         //alert(countryId);
-            
-    //         $.ajax({
-    //             type: 'POST',
-    //             url: "getstateforselectsize",
-    //             data:  "_token="+$('input[name="_token"]').val()+"&country_id="+countryId+"&request_for=state",
-    //             dataType: "json",
-    //             async: false,
-    //             success: function(response) { 
-    //             console.log(response)   
-    //             console.log(response)
-    //                 $('.selectize-control').show();
-    //                 //$('.cityid').show();
-    //                 //$('#cityid').html(response);
-        
-    //                 selectizeInstance.clearOptions();
-    //                 selectizeInstance.addOption(response);
-    //                 // Refresh the dropdown to display new options
-    //                 selectizeInstance.refreshOptions(false);
-                
-    //             } 
-    //         });
-    //     });
-    //     $('#country_select').trigger('change');
-        
-    //     $('#state_id').change(function () {
-    //         var stateId = $(this).val();
-    //         var selectizeInstance = $('#town_id')[0].selectize;
-    //         var selectizeInstancecity = $('#city_id')[0].selectize;
-    //         //console.log(selectizeInstancest);
-    //         //alert(countryId);
-            
-    //         $.ajax({
-    //             type: 'POST',
-    //             url: "getstateforselectsize",
-    //             data:  "_token="+$('input[name="_token"]').val()+"&state_id="+stateId+"&request_for=city",
-    //             dataType: "json",
-    //             async: false,
-    //             success: function(response) { 
-    //             console.log(response)   
-    //             console.log(response)
-    //                 $('.selectize-control').show();
-    //                 //$('.cityid').show();
-    //                 //$('#cityid').html(response);
-        
-    //                 selectizeInstance.clearOptions();
-    //                 selectizeInstance.addOption(response);
-    //                 // Refresh the dropdown to display new options
-    //                 selectizeInstance.refreshOptions(false);
-                    
-    //                 selectizeInstancecity.clearOptions();
-    //                 selectizeInstancecity.addOption(response);
-    //                 // Refresh the dropdown to display new options
-    //                 selectizeInstancecity.refreshOptions(false);
-                
-    //             } 
-    //         });
-    //     });
-    // });
-    
 </script>

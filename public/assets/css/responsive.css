@@ -972,13 +972,27 @@
     margin: 0 auto;
     margin-bottom: 15px;
   }
-}@media only screen and (max-width: 767px) {
+}@media only screen and (max-width: 991px) {
+  .top_bar .logo_col,
+  .top_bar.inner .logo_col,
+  .top_bar .inlogo,
+  .top_bar.inner .inlogo {
+    display: none !important;
+  }
+
   .top_bar, .top_bar.inner {
     padding-top: 10px !important;
     padding-bottom: 10px !important;
   }
 
-  /* Make the top bar row a flex container so both cols fit on one line */
+  .top_bar > .container,
+  .top_bar.inner > .container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    max-width: 100% !important;
+  }
+
+  /* Make the top bar row a flex container so left and right fit on one line */
   .top_bar > .container > .row,
   .top_bar.inner > .container > .row {
     display: flex !important;
@@ -986,6 +1000,9 @@
     flex-wrap: nowrap !important;
     align-items: center !important;
     justify-content: space-between !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
   }
 
   .top_bar > .container > .row > [class*="col-"],
@@ -993,37 +1010,54 @@
     flex: 0 0 auto !important;
     max-width: none !important;
     width: auto !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
-  /* Left col: globe + country select */
+  /* Left col: globe + country select (flush left) */
+  .nz_region_col,
+  .top_bar .nz_region_col,
+  .top_bar.inner .nz_region_col,
   .top_bar > .container > .row > .col-7,
   .top_bar > .container > .row > .col-3,
   .top_bar.inner > .container > .row > .nz_region_col {
     order: 1 !important;
     flex: 0 0 auto !important;
     min-width: 0 !important;
-    padding-left: 5px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    float: left !important;
   }
 
-  /* Right col: icons + hamburger */
+  /* Right col: icons + hamburger (flush right) */
   .top_bar > .container > .row > .col-5,
   .top_bar > .container > .row > .col-9,
   .top_bar.inner > .container > .row > .top_menu_col {
     order: 2 !important;
     width: auto !important;
     flex: 0 0 auto !important;
-    padding-right: 5px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
   }
 
   .nz_region {
-    padding-left: 28px !important;
+    padding-left: 26px !important;
     background: url(../images/globe_icon.png) 0 center / 20px auto no-repeat !important;
     white-space: nowrap !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    margin-left: 4px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
   }
