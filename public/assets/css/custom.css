@@ -376,7 +376,7 @@ ul#ui-id-1 {
   border-radius: 4px !important;
 }
 
-/* Bottom Advertisements Slider / Carousel (Single horizontal line with smooth scroll) */
+/* Bottom Advertisements Slider / Carousel (Clean Single Row Slider) */
 .bottom_advsec {
   display: flex !important;
   flex-direction: row !important;
@@ -410,13 +410,66 @@ ul#ui-id-1 {
   border-radius: 10px !important;
 }
 
-.bottom_advsec > * {
-  flex: 0 0 280px !important;
-  width: 280px !important;
-  min-width: 280px !important;
-  max-width: 280px !important;
-  height: 160px !important;
+/* Card container (ONLY container with border, background, and shadow) */
+.bottom_advsec > *,
+.bottom_advsec .ad-card {
+  flex: 0 0 240px !important;
+  width: 240px !important;
+  min-width: 240px !important;
+  max-width: 240px !important;
+  height: 120px !important;
   margin: 0 !important;
+  padding: 10px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
   scroll-snap-align: start !important;
   box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.bottom_advsec > *:hover,
+.bottom_advsec .ad-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
+  border-color: #9bcd22 !important;
+}
+
+/* Inner <a> tag: NO INNER BORDERS OR EXTRA PADDING */
+.bottom_advsec a,
+.bottom_advsec .ad-card a {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  text-decoration: none !important;
+}
+
+/* Inner <img> tag: FILL THE CARD PROPORTIONATELY */
+.bottom_advsec img,
+.bottom_advsec .ad-card img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  border-radius: 6px !important;
 }
