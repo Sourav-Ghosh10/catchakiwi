@@ -159,6 +159,49 @@
                                         </div>
                                     </div>
 
+                                    <!-- Services Offered Fields -->
+                                    <div id="services_offered_fields" style="display:none;">
+                                        <div class="frm_dv" style="position:relative;">
+                                            <label for="so_address_input">Town/Suburb:</label>
+                                            <div style="flex:1; max-width:535px; position:relative;">
+                                                <input
+                                                    type="text"
+                                                    id="so_address_input"
+                                                    name="town_suburb"
+                                                    placeholder="Start typing town/suburb or address…"
+                                                    autocomplete="off"
+                                                    value="{{ old('town_suburb', $notice->town_suburb ?? ($notice->gs_address ?? '')) }}"
+                                                >
+                                                <span id="so_address_spinner" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9bcd22;">&#8987;</span>
+                                                <ul id="so_address_suggestions" style="
+                                                    display:none;
+                                                    position:absolute;
+                                                    top:100%; left:0; right:0;
+                                                    background:#fff;
+                                                    border:1px solid #9bcd22;
+                                                    border-top:none;
+                                                    list-style:none;
+                                                    margin:0; padding:0;
+                                                    z-index:9999;
+                                                    max-height:220px;
+                                                    overflow-y:auto;
+                                                    box-shadow:0 4px 12px rgba(0,0,0,.12);
+                                                    font-family:'Poppins',sans-serif;
+                                                    font-size:13px;
+                                                "></ul>
+                                            </div>
+                                            <input type="hidden" name="so_gs_address" id="so_gs_address" value="{{ old('gs_address', $notice->gs_address ?? '') }}">
+                                            <input type="hidden" name="gs_lat" id="so_lat" value="{{ old('gs_lat', $notice->gs_lat ?? '') }}">
+                                            <input type="hidden" name="gs_lng" id="so_lng" value="{{ old('gs_lng', $notice->gs_lng ?? '') }}">
+                                        </div>
+                                        <div id="so_map_preview" style="display:none; margin-bottom:15px;">
+                                            <div class="frm_dv">
+                                                <label></label>
+                                                <div id="so_map_container" style="flex:1; max-width:535px; height:200px; border:1px solid #9bcd22; border-radius:4px; overflow:hidden;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- Garage Sales Fields -->
                                     <div id="garage_sales_fields" style="display:none;">
                                         <div class="frm_dv" style="position:relative;">
@@ -675,6 +718,7 @@
                                 var restOfFields = document.getElementById('rest_of_fields');
                                 var getAQuoteFields = document.getElementById('get_a_quote_fields');
                                 var serviceDealFields = document.getElementById('service_deal_fields');
+                                var servicesOfferedFields = document.getElementById('services_offered_fields');
                                 var garageSalesFields = document.getElementById('garage_sales_fields');
                                 var additionalImagesSection = document.getElementById('additional_images_section');
                                 var bodyLabel = document.getElementById('body_label');
@@ -683,8 +727,9 @@
                                 var noticeOptionsFields = document.getElementById('notice_options_fields');
                                 var serviceTypeFields = document.getElementById('service_type_fields');
 
-                                // Always hide garage fields & service type fields first, re-show if needed
+                                // Always hide garage fields, services offered fields & service type fields first, re-show if needed
                                 if (garageSalesFields) garageSalesFields.style.display = 'none';
+                                if (servicesOfferedFields) servicesOfferedFields.style.display = 'none';
                                 if (serviceTypeFields) serviceTypeFields.style.display = 'none';
 
                                 var isServicesOffered = (categoryId == '8' || categorySlug === 'services-offered' || categoryName === 'services offered');
@@ -695,9 +740,20 @@
                                     if (itemOptionsFields) itemOptionsFields.style.setProperty('display', 'none', 'important'); // hidden by default
                                     if (noticeOptionsFields) noticeOptionsFields.style.display = ''; // shown by default
 
-                                    if (isServicesOffered || isFiveDollarDeal) {
+                                    if (isServicesOffered) {
+                                        serviceDealFields.style.display = 'none';
+                                        if (servicesOfferedFields) servicesOfferedFields.style.display = 'block';
+                                        if (serviceTypeFields) serviceTypeFields.style.display = 'flex';
+                                        getAQuoteFields.style.display = 'none';
+                                        additionalImagesSection.style.display = 'none';
+                                        bodyLabel.innerText = 'Description:';
+                                        bodyTextarea.placeholder = 'Description (300 char max).';
+                                        bodyTextarea.maxLength = 300;
+                                        document.getElementById('body_counter').innerText = bodyTextarea.value.length + ' / 300 characters';
+                                    } else if (isFiveDollarDeal) {
                                         serviceDealFields.style.display = 'block';
-                                        if (serviceTypeFields) serviceTypeFields.style.display = isServicesOffered ? 'flex' : 'none';
+                                        if (servicesOfferedFields) servicesOfferedFields.style.display = 'none';
+                                        if (serviceTypeFields) serviceTypeFields.style.display = 'none';
                                         getAQuoteFields.style.display = 'none';
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Description:';
@@ -903,115 +959,143 @@
                         </script>
 
                         <script>
-                        // ── OpenStreetMap Address Autocomplete & Map for Garage Sales ─────────────────
+                        // ── OpenStreetMap Address Autocomplete & Map for Garage Sales & Services Offered ──
                         (function () {
-                            var addressInput   = document.getElementById('gs_address_input');
-                            var suggestionsList = document.getElementById('gs_address_suggestions');
-                            var spinner        = document.getElementById('gs_address_spinner');
-                            var latField       = document.getElementById('gs_lat');
-                            var lngField       = document.getElementById('gs_lng');
-                            var mapPreview     = document.getElementById('gs_map_preview');
-                            var mapContainer   = document.getElementById('gs_map_container');
-                            var debounceTimer  = null;
-                            var leafletMap     = null;
-                            var leafletMarker  = null;
+                            // Map session CountryCode to Nominatim ISO country code
+                            var sessionCountryCode = '{{ strtolower(session("CountryCode", "NZ")) }}';
+                            if (sessionCountryCode === 'uk') sessionCountryCode = 'gb';
 
-                            if (!addressInput) return;
+                            function initAddressAutocomplete(cfg) {
+                                var addressInput   = document.getElementById(cfg.inputId);
+                                var suggestionsList = document.getElementById(cfg.suggestionsId);
+                                var spinner        = document.getElementById(cfg.spinnerId);
+                                var latField       = document.getElementById(cfg.latId);
+                                var lngField       = document.getElementById(cfg.lngId);
+                                var mapPreview     = document.getElementById(cfg.mapPreviewId);
+                                var mapContainer   = document.getElementById(cfg.mapContainerId);
+                                var extraAddr      = cfg.extraAddrId ? document.getElementById(cfg.extraAddrId) : null;
+                                var debounceTimer  = null;
+                                var leafletMap     = null;
+                                var leafletMarker  = null;
 
-                            function hideSuggestions() {
-                                suggestionsList.innerHTML = '';
-                                suggestionsList.style.display = 'none';
-                            }
+                                if (!addressInput) return;
 
-                            function clearCoords() {
-                                latField.value = '';
-                                lngField.value = '';
-                                if (mapPreview) mapPreview.style.display = 'none';
-                            }
+                                function hideSuggestions() {
+                                    if (suggestionsList) {
+                                        suggestionsList.innerHTML = '';
+                                        suggestionsList.style.display = 'none';
+                                    }
+                                }
 
-                            function initMap(lat, lng) {
-                                if (typeof L === 'undefined') return;
-                                if (mapPreview) mapPreview.style.display = 'block';
-                                
-                                if (!leafletMap) {
-                                    leafletMap = L.map(mapContainer).setView([lat, lng], 15);
-                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                        maxZoom: 19,
-                                        attribution: '&copy; OpenStreetMap contributors'
-                                    }).addTo(leafletMap);
-                                    leafletMarker = L.marker([lat, lng]).addTo(leafletMap);
-                                } else {
-                                    leafletMap.setView([lat, lng], 15);
-                                    leafletMarker.setLatLng([lat, lng]);
+                                function clearCoords() {
+                                    if (latField) latField.value = '';
+                                    if (lngField) lngField.value = '';
+                                    if (mapPreview) mapPreview.style.display = 'none';
+                                }
+
+                                function initMap(lat, lng) {
+                                    if (typeof L === 'undefined') return;
+                                    if (mapPreview) mapPreview.style.display = 'block';
+
+                                    if (!leafletMap) {
+                                        leafletMap = L.map(mapContainer).setView([lat, lng], 15);
+                                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                            maxZoom: 19,
+                                            attribution: '&copy; OpenStreetMap contributors'
+                                        }).addTo(leafletMap);
+                                        leafletMarker = L.marker([lat, lng]).addTo(leafletMap);
+                                    } else {
+                                        leafletMap.setView([lat, lng], 15);
+                                        leafletMarker.setLatLng([lat, lng]);
+                                    }
+                                }
+
+                                function loadSDK(cb) {
+                                    if (typeof L !== 'undefined') { cb(); return; }
+                                    var head = document.head;
+                                    var link = document.createElement('link');
+                                    link.rel = 'stylesheet';
+                                    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                                    head.appendChild(link);
+
+                                    var s = document.createElement('script');
+                                    s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                                    s.onload = cb;
+                                    head.appendChild(s);
+                                }
+
+                                function fetchSuggestions(q) {
+                                    if (spinner) spinner.style.display = 'inline';
+                                    fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en&countrycodes=' + sessionCountryCode + '&q=' + encodeURIComponent(q))
+                                        .then(function(r) { return r.json(); })
+                                        .then(function(d) {
+                                            if (spinner) spinner.style.display = 'none';
+                                            if (!suggestionsList) return;
+                                            suggestionsList.innerHTML = '';
+                                            if (!d || !d.length) { hideSuggestions(); return; }
+                                            d.forEach(function(item) {
+                                                var label = item.display_name;
+                                                var li = document.createElement('li');
+                                                li.textContent = label;
+                                                li.style.cssText = 'padding:9px 14px; cursor:pointer; border-bottom:1px solid #f0f0f0;';
+                                                li.addEventListener('mouseenter', function() { li.style.background = '#f6fbf0'; });
+                                                li.addEventListener('mouseleave', function() { li.style.background = ''; });
+                                                li.addEventListener('mousedown', function(e) {
+                                                    e.preventDefault();
+                                                    addressInput.value = label;
+                                                    if (extraAddr) extraAddr.value = label;
+                                                    if (latField) latField.value = item.lat;
+                                                    if (lngField) lngField.value = item.lon;
+                                                    hideSuggestions();
+                                                    loadSDK(function() { initMap(item.lat, item.lon); });
+                                                });
+                                                suggestionsList.appendChild(li);
+                                            });
+                                            suggestionsList.style.display = 'block';
+                                        }).catch(function() { if (spinner) spinner.style.display = 'none'; });
+                                }
+
+                                addressInput.addEventListener('input', function() {
+                                    clearTimeout(debounceTimer);
+                                    clearCoords();
+                                    var q = this.value.trim();
+                                    if (q.length < 3) { hideSuggestions(); return; }
+                                    debounceTimer = setTimeout(function() { fetchSuggestions(q); }, 500);
+                                });
+
+                                addressInput.addEventListener('blur', function() {
+                                    setTimeout(hideSuggestions, 200);
+                                });
+
+                                if (latField && lngField && latField.value && lngField.value) {
+                                    loadSDK(function() {
+                                        initMap(parseFloat(latField.value), parseFloat(lngField.value));
+                                    });
                                 }
                             }
 
-                            function loadSDK(cb) {
-                                if (typeof L !== 'undefined') { cb(); return; }
-                                var head = document.head;
-                                var link = document.createElement('link');
-                                link.rel = 'stylesheet';
-                                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                                head.appendChild(link);
-                                
-                                var s = document.createElement('script');
-                                s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-                                s.onload = cb;
-                                head.appendChild(s);
-                            }
-
-                            // Map session CountryCode to Nominatim ISO country code
-                            var sessionCountryCode = '{{ strtolower(session("CountryCode", "NZ")) }}';
-                            // Nominatim uses 'gb' for UK
-                            if (sessionCountryCode === 'uk') sessionCountryCode = 'gb';
-
-                            function fetchSuggestions(q) {
-                                if (spinner) spinner.style.display = 'inline';
-                                fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&accept-language=en&countrycodes=' + sessionCountryCode + '&q=' + encodeURIComponent(q))
-                                    .then(function(r) { return r.json(); })
-                                    .then(function(d) {
-                                        if (spinner) spinner.style.display = 'none';
-                                        suggestionsList.innerHTML = '';
-                                        if (!d || !d.length) { hideSuggestions(); return; }
-                                        d.forEach(function(item) {
-                                            var label = item.display_name;
-                                            var li = document.createElement('li');
-                                            li.textContent = label;
-                                            li.style.cssText = 'padding:9px 14px; cursor:pointer; border-bottom:1px solid #f0f0f0;';
-                                            li.addEventListener('mouseenter', function() { li.style.background = '#f6fbf0'; });
-                                            li.addEventListener('mouseleave', function() { li.style.background = ''; });
-                                            li.addEventListener('mousedown', function(e) {
-                                                e.preventDefault();
-                                                addressInput.value = label;
-                                                latField.value = item.lat;
-                                                lngField.value = item.lon; // Note: Nominatim uses 'lon' instead of 'lng'
-                                                hideSuggestions();
-                                                loadSDK(function() { initMap(item.lat, item.lon); });
-                                            });
-                                            suggestionsList.appendChild(li);
-                                        });
-                                        suggestionsList.style.display = 'block';
-                                    }).catch(function() { if (spinner) spinner.style.display = 'none'; });
-                            }
-
-                            addressInput.addEventListener('input', function() {
-                                clearTimeout(debounceTimer);
-                                clearCoords();
-                                var q = this.value.trim();
-                                if (q.length < 3) { hideSuggestions(); return; }
-                                debounceTimer = setTimeout(function() { fetchSuggestions(q); }, 500); // 500ms debounce for Nominatim
+                            // Initialize for Garage Sales
+                            initAddressAutocomplete({
+                                inputId: 'gs_address_input',
+                                suggestionsId: 'gs_address_suggestions',
+                                spinnerId: 'gs_address_spinner',
+                                latId: 'gs_lat',
+                                lngId: 'gs_lng',
+                                mapPreviewId: 'gs_map_preview',
+                                mapContainerId: 'gs_map_container'
                             });
 
-                            addressInput.addEventListener('blur', function() {
-                                setTimeout(hideSuggestions, 200);
+                            // Initialize for Services Offered
+                            initAddressAutocomplete({
+                                inputId: 'so_address_input',
+                                suggestionsId: 'so_address_suggestions',
+                                spinnerId: 'so_address_spinner',
+                                latId: 'so_lat',
+                                lngId: 'so_lng',
+                                mapPreviewId: 'so_map_preview',
+                                mapContainerId: 'so_map_container',
+                                extraAddrId: 'so_gs_address'
                             });
-
-                            // If editing an existing garage sale notice that already has coords
-                            if (latField.value && lngField.value) {
-                                loadSDK(function() {
-                                    initMap(parseFloat(latField.value), parseFloat(lngField.value));
-                                });
-                            }
                         })();
                         </script>
 
