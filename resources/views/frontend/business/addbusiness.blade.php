@@ -91,7 +91,7 @@
               <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                      <h5 class="modal-title" id="exampleModalLabel">Crop Image</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -296,24 +296,6 @@
     <label>Website URL</label>
     <input name="website_url" type="text" value="{{ old('website_url') }}" placeholder="">
     </div>
-    <div class="frm_dv">
-        <label>Enter apartment number</label>
-        <input name="appt_number" type="text" placeholder="Enter apartment number" class="street_address valid" value="{{ old('appt_number') }}">
-    </div>
-    <!--<div class="frm_dv">-->
-    <!--<label>Address</label>-->
-    <!--<input name="address" type="text" placeholder="Start typing your address ( Number, Street, Suburb, City )" required>-->
-    <!--</div>-->
-    
-    <!--<div class="frm_dv">-->
-    <!--    <label>Region* </label>-->
-    <!--    <select class="form-control selectsize addressdd" name="state_id" id="state_id" placeholder="Select State" required>-->
-    <!--    </select>-->
-    <!--</div>-->
-    <!--<div class="frm_dv"> -->
-    <!--    <label>Street*</label>-->
-    <!--    <input name="appt_number" type="text" placeholder="Street*" class="appt_number" required>-->
-    <!--</div>-->
     <div class="frm_dv catfield">
         <label class="dist">Address * </label>
         <div class="address-input-wrapper">
@@ -347,6 +329,10 @@
         @error('city_id')
             <span class="invalid-feedback">{{ $message }}</span>
         @enderror
+    </div>
+    <div class="frm_dv">
+        <label>Enter unit or apartment number</label>
+        <input name="appt_number" type="text" placeholder="Enter unit or apartment number" class="street_address valid" value="{{ old('appt_number') }}">
     </div>
     <!--<div class="frm_dv">-->
     <!--    <label>Town/suburb*</label>-->

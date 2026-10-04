@@ -329,34 +329,58 @@ ul#ui-id-1 {
 }
 
 .imagecrop .img-container {
+  width: 100% !important;
   max-width: 100% !important;
-  max-height: 55vh !important;
-  min-height: 180px !important;
+  max-height: 60vh !important;
+  min-height: 200px !important;
   overflow: hidden !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  display: block !important;
+  text-align: center !important;
+  margin: 0 auto !important;
   background: #111 !important;
 }
 
-.imagecrop .img-container img,
-.imagecrop #image {
+.imagecrop .img-container > img:not(.cropper-hidden),
+.imagecrop #image:not(.cropper-hidden) {
   max-width: 100% !important;
-  max-height: 55vh !important;
+  max-height: 60vh !important;
   display: block !important;
+  margin: 0 auto !important;
+}
+
+.imagecrop .cropper-hidden,
+#image.cropper-hidden,
+.cropper-hidden {
+  display: none !important;
 }
 
 .cropper-container {
+  width: 100% !important;
   max-width: 100% !important;
-  max-height: 55vh !important;
+  max-height: 60vh !important;
+  margin: 0 auto !important;
 }
 
-.cropper-wrap-box,
-.cropper-canvas,
-.cropper-drag-box,
-.cropper-crop-box,
-.cropper-modal {
-  max-width: 100% !important;
+.cropper-container img {
+  max-width: none !important;
+  max-height: none !important;
+}
+
+/* Homebased Startup notification banner layout fix */
+.notification_homebased {
+  margin-top: 12px !important;
+  margin-left: 0 !important;
+  padding: 10px 16px !important;
+  line-height: 1.4 !important;
+  border-radius: 6px !important;
+  clear: both !important;
+  position: relative !important;
+}
+
+.notification_homebased::before {
+  top: -8px !important;
+  left: 30px !important;
+  right: auto !important;
 }
 
 .imagecrop .modal-footer {

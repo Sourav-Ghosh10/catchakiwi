@@ -93,6 +93,16 @@
                                         </div>
                                     </div>
 
+                                    <div class="frm_dv" id="service_type_fields" style="display:none;">
+                                        <label for="service_type">Service type</label>
+                                        <select name="service_type" id="service_type">
+                                            <option value="" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == '' ? 'selected' : '' }}>Services type</option>
+                                            <option value="Tradies and home maintenance" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == 'Tradies and home maintenance' ? 'selected' : '' }}>Tradies and home maintenance</option>
+                                            <option value="Cafts and domestic services" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == 'Cafts and domestic services' ? 'selected' : '' }}>Cafts and domestic services</option>
+                                            <option value="Personal and educational services" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == 'Personal and educational services' ? 'selected' : '' }}>Personal and educational services</option>
+                                        </select>
+                                    </div>
+
                                     <div class="frm_dv">
                                         <label>Notice Title:</label>
                                         <div class="notice-field-column">
@@ -209,8 +219,8 @@
                                     <div class="frm_dv textareadv">
                                         <label id="body_label">Add your content: </label>
                                         <div class="notice-field-column">
-                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text." maxlength="{{ isset($notice) && in_array($notice->category_id, [1, 9]) ? '300' : '155' }}">{{ old('notice_body', $notice->content ?? '') }}</textarea>
-                                            <div id="body_counter" class="notice-character-counter">{{ isset($notice) ? strlen($notice->content) : 0 }} / {{ isset($notice) && in_array($notice->category_id, [1, 9]) ? '300' : '155' }} characters</div>
+                                            <textarea name="notice_body" id="notice_body" cols="" rows="" placeholder="Add notice body text." maxlength="{{ isset($notice) && in_array($notice->category_id, [1, 8, 9]) ? '300' : '155' }}">{{ old('notice_body', $notice->content ?? '') }}</textarea>
+                                            <div id="body_counter" class="notice-character-counter">{{ isset($notice) ? strlen($notice->content) : 0 }} / {{ isset($notice) && in_array($notice->category_id, [1, 8, 9]) ? '300' : '155' }} characters</div>
                                         </div>
                                     </div>
 
@@ -671,19 +681,23 @@
                                 var bodyTextarea = document.getElementsByName('notice_body')[0];
                                 var itemOptionsFields = document.getElementById('item_options_fields');
                                 var noticeOptionsFields = document.getElementById('notice_options_fields');
+                                var serviceTypeFields = document.getElementById('service_type_fields');
 
-                                // Always hide garage fields first, re-show if needed
+                                // Always hide garage fields & service type fields first, re-show if needed
                                 if (garageSalesFields) garageSalesFields.style.display = 'none';
+                                if (serviceTypeFields) serviceTypeFields.style.display = 'none';
+
+                                var isServicesOffered = (categoryId == '8' || categorySlug === 'services-offered' || categoryName === 'services offered');
+                                var isFiveDollarDeal = (categoryId == '1' || categorySlug === 'five-dollar-service-deal' || categoryName === '$5 service deal');
 
                                 if (categoryId) {
                                     restOfFields.style.display = 'block';
                                     if (itemOptionsFields) itemOptionsFields.style.setProperty('display', 'none', 'important'); // hidden by default
                                     if (noticeOptionsFields) noticeOptionsFields.style.display = ''; // shown by default
 
-                                    // ID 1 is $5 Service Deal
-                                    // ID 2 is Get a Quote
-                                    if (categoryId == '1') {
+                                    if (isServicesOffered || isFiveDollarDeal) {
                                         serviceDealFields.style.display = 'block';
+                                        if (serviceTypeFields) serviceTypeFields.style.display = isServicesOffered ? 'flex' : 'none';
                                         getAQuoteFields.style.display = 'none';
                                         additionalImagesSection.style.display = 'none';
                                         bodyLabel.innerText = 'Description:';
@@ -785,7 +799,7 @@
                                 var initialCat = $('#category_id').val();
                                 if (initialCat == '2') {
                                     setTimeout(updateQuoteTowns, 500);
-                                } else if (initialCat == '1' || initialCat == '9') {
+                                } else if (initialCat == '1' || initialCat == '8' || initialCat == '9') {
                                     setTimeout(updateServiceDealTowns, 500);
                                 }
                             });
@@ -1009,7 +1023,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Crop Image</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>

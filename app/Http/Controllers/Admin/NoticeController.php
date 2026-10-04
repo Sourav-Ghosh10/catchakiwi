@@ -107,6 +107,7 @@ class NoticeController extends Controller
             'notice_title' => 'required|string|max:35',
             'notice_body' => 'required|string|max:300',
             'town_suburb' => 'nullable|string',
+            'service_type' => 'nullable|string',
             'looking_for' => 'nullable|string',
             'job_location' => 'nullable|string',
             'start_date' => 'nullable|string',
@@ -123,13 +124,15 @@ class NoticeController extends Controller
         $selectedNoticeCategorySlug = $selectedNoticeCategory->slug ?? '';
         $isItemsCategory = in_array($selectedNoticeCategorySlug, ['items-for-sale', 'items-for-sale-or-wanted'])
             || in_array($selectedNoticeCategoryName, ['items for sale', 'items for sale or wanted']);
-        $noticeLookingFor = $isItemsCategory ? $request->input('item_type') : $request->input('looking_for');
+        $serviceType = $request->input('service_type');
+        $noticeLookingFor = $isItemsCategory ? $request->input('item_type') : ($request->input('looking_for') ?: $serviceType);
 
         $notice->category_id = $category_id;
         $notice->noticetype = $request->input('noticetype');
         $notice->heading = $request->input('notice_title');
         $notice->content = $request->input('notice_body');
         $notice->town_suburb = $request->input('town_suburb');
+        $notice->service_type = $serviceType;
         $notice->looking_for = $noticeLookingFor;
         $notice->job_location = $request->input('job_location');
         $notice->start_date = $request->input('start_date');

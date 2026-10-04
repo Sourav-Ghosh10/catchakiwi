@@ -755,6 +755,15 @@ class BusinessController extends Controller
 
     public function listInsert(Request $request)
     {
+        foreach (['website_url', 'facebook_prof', 'linkedin', 'twitter'] as $urlField) {
+            if ($request->filled($urlField)) {
+                $val = trim($request->input($urlField));
+                if ($val && !preg_match('#^https?://#i', $val)) {
+                    $request->merge([$urlField => 'https://' . $val]);
+                }
+            }
+        }
+
         $validatedData = $request->validate([
             'homebased_business' => 'required|string|in:Yes,No',
             'company_name' => 'required|string|max:255',
@@ -880,6 +889,15 @@ class BusinessController extends Controller
 
     public function businessUpdate(Request $request, $id)
     {
+        foreach (['website_url', 'facebook_prof', 'linkedin', 'twitter'] as $urlField) {
+            if ($request->filled($urlField)) {
+                $val = trim($request->input($urlField));
+                if ($val && !preg_match('#^https?://#i', $val)) {
+                    $request->merge([$urlField => 'https://' . $val]);
+                }
+            }
+        }
+
         $validatedData = $request->validate([
             'homebased_business' => 'required|string|in:Yes,No',
             'company_name' => 'required|string|max:255',

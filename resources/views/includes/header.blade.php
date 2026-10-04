@@ -65,38 +65,32 @@
     </style>
 <script>
 function openNav() {
-  document.getElementById("mySidenav").style.width = "230px";
+  var navs = document.querySelectorAll('.sidenav, #mySidenav');
+  for (var i = 0; i < navs.length; i++) {
+    navs[i].style.width = "270px";
+  }
 }
 
 function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-}
-</script>
-
- <!-- <script>
-  $( function() {
-    $( "#accordion" ).accordion({
-      heightStyle: "content"
-    });
-  } );
-  </script>-->
-  
-<script>
-function openNav() {
-  document.getElementById("mySidenav").style.width = "270px";
+  var navs = document.querySelectorAll('.sidenav, #mySidenav');
+  for (var i = 0; i < navs.length; i++) {
+    navs[i].style.width = "0";
+  }
 }
 
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-}
-</script>
-<!--<script>
-$(document).ready(function(){
-  $(".menutag").click(function(){
-    $("#mySidenav").toggle();
+document.addEventListener('click', function(e) {
+  var navs = document.querySelectorAll('.sidenav, #mySidenav');
+  navs.forEach(function(nav) {
+    if (nav.style.width && nav.style.width !== "0px" && nav.style.width !== "0") {
+      var isMenutag = e.target.closest('.menutag');
+      var isNav = e.target.closest('.sidenav');
+      if (!isMenutag && !isNav) {
+        closeNav();
+      }
+    }
   });
 });
-</script>-->
+</script>
 
 
 <!-- cropper method -->

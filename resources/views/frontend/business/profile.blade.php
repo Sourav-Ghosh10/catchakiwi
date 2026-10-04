@@ -53,18 +53,14 @@
                <div class="modal-dialog modal-lg">
                   <div class="modal-content">
                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Crop Image</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                            <span aria-hidden="true">&times;</span>
                         </button>
                      </div>
                      <div class="modal-body">
                         <div class="img-container">
-                           <div class="row">
-                              <div class="col-md-11">
-                                 <img id="image" src="https://avatars0.githubusercontent.com/u/3456749">
-                              </div>
-                           </div>
+                           <img id="image" src="https://avatars0.githubusercontent.com/u/3456749">
                         </div>
                      </div>
                      <input type="hidden" id="uploadtype" value="">

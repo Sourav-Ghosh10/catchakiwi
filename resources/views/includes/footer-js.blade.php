@@ -46,32 +46,35 @@
             }
         });
         $modal.on('shown.bs.modal', function() {
-            let uploadtype = $("#uploadtype").val();
-            if(uploadtype == "imageUpload" || uploadtype == "imageUpload2"){
-                cropper = new Cropper(image, {
-                    aspectRatio: 1,
-                    viewMode: 1,
-                });
-            }else if(uploadtype=="coverupload"){
-                cropper = new Cropper(image, {
-                    aspectRatio: 3,
-                    viewMode: 1,
-                });
-            }else if(uploadtype.startsWith("noticeimg")){
-                cropper = new Cropper(image, {
-                    aspectRatio: 600/400,
-                    viewMode: 1,
-                });
-            }else if(uploadtype == "businessimage" || uploadtype == "articleimage"){
-                cropper = new Cropper(image, {
-                    aspectRatio: 800/600,
-                    viewMode: 1,
-                });
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
             }
-            
+            let uploadtype = $("#uploadtype").val();
+            let ratio = 800 / 600;
+            if (uploadtype == "imageUpload" || uploadtype == "imageUpload2") {
+                ratio = 1;
+            } else if (uploadtype == "coverupload") {
+                ratio = 3;
+            } else if (uploadtype && uploadtype.startsWith("noticeimg")) {
+                ratio = 600 / 400;
+            } else if (uploadtype == "businessimage" || uploadtype == "articleimage") {
+                ratio = 800 / 600;
+            }
+
+            cropper = new Cropper(image, {
+                aspectRatio: ratio,
+                viewMode: 1,
+                autoCropArea: 0.8,
+                responsive: true,
+                restore: false,
+                checkCrossOrigin: false,
+            });
         }).on('hidden.bs.modal', function() {
-            cropper.destroy();
-            cropper = null;
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
         });
         $("body").on("click", "#crop", function() {
             try {

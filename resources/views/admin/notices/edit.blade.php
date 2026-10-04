@@ -315,6 +315,17 @@ select.edit-input option { background:#252836; color:#c8ccd8; }
 
                 {{-- ── $5 Service Deal / Items-for-Sale ── --}}
                 <div id="service_fields" style="display:none;">
+                    <div class="field-group" id="admin_service_type_group">
+                        <label class="field-label" for="service_type_select">Service type</label>
+                        <div class="sel-wrap">
+                            <select name="service_type" id="service_type_select" class="edit-input">
+                                <option value="">Services type</option>
+                                <option value="Tradies and home maintenance" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == 'Tradies and home maintenance' ? 'selected' : '' }}>Tradies and home maintenance</option>
+                                <option value="Cafts and domestic services" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == 'Cafts and domestic services' ? 'selected' : '' }}>Cafts and domestic services</option>
+                                <option value="Personal and educational services" {{ old('service_type', $notice->service_type ?? ($notice->looking_for ?? '')) == 'Personal and educational services' ? 'selected' : '' }}>Personal and educational services</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="field-group">
                         <label class="field-label" for="town_suburb_sel">Town / Suburb</label>
                         <select name="town_suburb" id="town_suburb_sel" placeholder="Select Town/Suburb"></select>

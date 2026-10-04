@@ -339,66 +339,66 @@
                   <p><?= $business->business_description ?></p>
                 <!--  <p><a href="#"><?= $business->title ?></a> / <a href="#" class="active"><?= $business->sec_title ?></a> </p> -->
                </div>
-               @if($business->display_address == "yes")
                <div class="busidtls_location" id="maploc">
                   <h4><img src="{{ asset('assets/images/location_icon.png') }}" alt=""> Map / Location</h4>
-                  <p><?= ($business->address ? $business->address . ", " : "") . $business->region ?></p>
-                  @if($business->map)
-                        {!! $business->map !!}
-                  @else
-                        <div id="osm-map" style="width: 100%; height: 350px; border-radius: 8px; margin-top: 15px; border: 1px solid #ddd; z-index: 1;"></div>
-                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function() {
-                                var rawAddress = "{{ addslashes(($business->address ? $business->address . ', ' : '') . $business->region) }}";
-                                var parts = rawAddress.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-                                var cleanParts = [];
-                                parts.forEach(function(p){
-                                    if (cleanParts.indexOf(p) === -1) cleanParts.push(p);
-                                });
-                                var address = cleanParts.join(', ');
-                                if (!address) address = "New Zealand";
+                  <p><?= (($business->display_address == "yes" && $business->address) ? $business->address . ", " : "") . $business->region ?></p>
+                  @if($business->display_address == "yes")
+                      @if($business->map)
+                            {!! $business->map !!}
+                      @else
+                            <div id="osm-map" style="width: 100%; height: 350px; border-radius: 8px; margin-top: 15px; border: 1px solid #ddd; z-index: 1;"></div>
+                            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    var rawAddress = "{{ addslashes(($business->address ? $business->address . ', ' : '') . $business->region) }}";
+                                    var parts = rawAddress.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+                                    var cleanParts = [];
+                                    parts.forEach(function(p){
+                                        if (cleanParts.indexOf(p) === -1) cleanParts.push(p);
+                                    });
+                                    var address = cleanParts.join(', ');
+                                    if (!address) address = "New Zealand";
 
-                                var mapContainer = document.getElementById('osm-map');
-                                if (!mapContainer) return;
+                                    var mapContainer = document.getElementById('osm-map');
+                                    if (!mapContainer) return;
 
-                                var map = L.map('osm-map').setView([-40.9006, 174.8860], 6);
-                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                    maxZoom: 19,
-                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                }).addTo(map);
+                                    var map = L.map('osm-map').setView([-40.9006, 174.8860], 6);
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        maxZoom: 19,
+                                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    }).addTo(map);
 
-                                function geocodeAndSet(query) {
-                                    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
-                                        .then(function(res) { return res.json(); })
-                                        .then(function(data) {
-                                            if (data && data.length > 0) {
-                                                var lat = parseFloat(data[0].lat);
-                                                var lon = parseFloat(data[0].lon);
-                                                map.setView([lat, lon], 14);
-                                                L.marker([lat, lon]).addTo(map)
-                                                    .bindPopup('<b>{{ addslashes($business->display_name ?? $business->title) }}</b><br>' + address)
-                                                    .openPopup();
-                                                return true;
-                                            }
-                                            return false;
-                                        });
-                                }
-
-                                geocodeAndSet(address).then(function(success) {
-                                    if (!success && cleanParts.length > 1) {
-                                        var shortQuery = cleanParts.slice(-2).join(', ');
-                                        geocodeAndSet(shortQuery);
+                                    function geocodeAndSet(query) {
+                                        return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
+                                            .then(function(res) { return res.json(); })
+                                            .then(function(data) {
+                                                if (data && data.length > 0) {
+                                                    var lat = parseFloat(data[0].lat);
+                                                    var lon = parseFloat(data[0].lon);
+                                                    map.setView([lat, lon], 14);
+                                                    L.marker([lat, lon]).addTo(map)
+                                                        .bindPopup('<b>{{ addslashes($business->display_name ?? $business->title) }}</b><br>' + address)
+                                                        .openPopup();
+                                                    return true;
+                                                }
+                                                return false;
+                                            });
                                     }
-                                }).catch(function(err) {
-                                    console.error('OSM Geocoding error:', err);
+
+                                    geocodeAndSet(address).then(function(success) {
+                                        if (!success && cleanParts.length > 1) {
+                                            var shortQuery = cleanParts.slice(-2).join(', ');
+                                            geocodeAndSet(shortQuery);
+                                        }
+                                    }).catch(function(err) {
+                                        console.error('OSM Geocoding error:', err);
+                                    });
                                 });
-                            });
-                        </script>
+                            </script>
+                      @endif
                   @endif
                </div>
-               @endif
                <div class="busidtls_reviewpan">
                   <h4><img src="{{ asset('assets/images/review_icon.png') }}" alt="">Reviews ({{ count($rating) }})</h4>
                   @php

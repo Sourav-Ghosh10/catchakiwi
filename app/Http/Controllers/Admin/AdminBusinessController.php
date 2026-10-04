@@ -87,6 +87,15 @@ class AdminBusinessController extends Controller
     {
         $business = Business::findOrFail($id);
 
+        foreach (['website_url', 'facebook', 'linkedIn', 'twitter'] as $urlField) {
+            if ($request->filled($urlField)) {
+                $val = trim($request->input($urlField));
+                if ($val && !preg_match('#^https?://#i', $val)) {
+                    $request->merge([$urlField => 'https://' . $val]);
+                }
+            }
+        }
+
         $validatedData = $request->validate([
             'homebased_business' => 'required|in:yes,no',
             'suits_you' => 'nullable|string|max:100',

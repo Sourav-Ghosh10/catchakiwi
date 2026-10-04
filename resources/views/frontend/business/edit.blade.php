@@ -33,7 +33,7 @@
               <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                      <h5 class="modal-title" id="exampleModalLabel">Crop Image</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -224,11 +224,6 @@
     <label>Website URL</label>
     <input name="website_url" type="text" value="{{ $business->website_url }}">
     </div>
-    <div class="frm_dv">
-        <label>Enter apartment number</label>
-        <input name="appt_number" type="text" value="{{ $business->apartment_number }}">
-    </div>
-
     <div class="frm_dv catfield">
         <label class="dist">Address * </label>
         <div class="address-input-wrapper">
@@ -262,6 +257,11 @@
         @error('city_id')
             <span class="invalid-feedback">{{ $message }}</span>
         @enderror
+    </div>
+
+    <div class="frm_dv">
+        <label>Enter unit or apartment number</label>
+        <input name="appt_number" type="text" value="{{ $business->apartment_number }}" placeholder="Enter unit or apartment number">
     </div>
     
     <div class="frm_dv display_addrs">

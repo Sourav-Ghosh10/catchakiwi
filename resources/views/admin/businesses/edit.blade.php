@@ -401,14 +401,6 @@ select.form-control option {
                                         </div>
                                     </div>
 
-                                    {{-- Apartment Number --}}
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Enter apartment number</label>
-                                            <input name="apartment_number" type="text" class="form-control" value="{{ $business->apartment_number }}">
-                                        </div>
-                                    </div>
-
                                     {{-- Address --}}
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -416,6 +408,14 @@ select.form-control option {
                                             <select class="form-control addressdd" name="region" id="city_id" required>
                                                 <option value="">Select City/District</option>
                                             </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Unit / Apartment Number --}}
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Enter unit or apartment number</label>
+                                            <input name="apartment_number" type="text" class="form-control" value="{{ $business->apartment_number }}" placeholder="Enter unit or apartment number">
                                         </div>
                                     </div>
 
