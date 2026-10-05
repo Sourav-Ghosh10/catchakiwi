@@ -65,16 +65,16 @@
                         <a href="{{ URL::to('/profile') }}"><img src="{{ asset('assets/images/dash_icon.png') }}" alt=""> <span class="gw-menu-text">Dashboard</span> <b></b> </a>
                      </li>
                      <li>
-                        <a href="javascript:void(0)"><img src="{{ asset('assets/images/garage-sale.png') }}" alt=""> <span class="gw-menu-text">Garagesales</span> <b></b> </a>
+                        <a href="{{ url('/notice-board/garage-sales') }}"><img src="{{ asset('assets/images/garage-sale.png') }}" alt=""> <span class="gw-menu-text">Garagesales</span> <b></b> </a>
                      </li>
-                     <li>
-                        <a href="javascript:void(0)"> <img src="{{ asset('assets/images/vehicle.png') }}" alt=""><span class="gw-menu-text">Vehicles</span> <b></b> </a>
+                     <li class="disabled-menu-item" style="opacity: 0.55; pointer-events: none; cursor: not-allowed;">
+                        <a href="javascript:void(0)" style="cursor: not-allowed;"><img src="{{ asset('assets/images/vehicle.png') }}" alt="" style="filter: grayscale(100%); opacity: 0.6;"><span class="gw-menu-text" style="color: #888;">Vehicles</span> <b></b> </a>
                      </li>
-                     <li>
-                        <a href="javascript:void(0)"><img src="{{ asset('assets/images/real-estate.png') }}" alt=""> <span class="gw-menu-text">Real Estate</span> <b></b> </a>
+                     <li class="disabled-menu-item" style="opacity: 0.55; pointer-events: none; cursor: not-allowed;">
+                        <a href="javascript:void(0)" style="cursor: not-allowed;"><img src="{{ asset('assets/images/real-estate.png') }}" alt="" style="filter: grayscale(100%); opacity: 0.6;"><span class="gw-menu-text" style="color: #888;">Real Estate</span> <b></b> </a>
                      </li>
-                     <li>
-                        <a href="javascript:void(0)"><img src="{{ asset('assets/images/catch-a-ride.png') }}" alt=""> <span class="gw-menu-text">Catch-a-Ride</span> <b></b> </a>
+                     <li class="disabled-menu-item" style="opacity: 0.55; pointer-events: none; cursor: not-allowed;">
+                        <a href="javascript:void(0)" style="cursor: not-allowed;"><img src="{{ asset('assets/images/catch-a-ride.png') }}" alt="" style="filter: grayscale(100%); opacity: 0.6;"><span class="gw-menu-text" style="color: #888;">Catch-a-Ride</span> <b></b> </a>
                      </li>
                      <li class="init-arrow-down subm">
                         <div class="gw-parent-row">
