@@ -308,12 +308,6 @@
             <p>So often, two people who need to connect walk straight past each other in the street. Don't let Catchakiwi
                become just an online community, let it become the hub of our community.
             </p>
-            <!--<button class="p-3 d-flex align-items-center justify-content-center newcacpop" id="newcacpop">-->
-            <!--    <span class="me-sm-3">The new catchakiwi is coming</span>-->
-            <!--    <div class="bg">-->
-            <!--      <div class="loader"></div>-->
-            <!--    </div>-->
-            <!--  </button>-->
             <div class="home_searchsec">
                <form action="" method="post">
                   <input name="" type="text" placeholder="Services I’m looking for" />
