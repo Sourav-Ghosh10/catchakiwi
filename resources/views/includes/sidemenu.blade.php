@@ -10,7 +10,7 @@
 									
 								</a>-->
                           		<a href="#" class="msg_notift position-relative" id="notificationBell">
-                                    <span class="badge badge-danger" id="unreadCount">{{ auth()->user()->receivedNotifications()->wherePivot('read', false)->count() }}</span>
+                                    <span class="header_count_bubble" id="unreadCount">{{ auth()->user()->receivedNotifications()->wherePivot('read', false)->count() }}</span>
                                     <img src="{{ asset('assets/images/top_msgicon.png') }}" alt="Notifications">
                                 </a>
 
@@ -37,8 +37,8 @@
                                     <div class="text-center mt-2">
                                     </div>
                                 </div>
-								<a href="{{ url('/profile') }}#parentHorizontalTab3" class="header_msg_link">
-                                    <span id="headerMsgCount">0</span>
+								<a href="{{ url('/profile') }}#parentHorizontalTab3" class="header_msg_link email_notift position-relative">
+                                    <span class="header_count_bubble" id="headerMsgCount">0</span>
                                     <img src="{{ asset('assets/images/top_emailicon.png') }}" alt="Messages">
                                 </a>
 								@endif

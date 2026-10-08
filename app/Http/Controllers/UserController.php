@@ -822,14 +822,21 @@ class UserController extends Controller
             'message' => 'required',
         ]);
 
-        $suburb = City::with('state.country')->find($request->post('suburb_id'));
+        $locationVal = $request->post('suburb_id');
+        if (is_numeric($locationVal)) {
+            $suburb = City::with('state.country')->find($locationVal);
+            $locationStr = $suburb ? $suburb->name.','.$suburb->state->name.','.$suburb->state->country->name : $locationVal;
+        } else {
+            $locationStr = $locationVal ?? '';
+        }
+
         $htmlBody = ZohoMailService::renderView('email', [
             'name' => $request->post('name'),
             'email' => $request->post('email'),
             'phone_no' => $request->post('phone_no') ?? '',
             'country' => ($request->post('country') == 'others')
                             ? $request->post('otherscoun')
-                            : $suburb->name.','.$suburb->state->name.','.$suburb->state->country->name,
+                            : $locationStr,
             'msg' => $request->post('message'),
             'ip' => $request->ip(),
         ]);

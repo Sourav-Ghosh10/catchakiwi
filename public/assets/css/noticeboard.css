@@ -187,17 +187,25 @@
     }
 
     .nb-v2-search-input-wrap {
-        padding: 4px 4px 4px 12px !important;
+        padding: 4px 4px 4px 14px !important;
+        border-radius: 50px !important;
     }
 
     .nb-v2-search-input {
-        font-size: 12px !important;
+        font-size: 13px !important;
     }
 
     .nb-v2-search-btn {
-        padding: 7px 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 8px 14px !important;
         font-size: 12px !important;
-        border-radius: 8px !important;
+        font-weight: 700 !important;
+        border-radius: 50px !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        margin-left: 6px !important;
     }
 
     .left_notice h2 {
@@ -616,41 +624,44 @@
 
 @media (max-width: 768px) {
     .nb-v2-search-input-wrap {
-        padding: 6px 6px 6px 16px;
-        border-radius: 12px;
+        padding: 5px 5px 5px 16px;
+        border-radius: 50px;
     }
     
     .nb-v2-search-btn {
-        padding: 10px 20px;
-        font-size: 14px;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 8px 18px !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        border-radius: 50px !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
     }
     
     .nb-v2-search-icon {
-        font-size: 18px;
-        margin-right: 12px;
+        font-size: 16px;
+        margin-right: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .nb-v2-search-btn {
-        display: inline-block !important;
-        padding: 6px 10px !important;
-        font-size: 11px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 7px 14px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        border-radius: 50px !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
     }
     
     .nb-v2-search-input-wrap::after {
-        content: '\f002';
-        font-family: FontAwesome;
-        position: absolute;
-        right: 20px;
-        color: #fff;
-        background: #a3d900;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
+        display: none !important;
+        content: none !important;
     }
 }
 

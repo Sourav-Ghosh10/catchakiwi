@@ -64,20 +64,12 @@
               <span class="menu-title">User List</span>
             </a>
           </li>
-          <li class="nav-item menu-items">
+          <li class="nav-item menu-items" style="border-bottom: 1px solid #2c2e33; margin-bottom: 20px; padding-bottom: 10px;">
             <a class="nav-link" href="{{ route('admin.ads.index') }}">
               <span class="menu-icon">
                 <i class="mdi mdi-bullhorn"></i>
               </span>
               <span class="menu-title">Ads</span>
-            </a>
-          </li>
-          <li class="nav-item menu-items" style="border-bottom: 1px solid #2c2e33; margin-bottom: 20px; padding-bottom: 10px;">
-            <a class="nav-link" href="{{ route('admin.locations.index') }}">
-              <span class="menu-icon">
-                <i class="mdi mdi-map-marker-radius"></i>
-              </span>
-              <span class="menu-title">Location</span>
             </a>
           </li>
 

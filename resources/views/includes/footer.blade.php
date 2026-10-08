@@ -232,7 +232,7 @@ function updateHeaderMessages() {
         const badge = document.getElementById('headerMsgCount');
         if (badge) {
             badge.textContent = total;
-            badge.style.display = total > 0 ? 'inline-block' : 'none';
+            badge.style.display = 'inline-flex';
         }
 
         if (total === 0) {
@@ -396,8 +396,7 @@ $(document).ready(function() {
 
     function updateUnreadCount() {
         const count = $('.notification-item.unread').length;
-        $('#unreadCount').text(count);
-        if (count === 0) $('#unreadCount').hide();
+        $('#unreadCount').text(count).css('display', 'inline-flex');
     }
 });
 </script>
