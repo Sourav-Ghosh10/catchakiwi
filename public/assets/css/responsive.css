@@ -500,16 +500,14 @@
   }
 
   .after_logmenu a.after_logname {
-    margin-left: 5px;
-    margin-right: 25px;
+    margin-left: 0 !important;
+    margin-right: 12px !important;
   }
 
-  .email_notift {
-    margin-right: 0 !important;
-  }
-
-  .after_logmenu a {
-    margin-right: 10px;
+  .after_logmenu a.msg_notift,
+  .after_logmenu a.email_notift,
+  .after_logmenu a.header_msg_link {
+    margin-right: 16px !important;
   }
 
   .getquote_frm input[type="submit"],
@@ -1126,8 +1124,10 @@
     float: none !important;
   }
 
-  .after_logmenu a {
-    margin-right: 4px !important;
+  .after_logmenu a.msg_notift,
+  .after_logmenu a.email_notift,
+  .after_logmenu a.header_msg_link {
+    margin-right: 14px !important;
   }
 
   .after_logmenu > a img {
@@ -1350,8 +1350,10 @@
     padding: 1px 6px !important;
   }
 
-  .after_logmenu a {
-    margin-right: 4px !important;
+  .after_logmenu a.msg_notift,
+  .after_logmenu a.email_notift,
+  .after_logmenu a.header_msg_link {
+    margin-right: 12px !important;
   }
 
   .after_logmenu a img {

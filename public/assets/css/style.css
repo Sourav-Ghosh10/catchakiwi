@@ -1014,14 +1014,26 @@ textarea {
 }
 
 .after_logmenu {
-  display: inline-block;
-  margin-left: 40px;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-left: 20px;
 }
 
 .after_logmenu a {
-  display: inline-block;
-  margin-right: 18px;
-  vertical-align: top;
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: middle;
+}
+
+.after_logmenu a.msg_notift,
+.after_logmenu a.email_notift,
+.after_logmenu a.header_msg_link {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 20px !important;
+  vertical-align: middle !important;
 }
 
 .after_logmenu a.after_logname {
@@ -1030,10 +1042,12 @@ textarea {
   color: #f78f0a;
   line-height: 18px;
   text-align: left;
-  margin-top: -5px;
-  margin-left: 10px;
-  margin-right: 0;
-  cursor: auto;
+  margin-top: 0;
+  margin-left: 0 !important;
+  margin-right: 14px !important;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
 .after_logmenu a.after_logname img {
@@ -1043,20 +1057,21 @@ textarea {
   border: 2px solid #e1e1e1;
   border-radius: 50%;
   margin-right: 0;
-  vertical-align: top;
+  vertical-align: middle;
   object-fit: cover;
 }
 
 .after_logmenu a.after_logname span {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
   font-style: italic;
 }
 
-.after_logmenu a.msg_notift,
-.after_logmenu a.email_notift,
-.after_logmenu a.header_msg_link {
-  position: relative;
+.after_logmenu .menutag {
+  display: inline-flex !important;
+  align-items: center !important;
+  cursor: pointer;
+  margin-left: 2px;
 }
 
 .after_logmenu a.msg_notift span,
@@ -1066,18 +1081,18 @@ textarea {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 18px !important;
-  height: 18px !important;
-  min-width: 18px !important;
+  width: 17px !important;
+  height: 17px !important;
+  min-width: 17px !important;
   border: 1.5px solid #d0d0d0 !important;
   text-align: center !important;
   background: #ffffff !important;
-  font-size: 11px !important;
+  font-size: 10px !important;
   color: #111111 !important;
   line-height: 1 !important;
   position: absolute !important;
   border-radius: 50% !important;
-  right: -6px !important;
+  right: -5px !important;
   top: -4px !important;
   font-weight: 700 !important;
   z-index: 99 !important;
